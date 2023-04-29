@@ -33,6 +33,25 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## How to Contribute
+
+1. Clone the repository.
+```shell
+git clone -b staging git@link_of_repo
+```
+2. Create and switch to a new branch
+```shell
+git switch -c your-new-branch-name
+```
+3. Commit changes after development
+```shell
+git commit -m "Describe your changes"
+```
+4. Push to remote repository
+```shell
+git push -u origin your-branch-name
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
