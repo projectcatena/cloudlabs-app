@@ -1,11 +1,16 @@
+import Head from "next/head"
 import Image from "next/image"
 
+{/* Done by Tristan */}
 export default function Settings() {
     return (
         <>
         {/* Card Section */}
         {/* Card */}
         <div className="h-screen bg-white shadow p-4 sm:p-7 dark:bg-slate-900">
+            <Head>
+                <title>Settings</title>
+            </Head>
             <div className="mb-8">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 Profile
