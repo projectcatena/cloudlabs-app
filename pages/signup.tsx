@@ -11,24 +11,24 @@ export default function SignUp() {
     SetIsPasswordVisible((prevState)=>!prevState)
   }
     return(
-      <div className="grid grid-cols-1 md:grid-cols-2 bg-inherit dark:bg-inherit">
+      <div className="grid grid-cols md:grid-cols-2 bg-inherit dark:bg-inherit">
         <div className="border-0">
           <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
               <div className="p-4 sm:p-7">  
                 <div className="text-center">
-                  <h1 className="block text-7xl font-bold white dark:text-white">
+                  <h1 className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold white dark:text-white">
                     <span>Cloud</span>
                     <span className="text-blue-600">Labs</span>
                   </h1>
-                  <p className="mt-1 text-xl text-white dark:text-white">
+                  <p className="mt-1 text-sm sm:text-base md:text-lg lg:text-xl text-white dark:text-white">
                     Cloud-Based Computing Labs for Academia
                   </p>
                 </div>
                 <div className="mt-5">
                   <button
                     type="button"
-                    className="w-full py-5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-inherit text-gray-700 shadow-sm align-middle hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+                    className="flex-auto w-full py-5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-inherit text-gray-700 shadow-sm align-middle hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
                   >
                     <svg
                       className="w-4 h-auto"
@@ -63,7 +63,7 @@ export default function SignUp() {
                   <form>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
-                      <div>
+                      <div className="flex-auto">
                         <label
                           htmlFor="fullname"
                           className="block text-sm mb-2 dark:text-white"
@@ -98,7 +98,7 @@ export default function SignUp() {
                       </div>
                       {/* End Form Group */}
                       {/* Form Group */}
-                      <div>
+                      <div className="flex-auto">
                         <label
                           htmlFor="email"
                           className="block text-sm mb-2 dark:text-white"
@@ -135,7 +135,7 @@ export default function SignUp() {
                       </div>
                       {/* End Form Group */}
                       {/* Form Group */}
-                      <div>
+                      <div className="flex-auto">
                         <label
                           htmlFor="password"
                           className="block text-sm mb-2 dark:text-white"
@@ -197,7 +197,7 @@ export default function SignUp() {
                       </div>
                       <button
                         type="submit"
-                        className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                        className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
                       >
                         Sign up
                       </button>
