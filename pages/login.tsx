@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+import Script from "next/script";
 
 //Login Page -- Tristan
 export default function Login() {
@@ -11,14 +12,13 @@ export default function Login() {
         <div>
             <Head>
                 <title>Login Page</title>
-                <script src="./assets/vendor/preline/dist/preline.js"></script>
-                <script src="https://accounts.google.com/gsi/client" async defer></script>
             </Head>
         </div>
             
         {/*Starting of grid*/}
         {/* Hero */}
         <div className="container m-auto -mr-auto px-4">
+            <Script src="./assets/vendor/preline/dist/preline.js"></Script>
         <div className="h-screen flex items-center justify-center">
         {/* Grid */}
             <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
@@ -97,7 +97,7 @@ export default function Login() {
                     </div>
                 </div>
                 <div className="relative ml-4">
-                    <img className="w-full rounded-md" src="./THG.jpeg" alt="Picture of THG" />
+                    <Image className="w-full rounded-md" src="/THG.jpeg" alt="Picture of THG" width={500} height={500} />
                     <div className="absolute inset-0 -z-[1] bg-gradient-to-tr from-gray-200 via-white/0 to-white/0 w-full h-full rounded-md mt-4 -mb-4 mr-4 -ml-4 lg:mt-6 lg:-mb-6 lg:mr-6 lg:-ml-6 dark:from-slate-800 dark:via-slate-900/0 dark:to-slate-900/0" />
                 </div>
                 {/* End Col */}

@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 export default function Settings() {
     return (
         <>
@@ -23,7 +25,7 @@ export default function Settings() {
                 {/* End Col */}
                 <div className="col-span-9">
                 <div className="flex items-center gap-5">
-                    <img className="inline-block h-16 w-16 rounded-full ring-2 ring-white dark:ring-gray-800" src="./basicprofilepicture.jpg" alt="Profile Picture" />
+                    <Image className="inline-block h-16 w-16 rounded-full ring-2 ring-white dark:ring-gray-800" src="/basicprofilepicture.jpeg" alt="Profile Picture" width={500} height={500}/>
                     <div className="flex gap-x-2">
                     <div>
                         <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
