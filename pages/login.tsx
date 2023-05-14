@@ -20,7 +20,11 @@ export default function Login() {
         </Head>
         {/* Left Side of Page */}
         <div className="hidden md:block border-0">
-            <Image src="/ICT.jpg" alt="ICT Image" className="max-w-full h-full object-cover border-0" width={900} height={800}></Image>
+            <img
+              src="/ICT.jpg" 
+              alt="ICT Image" 
+              className="max-w-full h-full object-cover border-0" 
+              ></img>
         </div>
         {/* Right Side of Page */}
         <div className="border-0">
