@@ -1,3 +1,4 @@
+import DashboardLayout from "@/components/layouts/DashboardLayout"
 import Head from "next/head"
 import Image from "next/image"
 
@@ -5,6 +6,7 @@ import Image from "next/image"
 export default function Settings() {
     return (
         <>
+        <DashboardLayout>
         {/* Card Section */}
         {/* Card */}
         <div className="h-screen bg-white shadow p-4 sm:p-7 dark:bg-slate-900">
@@ -64,8 +66,8 @@ export default function Settings() {
                 {/* End Col */}
                 <div className="col-span-9">
                 <div className="sm:flex">
-                    <input id="af-account-full-name" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Por" />
-                    <input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="So Gay" />
+                    <input id="af-account-full-name" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-md first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="First name" />
+                    <input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-md first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Last name" />
                 </div>
                 </div>
                 {/* End Col */}
@@ -76,7 +78,7 @@ export default function Settings() {
                 </div>
                 {/* End Col */}
                 <div className="col-span-9">
-                <input id="af-account-email" type="email" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="email@email.com" />
+                <input id="af-account-email" type="email" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="email@email.com" />
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
@@ -87,8 +89,8 @@ export default function Settings() {
                 {/* End Col */}
                 <div className="col-span-9">
                 <div className="space-y-2">
-                    <input id="af-account-password" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter current password" />
-                    <input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter new password" />
+                    <input id="af-account-password" type="text" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter current password" />
+                    <input type="text" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter new password" />
                 </div>
                 </div>
                 {/* End Col */}
@@ -106,6 +108,7 @@ export default function Settings() {
         </div>
         {/* End Card */}
         {/* End Card Section */}
+        </DashboardLayout>
         </>
     )
 }

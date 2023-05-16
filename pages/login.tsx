@@ -2,10 +2,9 @@ import React from 'react'
 import { Inter } from 'next/font/google'
 import { useState } from 'react'
 import Image from 'next/image'
-import Head from 'next/head'
 import Link from 'next/link'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 
-{/* Done by Tristan */}
 const inter = Inter({ subsets: ['latin'] })
 export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
@@ -15,35 +14,22 @@ export default function Login() {
   }
     return(
       <div className="grid grid-cols md:grid-cols-2 bg-inherit dark:bg-inherit">
-        <Head>
-            {/* Page Title */}
-            <title>Login</title>
-        </Head>
-        {/* Left Side of Page */}
         <div className="hidden md:block border-0">
-            <img
-              src="/ICT.jpg" 
-              alt="ICT Image" 
-              className="max-w-full h-full object-cover border-0" 
-              ></img>
+            <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
         </div>
-        {/* Right Side of Page */}
         <div className="border-0">
           <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
               <div className="p-4 sm:p-7">  
-              {/* CloudLabs header */}
                 <div className="text-center">
                   <h1 className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold white dark:text-white">
                     <span>Cloud</span>
                     <span className="text-blue-600">Labs</span>
                   </h1>
-                  {/* Description */}
                   <p className="mt-1 text-sm sm:text-base md:text-lg lg:text-xl text-white dark:text-white">
                     Cloud-Based Computing Labs for Academia
                   </p>
                 </div>
-                {/* Google Sign in button */}
                 <div className="mt-5">
                   <button
                     type="button"
@@ -80,6 +66,7 @@ export default function Login() {
                   </div>
                   {/* Form */}
                   <form>
+                    <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
                         <label
@@ -114,7 +101,6 @@ export default function Login() {
                           className="hidden text-xs text-red-600 mt-2"
                           id="email-error"
                         >
-			            Please include a valid email address so we can get back to you
                         </p>
                       </div>
                       {/* End Form Group */}
@@ -171,24 +157,20 @@ export default function Login() {
                         </p>
                       </div>
                       {/* End Form Group */}
-                      {/* Checkbox */}
-                        <div className="flex items-center">
-                            <div className="flex">
-                            <input id="remember-me" name="remember-me" type="checkbox" className="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" />
-                            </div>
-                            <div className="ml-3">
-                            <label htmlFor="remember-me" className="text-sm dark:text-white">Remember me</label>
-                        </div>
-                        </div>
-                    {/* End Checkbox */}
-                    <button type="submit" className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">Sign in</button>
-                    <div className="p-4 sm:p-7">
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Don&#000t have an account yet?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium" href="/signup">
-                        Sign up here
+                      <div className="text-center">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Dont&apos;t have an account?
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup">
+                            Sign up here
                         </Link>
-                    </p>
+                        </p>
+                      </div>
+                      <button
+                        type="submit"
+                        className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                      >
+                        Log in
+                      </button>
                     </div>
                   </form>
                   {/* End Form */}
@@ -198,6 +180,5 @@ export default function Login() {
           </main>
         </div>
       </div>
-        
     )
 }

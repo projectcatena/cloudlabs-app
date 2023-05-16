@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {
@@ -214,6 +215,5 @@ export default function SignUp() {
             <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
         </div>
       </div>
-        
     )
 }
