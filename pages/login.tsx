@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react'
 import Image from 'next/image'
 import Head from 'next/head'
+import Link from 'next/link'
 
 {/* Done by Tristan */}
 const inter = Inter({ subsets: ['latin'] })
@@ -184,9 +185,9 @@ export default function Login() {
                     <div className="p-4 sm:p-7">
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Don&#000t have an account yet?
-                        <a className="text-blue-600 decoration-2 hover:underline font-medium" href="/signup">
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium" href="/signup">
                         Sign up here
-                        </a>
+                        </Link>
                     </p>
                     </div>
                   </form>
