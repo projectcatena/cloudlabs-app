@@ -14,7 +14,7 @@ export default function MainDashboard(){
                 {/* Page Heading */}
                 <div>
                     <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Modules</h1>
-                    <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access your different module's materials.</p>
+                    <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access your different module&#39;s materials.</p>
                 </div>
                 
                 <div>
