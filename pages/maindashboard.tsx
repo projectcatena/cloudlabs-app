@@ -2,7 +2,6 @@ import DashboardLayout from '@/components/layouts/DashboardLayout'
 import MCard from '../components/elements/MCard'
 import { Inter } from 'next/font/google'
 import React from 'react'
-import VMCard from '../components/elements/VMCard'
 
 const inter = Inter({ subsets: ['latin'] })
 
