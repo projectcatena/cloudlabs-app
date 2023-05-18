@@ -15,7 +15,7 @@ export default function VMCard() {
                 Kali Linux
             </h3>
             <p className="mt-3 text-gray-500">
-            kz kkb
+            Kali Linux is an open-source, Debian-based Linux distribution geared towards various information security tasks. 
             </p>
         </div>
         <div className="mt-auto flex border-t border-gray-200 divide-x divide-gray-200 dark:border-gray-700 dark:divide-gray-700 z-0">
