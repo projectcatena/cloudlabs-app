@@ -6,7 +6,7 @@ import Link from 'next/link'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 
 const inter = Inter({ subsets: ['latin'] })
-export default function SignUp() {
+export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
   function togglePasswordVisibility() {
@@ -14,6 +14,9 @@ export default function SignUp() {
   }
     return(
       <div className="grid grid-cols md:grid-cols-2 bg-inherit dark:bg-inherit">
+        <div className="hidden md:block border-0">
+            <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
+        </div>
         <div className="border-0">
           <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
@@ -56,7 +59,7 @@ export default function SignUp() {
                         fill="#EB4335"
                       />
                     </svg>
-                    Sign up with Google
+                    Sign in with Google
                   </button>
                   <div className="py-4 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:border-gray-200 before:mr-6 after:flex-[1_1_0%] after:border-t after:border-gray-200 after:ml-6 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600">
                     Or
@@ -64,41 +67,6 @@ export default function SignUp() {
                   {/* Form */}
                   <form>
                     <div className="grid gap-y-4">
-                      {/* Form Group */}
-                      <div className="flex-auto">
-                        <label
-                          htmlFor="fullname"
-                          className="block text-sm mb-2 dark:text-white"
-                        >
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="fullname"
-                            id="fullname"
-                            name="fullname"
-                            className="py-3 px-4 block w-full border rounded-md text-sm focus:border-white focus:ring-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-900"
-                            required
-                            aria-describedby="fullname-error"
-                            placeholder="Full Name"
-                          />
-                          <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
-                            <svg
-                              className="h-5 w-5 text-red-500"
-                              width={16}
-                              height={16}
-                              fill="currentColor"
-                              viewBox="0 0 16 16"
-                              aria-hidden="true"
-                            >
-                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                            </svg>
-                          </div>
-                        </div>
-                        <p className="hidden text-xs text-red-600 mt-2" id="name-error">
-                          Please include your full name
-                        </p>
-                      </div>
-                      {/* End Form Group */}
                       {/* Form Group */}
                       <div className="flex-auto">
                         <label
@@ -191,9 +159,9 @@ export default function SignUp() {
                       {/* End Form Group */}
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        Already have an account?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/login">
-                            Sign in here
+                        Dont&apos;t have an account?
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup">
+                            Sign up here
                         </Link>
                         </p>
                       </div>
@@ -201,7 +169,7 @@ export default function SignUp() {
                         type="submit"
                         className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
                       >
-                        Sign up
+                        Log in
                       </button>
                     </div>
                   </form>
@@ -210,9 +178,6 @@ export default function SignUp() {
               </div>
             </div>  
           </main>
-        </div>
-        <div className="hidden md:block border-0">
-            <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
         </div>
       </div>
     )
