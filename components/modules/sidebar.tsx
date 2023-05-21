@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google'
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -236,7 +237,7 @@ export default function Sidebar() {
                 </nav>
             </div>
             <div className="flex flex-col gap-3">
-                <a className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="#">
+                <Link className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="/settings">
                     <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                         <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
@@ -245,7 +246,7 @@ export default function Sidebar() {
                         <p>Charlie Toh Keng Boon</p>
                         <p className="text-slate-700 dark:text-slate-400 truncate ">s13922394@connect.np.edu.sg</p>
                     </div>
-                </a>
+                </Link>
                 <div className="px-4 w-full">
                     <a className="w-full inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800" href="#" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">

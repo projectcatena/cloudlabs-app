@@ -1,5 +1,5 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout'
-import Card from '../components/elements/Card'
+import VirtualMachineCard from '../components/elements/VirtualMachineCard'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,7 +34,7 @@ export default function ModuleDashboard() {
           </div>
 
           {/* Card */}
-          <Card></Card>
+          <VirtualMachineCard></VirtualMachineCard>
           {/* End of Card */}
           {/* End Page Heading */}
       </div>

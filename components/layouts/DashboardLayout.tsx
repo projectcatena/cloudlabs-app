@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <main
             className={`flex min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}
             >
-                <div>
+                <div className="w-full max-w-7xl">
                     <Sidebar></Sidebar>
                     {children}
                 </div>

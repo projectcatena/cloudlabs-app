@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Card() {
+export default function VirtualMachineCard() {
   return (
     <div className="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
         <div className="h-16 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl"></div>
@@ -16,7 +16,7 @@ export default function Card() {
                 Kali Linux
             </h3>
             <p className="mt-3 text-gray-500">
-            Kali Linux is an open-source, Debian-based Linux distribution geared towards various information security tasks.
+            Kali Linux is an open-source, Debian-based Linux distribution geared towards various information security tasks. 
             </p>
         </div>
         <div className="mt-auto flex border-t border-gray-200 divide-x divide-gray-200 dark:border-gray-700 dark:divide-gray-700 z-0">
