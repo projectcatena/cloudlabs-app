@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function VMCard() {
+export default function VirtualMachineCard() {
   return (
     <div className="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
         <div className="h-16 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl"></div>
