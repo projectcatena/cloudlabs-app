@@ -21,8 +21,8 @@ type ModalProps = {
  * @returns 
  */
 const ErrorModal = ({open, onClose, errorMessage}: ModalProps) => {
-    if (!open) return null;
     const router = useRouter();
+    if (!open) return null;
 
     return (
         <div id="overlay" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
