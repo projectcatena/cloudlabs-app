@@ -42,6 +42,8 @@ export function connect(host: IHostEntity) {
     guac.disconnect();
   };
 
+  // Keyboard was originally here
+
   // Mouse
   var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
 
@@ -49,18 +51,7 @@ export function connect(host: IHostEntity) {
     guac.sendMouseState(mouseState)
   }
 
-  // Keyboard
-  var keyboard = new Guacamole.Keyboard(document);
-
-  keyboard.onkeydown = function (keysym: any) {
-    guac.sendKeyEvent(1, keysym);
-  };
-
-  keyboard.onkeyup = function (keysym: any) {
-    guac.sendKeyEvent(0, keysym);
-  };
-
-  // Clipboard
+  // TODO: Clipboard
   guac.onclipboard = function (stream: any, mimetype: string) {
     console.log("onclipboard ...",stream, mimetype);
     stream.onblob = function (data: any) {
@@ -73,4 +64,19 @@ export function connect(host: IHostEntity) {
   }
 
   return guac;
+}
+
+
+export function connectKeyboard(document: Document, guac: Guacamole.Client) {
+  var keyboard = new Guacamole.Keyboard(document)
+
+  keyboard.onkeydown = function (keysym: any) {
+    guac.sendKeyEvent(1, keysym);
+  };
+
+  keyboard.onkeyup = function (keysym: any) {
+    guac.sendKeyEvent(0, keysym);
+  };
+
+  return keyboard
 }

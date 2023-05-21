@@ -1,27 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
+import Guacamole from 'guacamole-common-js'
 
 type Props = {
-    onMenuButtonClick(): void;
+    keyboard: Guacamole.Keyboard
 }
 
-const Navbar = () => {
+const ConsoleBar = () => {
+    
+    // TODO: Send Ctrl + Alt + Del signal to guest
+    function handleRestart() {
+        // https://guacamole.apache.org/doc/guacamole-common-js/main_webapp_modules_Keyboard.js.html
+        // keyboard.press(17);
+        // keyboard.press(18);
+        // keyboard.press(46);
+        // keyboard.reset();
+        // console.log(keyboard);
+    }
+
     return (
         <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-white text-sm py-3 sm:py-0 dark:bg-slate-900">
-            <nav className="relative max-w-[85rem] w-full mx-auto px-4 flex items-center justify-between sm:px-6 lg:px-8" aria-label="Global">
+            <nav className="relative w-full mx-auto px-4 flex items-center justify-between sm:px-6 lg:px-8" aria-label="Global">
                 <div className="flex items-center justify-between">
                     <a className="flex-none text-3xl font-semibold dark:text-white" href="#" aria-label="Brand">Cloud<span className="text-blue-600">Labs</span></a>
                 </div>
-                <div className="flex gap-y-4 gap-x-0 flex-row items-center justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7"> {/* Log in button not aligned properly on mobile */}
-                    <a className="flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 sm:my-6 sm:pl-6 dark:border-gray-700 dark:text-gray-400 dark:hover:text-blue-500" href="#">
-                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                <div className="flex gap-y-4 gap-x-0 flex-row items-center justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7"> 
+                    {/* flex items-center gap-x-2 font-medium text-gray-500 hover:text-blue-600 sm:my-6 sm:pl-6 dark:border-gray-700 dark:text-gray-400 dark:hover:text-blue-500 */}
+                    <button onClick={handleRestart} className="sm:my-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
-                        Log in
-                    </a>
+                        Restart
+                    </button>
                 </div>
             </nav>
         </header>
     )
 }
 
-export default Navbar;
+export default ConsoleBar;
