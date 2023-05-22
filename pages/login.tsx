@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import Head from 'next/head'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function Login() {
@@ -13,6 +13,10 @@ export default function Login() {
     SetIsPasswordVisible((prevState)=>!prevState)
   }
     return(
+      <>
+      <Head>
+        <title>Login</title>
+      </Head>
       <div className="grid grid-cols md:grid-cols-2 bg-inherit dark:bg-inherit">
         <div className="hidden md:block border-0">
             <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
@@ -180,5 +184,6 @@ export default function Login() {
           </main>
         </div>
       </div>
+      </>
     )
 }

@@ -6,6 +6,9 @@ import Image from "next/image"
 export default function Settings() {
     return (
         <>
+        <Head>
+            <title>Account Settings</title>
+        </Head>
         <DashboardLayout>
         {/* Card Section */}
         {/* Card */}
