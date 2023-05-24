@@ -39,16 +39,16 @@ export default function Users() {
                         {/* Header */}
                         <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
                             <div className="inline-flex gap-x-2">
-                                <a className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" href="#">
+                                <Link className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" href="#">
                                 View all
-                                </a>
+                                </Link>
 
-                                <a className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800" href="#">
+                                <Link className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800" href="#">
                                 <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                     <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
                                 Add user
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         {/* End Header */}
@@ -161,9 +161,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
@@ -220,9 +220,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
@@ -279,9 +279,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
@@ -338,9 +338,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
@@ -397,9 +397,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
@@ -456,9 +456,9 @@ export default function Users() {
                                 </td>
                                 <td className="h-px w-px whitespace-nowrap">
                                 <div className="px-6 py-1.5">
-                                    <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
+                                    <Link className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="#">
                                     Edit
-                                    </a>
+                                    </Link>
                                 </div>
                                 </td>
                             </tr>
