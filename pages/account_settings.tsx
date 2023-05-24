@@ -12,11 +12,8 @@ export default function Settings() {
         <DashboardLayout>
         {/* Card Section */}
         {/* Card */}
-        <div className="h-screen bg-white shadow p-4 sm:p-7 dark:bg-slate-900">
-            <Head>
-                <title>Settings</title>
-            </Head>
-            <div className="mb-8">
+        <div className="h-screen bg-white p-4 sm:p-7 dark:bg-slate-900 lg:pl-72">
+            <div className="mb-8 ">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 Profile
             </h2>
