@@ -1,10 +1,36 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import VirtualMachineCard from '../components/elements/VirtualMachineCard'
 import { Inter } from 'next/font/google'
+import { useState } from 'react';
+import ErrorModal from '@/components/elements/ErrorModal';
+import { error } from 'console';
+import CreateVirtualMachineModal from '@/components/elements/CreateVirtualMachineModal';
+import { Image, InstanceType } from '@/components/elements/CreateVirtualMachineModal';
 
 const inter = Inter({ subsets: ['latin'] })
 
+
 export default function ModuleDashboard() {
+  const [openErrorModal, setOpenErrorModal] = useState(false);
+  const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
+
+  const InstanceData: InstanceType[] = [
+    {
+      name: "e2-micro"
+    },
+    {
+      name:"e2-medium"
+    },
+  ]
+
+  const ImageData: Image[] = [
+    {
+      name: "debian-11",
+      project: "projects/debian-cloud/global/images/family/",
+    },
+  ]
+
+
   return (
     <DashboardLayout>
       {/* ========== MAIN CONTENT ========== */}
@@ -25,6 +51,9 @@ export default function ModuleDashboard() {
                 <a className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800" href="https://github.com/htmlstreamofficial/preline/tree/main/examples/html" target="_blank">
                   Destroy All
                 </a>
+                <button onClick={() => setOpenCreateVirtualMachineModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                  Create VM
+                </button>
                 {/* <a className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold text-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 ring-offset-gray-50 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm py-3 px-4 dark:ring-offset-slate-900" href="../examples.html">
                   <svg className="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
                       <path d="M11.2792 1.64001L5.63273 7.28646C5.43747 7.48172 5.43747 7.79831 5.63273 7.99357L11.2792 13.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -38,6 +67,9 @@ export default function ModuleDashboard() {
           {/* End of Card */}
           {/* End Page Heading */}
       </div>
+      {/* Modals */}
+      <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
+      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} imageOptions={ImageData} instanceTypes={InstanceData} />
       {/* End Content */}
       {/* ========== END MAIN CONTENT ========== */}
     </DashboardLayout>
