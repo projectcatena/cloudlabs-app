@@ -14,6 +14,7 @@ export default function ModuleDashboard() {
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
 
+  // TODO: Test Data
   const InstanceData: InstanceType[] = [
     {
       name: "e2-micro"
@@ -26,6 +27,10 @@ export default function ModuleDashboard() {
   const ImageData: Image[] = [
     {
       name: "debian-11",
+      project: "projects/debian-cloud/global/images/family/",
+    },    
+    {
+      name: "debian-12",
       project: "projects/debian-cloud/global/images/family/",
     },
   ]

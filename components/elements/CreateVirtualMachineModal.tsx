@@ -1,7 +1,7 @@
 
 import { RSC_MODULE_TYPES } from 'next/dist/shared/lib/constants'
 import { Inter } from 'next/font/google'
-import React, { FormEventHandler } from 'react'
+import React, { useState, FormEventHandler } from 'react'
 import { Type } from 'typescript'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -15,12 +15,6 @@ export interface InstanceType {
     name: string
 }
 
-interface postData {
-    name: string,
-    image: Image,
-    instanceType: InstanceType,
-}
-
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
@@ -29,50 +23,44 @@ type ModalProps = {
     instanceTypes: InstanceType[]
 }
 
-async function createVirtualMachine(event: React.SyntheticEvent) {
-    // Get Form Data
-    event.preventDefault();
-
-    const form: HTMLFormElement = event.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    try {
-        // Or you can work with it as a plain object:
-        const formJson = Object.fromEntries(formData.entries());
-        console.log(formJson);
-
-        const response = await fetch("http://localhost:8080/api/compute/create", {
-            method: form.method,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(Object.fromEntries(formData)),
-        });
-
-
-        if (!response.ok) {
-            throw new Error("Network response failed.");
-        }
-
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.log("Error:", error);
-    }
-}
-
 const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}: ModalProps) => {
     if (!open) return null;
 
-    var state: postData = {
-        name: "",
-        image: { 
-            name: "",
-            project: "",
-        },
-        instanceType: { 
-            name: "",
-        },
+    const [name, setName] = useState("");
+    const [selectedImage, setSelectedImage] = useState({ name: "", project: "" });
+    const [selectedInstanceType, setSelectedInstanceType] = useState({ name: "" });
+
+    /**
+     * Handle form submission manually by posting data to the API endpoint.
+     * @param event 
+     * @returns 
+     */
+    async function createVirtualMachine(event: React.SyntheticEvent) {
+        event.preventDefault();
+
+        const postData = { name, selectedImage, selectedInstanceType };
+        console.log(postData);
+
+        try {
+
+            const response = await fetch("http://localhost:8080/api/compute/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+
+
+            if (!response.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.log("Error:", error);
+        }
     }
 
     return (
@@ -100,13 +88,13 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
 
                         <div className="space-y-4">
                              {/* Form */}
-                            <form id="createVirtualMachineForm" method='post' onSubmit={createVirtualMachine}>
+                            <form id="createVirtualMachineForm" onSubmit={createVirtualMachine}>
                                 <div className="grid gap-y-4">
                                     {/* Form Group */}
                                     <div>
                                         <label htmlFor="name" className="block text-sm mb-2 dark:text-white">Name</label>
                                         <div className="relative">
-                                            <input type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                            <input onChange={(e) => setName(e.target.value)} type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
                                             <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                 <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
@@ -124,7 +112,7 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                         </div>
                                         <div className="relative">
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <select onChange={e => setSelectedImage(imageOptions[e.target.value as unknown as number])} id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select a machine image</option>
                                                 {imageOptions.map((image, index) => {
                                                     return (
@@ -143,11 +131,11 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                         </div>
                                         <div className="relative">
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <select onChange={e => setSelectedInstanceType(instanceTypes[e.target.value as unknown as number])} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select an instance type</option>
-                                                {instanceTypes.map((instance) => {
+                                                {instanceTypes.map((instance, index) => {
                                                     return (
-                                                        <option value={instance.name}>{instance.name}</option>
+                                                        <option key={index} value={index}>{instance.name}</option>
                                                     );
                                                 })}
                                             </select>
