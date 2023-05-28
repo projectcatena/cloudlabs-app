@@ -15,6 +15,12 @@ export interface InstanceType {
     name: string
 }
 
+interface postData {
+    name: string,
+    image: Image,
+    instanceType: InstanceType,
+}
+
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
@@ -57,6 +63,17 @@ async function createVirtualMachine(event: React.SyntheticEvent) {
 
 const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}: ModalProps) => {
     if (!open) return null;
+
+    var state: postData = {
+        name: "",
+        image: { 
+            name: "",
+            project: "",
+        },
+        instanceType: { 
+            name: "",
+        },
+    }
 
     return (
         <div id="hs-notifications" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
@@ -109,9 +126,9 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
                                             <select id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select a machine image</option>
-                                                {imageOptions.map((image) => {
+                                                {imageOptions.map((image, index) => {
                                                     return (
-                                                        <option value={JSON.stringify(image)}>{image.name}</option>
+                                                        <option key={index} value={index}>{image.name}</option>
                                                     );
                                                 })}
                                             </select>
