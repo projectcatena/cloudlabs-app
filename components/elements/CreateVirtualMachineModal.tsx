@@ -24,11 +24,15 @@ type ModalProps = {
 }
 
 const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}: ModalProps) => {
-    if (!open) return null;
-
     const [name, setName] = useState("");
     const [selectedImage, setSelectedImage] = useState({ name: "", project: "" });
     const [selectedInstanceType, setSelectedInstanceType] = useState({ name: "" });
+    const [isChecked, setChecked] = useState(false);
+    const [script, setScript] = useState("");
+
+    const handleCheck = () => {
+        setChecked(!isChecked);
+    }
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -38,7 +42,7 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
 
-        const postData = { name, selectedImage, selectedInstanceType };
+        const postData = { name, selectedImage, selectedInstanceType, script };
         console.log(postData);
 
         try {
@@ -63,10 +67,12 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
         }
     }
 
+    if (!open) return null;
+
     return (
         <div id="hs-notifications" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
             <div className="mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-                <div className="relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+                <div className="z-[80] relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
                         <button type="button" onClick={() => onClose(false)} className="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                             <span className="sr-only">Close</span>
@@ -94,7 +100,7 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                     <div>
                                         <label htmlFor="name" className="block text-sm mb-2 dark:text-white">Name</label>
                                         <div className="relative">
-                                            <input onChange={(e) => setName(e.target.value)} type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                            <input onChange={(e) => setName(e.target.value)} placeholder="instance-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
                                             <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                 <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
@@ -143,27 +149,49 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                         <p className="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required</p>
                                     </div>
                                     {/* End Form Group */}
+                                    {/* Card */}
+                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                        <label htmlFor="hs-meetups-near-you" className="flex p-4 md:p-5">
+                                            <span className="flex mr-5">
+                                                {/* <svg className="flex-shrink-0 mt-1 w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+                                                </svg> */}
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="16" height="16" stroke-width="1.5" stroke="currentColor" className="flex-shrink-0 mt-1 w-5 h-5 text-gray-500">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
+                                                </svg>
+
+                                                <span className="ml-5">
+                                                <span className="block font-medium text-gray-800 dark:text-gray-200">Startup Script</span>
+                                                <span className="block text-sm text-gray-500">Add a custom shell script such as bash or powershell that runs on startup.</span>
+                                                </span>
+                                            </span>
+
+                                            <input checked={isChecked} onChange={handleCheck} type="checkbox" id="hs-meetups-near-you" className="relative shrink-0 w-[3.25rem] h-7 bg-gray-100 checked:bg-none checked:bg-blue-600 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 border border-transparent ring-1 ring-transparent focus:border-blue-600 focus:ring-blue-600 ring-offset-white focus:outline-none appearance-none dark:bg-gray-700 dark:checked:bg-blue-600 dark:focus:ring-offset-gray-800 before:inline-block before:w-6 before:h-6 before:bg-white checked:before:bg-blue-200 before:translate-x-0 checked:before:translate-x-full before:shadow before:rounded-full before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 dark:before:bg-gray-400 dark:checked:before:bg-blue-200" />
+                                        </label>
+                                    </div>
+                                    {/* End Card */}
+                                    {/* Form Group */}
+                                    {
+                                        isChecked && (
+                                        <div>
+                                            <label htmlFor="startup-script" className="block text-sm mb-2 dark:text-white">Startup Script</label>
+                                            <div className="relative">
+                                                {/* <input onChange={(e) => setName(e.target.value)} placeholder="instance-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" /> */}
+                                                <textarea onChange={(e) => setScript(e.target.value)} id="startup-script" name='startup-script' rows={4} className='py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'></textarea>
+                                                <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
+                                                    <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
+                                        </div>
+                                        )
+                                    }
+                                    {/* End Form Group */}
                                 </div>
                             </form>
-                            {/* Card */}
-                            {/* <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                <label htmlFor="hs-meetups-near-you" className="flex p-4 md:p-5">
-                                <span className="flex mr-5">
-                                    <svg className="flex-shrink-0 mt-1 w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
-                                    </svg>
-
-                                    <span className="ml-5">
-                                    <span className="block font-medium text-gray-800 dark:text-gray-200">Meetups Near You</span>
-                                    <span className="block text-sm text-gray-500">Get an email when a Preline Meetup is posted close to my location</span>
-                                    </span>
-                                </span>
-
-                                <input type="checkbox" id="hs-meetups-near-you" className="relative shrink-0 w-[3.25rem] h-7 bg-gray-100 checked:bg-none checked:bg-blue-600 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 border border-transparent ring-1 ring-transparent focus:border-blue-600 focus:ring-blue-600 ring-offset-white focus:outline-none appearance-none dark:bg-gray-700 dark:checked:bg-blue-600 dark:focus:ring-offset-gray-800 before:inline-block before:w-6 before:h-6 before:bg-white checked:before:bg-blue-200 before:translate-x-0 checked:before:translate-x-full before:shadow before:rounded-full before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 dark:before:bg-gray-400 dark:checked:before:bg-blue-200" />
-                                </label>
-                            </div> */}
-                            {/* End Card */}
-
                         </div>
                     </div>
 
