@@ -70,9 +70,9 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
     if (!open) return null;
 
     return (
-        <div id="hs-notifications" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
-            <div className="mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-                <div className="z-[80] relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+        <div id="hs-notifications" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
+            <div className={`h-full flex justify-center items-center ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto sm:h-fit`}>
+                <div className="my-auto relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
                         <button type="button" onClick={() => onClose(false)} className="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                             <span className="sr-only">Close</span>
@@ -82,10 +82,10 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                         </button>
                     </div>
 
-                    <div className="p-4 sm:p-10 overflow-y-auto">
+                    <div className="p-4 sm:p-10">
                         <div className="mb-6 text-center">
                         <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-200">
-                            Create a Virtual Machine Template
+                            Create a Virtual Machine
                         </h3>
                         <p className="text-gray-500">
                             Creating a template virtual machine enables you to customize the content of the virtual machines in the lab.
