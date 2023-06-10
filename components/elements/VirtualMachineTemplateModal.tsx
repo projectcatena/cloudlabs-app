@@ -13,8 +13,8 @@ const VirtualMachineTemplateModal = ({open, onClose}: ModalProps) => {
     if (!open) return null;
 
     return(
-        <div id="vm-template" className="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
-            <div id="vm-template" className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div id="vm-template" className="hs-overlay w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
+            <div id="vm-template" className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
                 <div className="relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
                         <button type="button" className="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
@@ -28,7 +28,7 @@ const VirtualMachineTemplateModal = ({open, onClose}: ModalProps) => {
                     <div className="p-4 sm:p-10 overflow-y-auto">
                         <div className="mb-6 text-center">
                         <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-200">
-                            Template Virtual Machine Settings
+                            Template VM Settings
                         </h3>
                         <p className="text-gray-500">
                             Creating a template virtual machine enables you to customize the content of the virtual machines in the lab.
