@@ -65,7 +65,7 @@ export default function VMSettings() {
                                 <label className="ml-3 block text-lg sm:text-xl font-normal text-gray-800 dark:text-gray-400">Shut down Virtual Machines when users do not connect</label>
                             </div>
 
-                            <div className="flex pt-3 items-center">
+                            <div className="flex pt-3 pb-3 items-center">
                                 <input type="number" defaultValue="15" className="py-3 px-4 w-14 h-10 md:w-20 block border-gray-200 rounded-md text-base focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400
                                 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"></input>
                                 <label htmlFor="not-connected" className="ml-3 block text-base sm:text-lg font-normal text-gray-800 dark:text-gray-400">minutes after machine is started</label>
