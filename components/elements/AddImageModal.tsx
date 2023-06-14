@@ -1,8 +1,7 @@
-
-import { RSC_MODULE_TYPES } from 'next/dist/shared/lib/constants'
 import { Inter } from 'next/font/google'
 import React, { useState, FormEventHandler } from 'react'
-import { Type } from 'typescript'
+import FileDropzone from './FileDropzone/FileDropzone'
+import FileDropzonePreview from './FileDropzone/FileDropzonePreview'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,15 +12,7 @@ type ModalProps = {
 }
 
 const AddImageModal = ({open, onClose}: ModalProps) => {
-    const [name, setName] = useState("");
-    const [selectedImage, setSelectedImage] = useState({ name: "", project: "" });
-    const [selectedInstanceType, setSelectedInstanceType] = useState({ name: "" });
-    const [isChecked, setChecked] = useState(false);
-    const [script, setScript] = useState("");
-
-    const handleCheck = () => {
-        setChecked(!isChecked);
-    }
+    const [fileSelected, setFileSelected] = useState<File>();
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -31,7 +22,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
 
-        const postData = { name, selectedImage, selectedInstanceType, script };
+        const postData = { fileSelected };
         console.log(postData);
 
         try {
@@ -99,11 +90,19 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                         <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
                                     </div> */}
                                     {/* End Form Group */}
+                                    <FileDropzone setFile={setFileSelected}></FileDropzone>
+                                    {
+                                        fileSelected ? (
+                                            <FileDropzonePreview filePreview={fileSelected} setFilePreview={setFileSelected}></FileDropzonePreview>
+                                        ) : (
+                                            <></>
+                                        )
+                                    }
                                     {/* Form Group */}
-                                    <div className="space-y-2">
-                                        {/* <label htmlFor="af-submit-app-upload-images" className="inline-block text-sm font-medium text-gray-800 dark:text-gray-200">
-                                        Preview image
-                                        </label> */}
+                                    {/* <label htmlFor="af-submit-app-upload-images" className="inline-block text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    Preview image
+                                    </label> */}
+                                    {/* <div className="space-y-2">
 
                                         <label htmlFor="af-submit-app-upload-images" className="group p-4 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:border-gray-700">
                                             <input id="af-submit-app-upload-images" name="af-submit-app-upload-images" type="file" className="sr-only" />
@@ -118,10 +117,43 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                                 Maximum file size is 2 MB
                                             </span>
                                         </label>
+                                    </div> */}
+                                    
+                                    {/* End of Form Group */}
+                                    {/* Form Group */}
+                                    <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                        <div className="grid grid-cols-5">
+                                            <span className="col-span-4 text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
+                                            <div className="col-span-1 flex space-x-2 justify-end items-center">
+                                                {/* <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span> */}
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        {/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
+                                        </div> */}
                                     </div>
                                     {/* End of Form Group */}
                                     {/* Form Group */}
                                     <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                        <div className="grid grid-cols-5 mb-1">
+                                            <span className="col-span-4 text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
+                                            <div className="col-span-1 flex space-x-2 justify-end items-center">
+                                                <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
+                                        </div>
+                                    </div>
+                                    {/* End of Form Group */}
+                                    {/* Original File Form Group */}
+                                    {/* <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                         <div className="flex justify-between mb-1">
                                             <span className="text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
                                             <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
@@ -129,7 +161,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                             <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     {/* End of Form Group */}
                                 </div>
                             </form>
