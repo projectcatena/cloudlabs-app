@@ -13,20 +13,22 @@ type ModalProps = {
 
 const AddImageModal = ({open, onClose}: ModalProps) => {
     const [fileSelected, setFileSelected] = useState<File>();
+    const [isFileUpload, setIsFileUpload] = useState(false);
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
      * @param event 
      * @returns 
      */
-    async function createVirtualMachine(event: React.SyntheticEvent) {
+    async function handleFormSubmit(event: React.SyntheticEvent) {
         event.preventDefault();
 
+        setIsFileUpload(true);
+        
         const postData = { fileSelected };
         console.log(postData);
 
         try {
-
             const response = await fetch("http://localhost:8080/api/compute/create", {
                 method: "POST",
                 headers: {
@@ -74,7 +76,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
 
                         <div className="space-y-4">
                              {/* Form */}
-                            <form id="createVirtualMachineForm" onSubmit={createVirtualMachine}>
+                            <form id="createVirtualMachineForm" onSubmit={handleFormSubmit}>
                                 <div className="grid gap-y-4">
                                     {/* Form Group */}
                                     {/* <div>
@@ -90,10 +92,10 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                         <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
                                     </div> */}
                                     {/* End Form Group */}
-                                    <FileDropzone setFile={setFileSelected}></FileDropzone>
+                                    <FileDropzone file={fileSelected} setFile={setFileSelected}></FileDropzone>
                                     {
                                         fileSelected ? (
-                                            <FileDropzonePreview filePreview={fileSelected} setFilePreview={setFileSelected}></FileDropzonePreview>
+                                            <FileDropzonePreview isUpload={isFileUpload} filePreview={fileSelected} setFilePreview={setFileSelected}></FileDropzonePreview>
                                         ) : (
                                             <></>
                                         )
@@ -119,22 +121,6 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                         </label>
                                     </div> */}
                                     
-                                    {/* End of Form Group */}
-                                    {/* Form Group */}
-                                    <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                                        <div className="grid grid-cols-5">
-                                            <span className="col-span-4 text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
-                                            <div className="col-span-1 flex space-x-2 justify-end items-center">
-                                                {/* <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span> */}
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        {/* <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
-                                        </div> */}
-                                    </div>
                                     {/* End of Form Group */}
                                     {/* Form Group */}
                                     <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
@@ -172,7 +158,11 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                             Cancel
                         </button>
                         <button type="submit" form='createVirtualMachineForm' className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                            Create
+                            <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Upload
                         </button>
                     </div>
                 </div>
