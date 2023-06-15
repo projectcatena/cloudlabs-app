@@ -1,23 +1,23 @@
-import { Inter } from 'next/font/google'
 import React from 'react'
 
 type FilePreviewProps = {
     filePreview: File | undefined,
     setFilePreview: React.Dispatch<React.SetStateAction<File | undefined>>,
-    isUpload: boolean
+    isUpload: boolean,
+    now: number
 }
 
-const FileDropzonePreview = ({filePreview, setFilePreview, isUpload}: FilePreviewProps) => {
+const FileDropzonePreview = ({filePreview, setFilePreview, isUpload, now}: FilePreviewProps) => {
 
     return (
         <>
             <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                 <div className={`grid grid-cols-5 ${isUpload ? 'mb-1': ''}`}>
-                    <span className="col-span-4 text-base font-medium text-blue-700 dark:text-white">{filePreview?.name}</span>
+                    <span className="max-w-sm truncate col-span-4 text-base font-medium text-blue-700 dark:text-white">{filePreview?.name}</span>
                     <div className="col-span-1 flex space-x-2 justify-end items-center">
                         {
                             isUpload ? (
-                                <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
+                                <span className="text-sm font-medium text-blue-700 dark:text-white">{now}%</span>
                             ) : (
                                 <></>
                             )
@@ -32,7 +32,7 @@ const FileDropzonePreview = ({filePreview, setFilePreview, isUpload}: FilePrevie
                 {
                     isUpload ? (
                         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${now}%`}}></div>
                         </div>
                     ) : (
                         <></>

@@ -1,9 +1,11 @@
-import { Inter } from 'next/font/google'
-import React, { useState, FormEventHandler } from 'react'
+import React, { useState } from 'react'
 import FileDropzone from './FileDropzone/FileDropzone'
 import FileDropzonePreview from './FileDropzone/FileDropzonePreview'
 
-const inter = Inter({ subsets: ['latin'] })
+type SignedURLResult = {
+    status: string,
+    signedURL: string
+}
 
 type ModalProps = {
     open: boolean
@@ -11,9 +13,30 @@ type ModalProps = {
     // onClose: (value: boolean) => void
 }
 
+async function getSignedUploadURL(fileName: string) {
+    // Get Signed URL for Upload
+    const signedURLResponse = await fetch("http://localhost:8080/storage/signed", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({objectName: fileName}),
+    });
+
+
+    if (!signedURLResponse.ok) {
+        throw new Error("Network response failed.");
+    }
+
+    const signedURLResult: SignedURLResult = await signedURLResponse.json();
+
+    return signedURLResult.signedURL;
+}
+
 const AddImageModal = ({open, onClose}: ModalProps) => {
     const [fileSelected, setFileSelected] = useState<File>();
     const [isFileUpload, setIsFileUpload] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -24,29 +47,63 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
         event.preventDefault();
 
         setIsFileUpload(true);
-        
-        const postData = { fileSelected };
-        console.log(postData);
 
-        try {
-            const response = await fetch("http://localhost:8080/api/compute/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(postData),
+        // Obtain GCP signed URL for upload
+        const signedURL = await getSignedUploadURL(fileSelected!.name);
+        console.log(signedURL);
+
+        const formData = new FormData();
+        formData.append("file", fileSelected as Blob)
+
+        console.log(formData);
+
+        const xhr = new XMLHttpRequest();
+        const success = await new Promise((resolve) => {
+            xhr.upload.addEventListener("progress", (event) => {
+                if (event.lengthComputable) {
+                    console.log("upload progress:", (100 * event.loaded) / event.total);
+                    setProgress(Math.round((100 * event.loaded) / event.total))
+                }
             });
-
-
-            if (!response.ok) {
-                throw new Error("Network response failed.");
-            }
-
-            const result = await response.json();
-            return result;
-        } catch (error) {
-            console.log("Error:", error);
+            xhr.addEventListener("progress", (event) => {
+                if (event.lengthComputable) {
+                    console.log("download progress:", event.loaded / event.total);
+                }
+            });
+            xhr.addEventListener("loadend", () => {
+                resolve(xhr.readyState === 4 && xhr.status === 200);
+            });
+            xhr.open("PUT", signedURL, true);
+            xhr.setRequestHeader("Content-Type", "application/octet-stream");
+            xhr.send(formData);
+        });
+        console.log("success:", success);
+        if (success) {
+            setIsFileUpload(false);
         }
+
+        // fetch() does not support progression visibility
+        // try {
+        //     const response = await fetch("http://localhost:8080/storage/upload", {
+        //         method: "POST",
+        //         // Do not set Content-Type header, browser will set automatically
+        //         // with the boundary parameter.
+        //         // headers: {
+        //         //     "Content-Type": "multipart/form-data",
+        //         // },
+        //         body: formData,
+        //     });
+
+
+        //     if (!response.ok) {
+        //         throw new Error("Network response failed.");
+        //     }
+
+        //     const result = await response.json();
+        //     return result;
+        // } catch (error) {
+        //     console.log("Error:", error);
+        // }
     }
 
     if (!open) return null;
@@ -95,7 +152,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                     <FileDropzone file={fileSelected} setFile={setFileSelected}></FileDropzone>
                                     {
                                         fileSelected ? (
-                                            <FileDropzonePreview isUpload={isFileUpload} filePreview={fileSelected} setFilePreview={setFileSelected}></FileDropzonePreview>
+                                            <FileDropzonePreview isUpload={isFileUpload} filePreview={fileSelected} setFilePreview={setFileSelected} now={progress}></FileDropzonePreview>
                                         ) : (
                                             <></>
                                         )
@@ -122,22 +179,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                     </div> */}
                                     
                                     {/* End of Form Group */}
-                                    {/* Form Group */}
-                                    <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                                        <div className="grid grid-cols-5 mb-1">
-                                            <span className="col-span-4 text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
-                                            <div className="col-span-1 flex space-x-2 justify-end items-center">
-                                                <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
-                                        </div>
-                                    </div>
-                                    {/* End of Form Group */}
+
                                     {/* Original File Form Group */}
                                     {/* <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                         <div className="flex justify-between mb-1">
@@ -157,12 +199,14 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                         <button type="button" onClick={() => onClose(false)} className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                             Cancel
                         </button>
-                        <button type="submit" form='createVirtualMachineForm' className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                            <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <button type="submit" form='createVirtualMachineForm' className="w-24 h-10 py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 disabled:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isFileUpload}>
+                            <svg className={`animate-spin h-4 w-4 text-white ${isFileUpload ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Upload
+                            <span className={`${ isFileUpload ? "hidden" : ""}`}>
+                                Upload
+                            </span>
                         </button>
                     </div>
                 </div>
