@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import FileDropzone from './FileDropzone/FileDropzone'
 import FileDropzonePreview from './FileDropzone/FileDropzonePreview'
 
 type SignedURLResult = {
-    status: string,
+    objectName: string,
     signedURL: string
 }
 
@@ -13,6 +13,21 @@ type ModalProps = {
     // onClose: (value: boolean) => void
 }
 
+/**
+ * TODO: Update backend on upload success
+ * On file upload success, make a POST request to backend to update database.
+ * Such that backend can later use the URI (e.g. gs://my-bucket/my-image.vmdk) 
+ * to build a virtual disk.
+ */
+async function initVirtualDiskBuild(fileName: string) {
+
+}
+
+/**
+ * Get a v4SignedURL from backend server for file upload
+ * @param fileName 
+ * @returns 
+ */
 async function getSignedUploadURL(fileName: string) {
     // Get Signed URL for Upload
     const signedURLResponse = await fetch("http://localhost:8080/storage/signed", {
@@ -34,9 +49,15 @@ async function getSignedUploadURL(fileName: string) {
 }
 
 const AddImageModal = ({open, onClose}: ModalProps) => {
-    const [fileSelected, setFileSelected] = useState<File>();
-    const [isFileUpload, setIsFileUpload] = useState(false);
+    // States for File Upload
+    const [fileInputEvent, setFileInputEvent] = useState<React.ChangeEvent<HTMLInputElement>>();
+    const fileSelected = fileInputEvent?.target.files![0];
+
+    // States for XMLHttpRequest
+    const [currentXHR, setCurrentXHR] = useState<XMLHttpRequest>();
     const [progress, setProgress] = useState(0);
+    const [isFileUpload, setIsFileUpload] = useState(false);
+    const [isCancel, setIsCancel] = useState(false);
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -58,7 +79,8 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
         console.log(formData);
 
         const xhr = new XMLHttpRequest();
-        const success = await new Promise((resolve) => {
+        setCurrentXHR(xhr);
+        const success = await new Promise((resolve, reject) => {
             xhr.upload.addEventListener("progress", (event) => {
                 if (event.lengthComputable) {
                     console.log("upload progress:", (100 * event.loaded) / event.total);
@@ -73,38 +95,31 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
             xhr.addEventListener("loadend", () => {
                 resolve(xhr.readyState === 4 && xhr.status === 200);
             });
+            xhr.addEventListener("abort", () => {
+                reject(xhr);
+            });
             xhr.open("PUT", signedURL, true);
             xhr.setRequestHeader("Content-Type", "application/octet-stream");
             xhr.send(formData);
         });
+
         console.log("success:", success);
+
         if (success) {
             setIsFileUpload(false);
-        }
-
-        // fetch() does not support progression visibility
-        // try {
-        //     const response = await fetch("http://localhost:8080/storage/upload", {
-        //         method: "POST",
-        //         // Do not set Content-Type header, browser will set automatically
-        //         // with the boundary parameter.
-        //         // headers: {
-        //         //     "Content-Type": "multipart/form-data",
-        //         // },
-        //         body: formData,
-        //     });
-
-
-        //     if (!response.ok) {
-        //         throw new Error("Network response failed.");
-        //     }
-
-        //     const result = await response.json();
-        //     return result;
-        // } catch (error) {
-        //     console.log("Error:", error);
-        // }
+        }            
     }
+
+    useEffect(
+        () => {
+            if (isCancel) {
+                currentXHR?.abort();
+                setIsCancel(false);
+                setIsFileUpload(false);
+            }
+        },
+        [isCancel] // Run only when isCancel changes
+    )
 
     if (!open) return null;
 
@@ -135,68 +150,20 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                              {/* Form */}
                             <form id="createVirtualMachineForm" onSubmit={handleFormSubmit}>
                                 <div className="grid gap-y-4">
-                                    {/* Form Group */}
-                                    {/* <div>
-                                        <label htmlFor="name" className="block text-sm mb-2 dark:text-white">Name</label>
-                                        <div className="relative">
-                                            <input onChange={(e) => setName(e.target.value)} placeholder="image-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
-                                            <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
-                                                <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
-                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
-                                    </div> */}
-                                    {/* End Form Group */}
-                                    <FileDropzone file={fileSelected} setFile={setFileSelected}></FileDropzone>
+                                    <FileDropzone setFileInputEvent={setFileInputEvent} ></FileDropzone>
                                     {
                                         fileSelected ? (
-                                            <FileDropzonePreview isUpload={isFileUpload} filePreview={fileSelected} setFilePreview={setFileSelected} now={progress}></FileDropzonePreview>
+                                            <FileDropzonePreview setIsCancel={setIsCancel} fileInputEvent={fileInputEvent} setFileInputEvent={setFileInputEvent} isUpload={isFileUpload} now={progress}></FileDropzonePreview>
                                         ) : (
                                             <></>
                                         )
                                     }
-                                    {/* Form Group */}
-                                    {/* <label htmlFor="af-submit-app-upload-images" className="inline-block text-sm font-medium text-gray-800 dark:text-gray-200">
-                                    Preview image
-                                    </label> */}
-                                    {/* <div className="space-y-2">
-
-                                        <label htmlFor="af-submit-app-upload-images" className="group p-4 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:border-gray-700">
-                                            <input id="af-submit-app-upload-images" name="af-submit-app-upload-images" type="file" className="sr-only" />
-                                            <svg className="w-10 h-10 mx-auto text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
-                                                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
-                                            </svg>
-                                            <span className="mt-2 block text-sm text-gray-800 dark:text-gray-200">
-                                                Browse your device or <span className="group-hover:text-blue-700 text-blue-600">drag 'n drop'</span>
-                                            </span>
-                                            <span className="mt-1 block text-xs text-gray-500">
-                                                Maximum file size is 2 MB
-                                            </span>
-                                        </label>
-                                    </div> */}
-                                    
-                                    {/* End of Form Group */}
-
-                                    {/* Original File Form Group */}
-                                    {/* <div className="py-4 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                                        <div className="flex justify-between mb-1">
-                                            <span className="text-base font-medium text-blue-700 dark:text-white">parrot-security.vmdk</span>
-                                            <span className="text-sm font-medium text-blue-700 dark:text-white">45%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                            <div className="bg-blue-600 h-2.5 rounded-full" style={{width: "45%"}}></div>
-                                        </div>
-                                    </div> */}
-                                    {/* End of Form Group */}
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div className="flex justify-end items-center gap-x-2 py-3 px-4 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">
-                        <button type="button" onClick={() => onClose(false)} className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
+                        <button type="button" onClick={() => {setIsCancel(true); onClose(true);}} className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                             Cancel
                         </button>
                         <button type="submit" form='createVirtualMachineForm' className="w-24 h-10 py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 disabled:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isFileUpload}>
