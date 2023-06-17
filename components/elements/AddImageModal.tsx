@@ -59,6 +59,9 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
     const [isFileUpload, setIsFileUpload] = useState(false);
     const [isCancel, setIsCancel] = useState(false);
 
+    // Toast
+    const [warningToastOpen, setWarningToastOpen] = useState(false);
+
     /**
      * Handle form submission manually by posting data to the API endpoint.
      * @param event 
@@ -76,11 +79,9 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
         const formData = new FormData();
         formData.append("file", fileSelected as Blob)
 
-        console.log(formData);
-
         const xhr = new XMLHttpRequest();
         setCurrentXHR(xhr);
-        const success = await new Promise((resolve, reject) => {
+        const isXHRSuccess = await new Promise((resolve, reject) => {
             xhr.upload.addEventListener("progress", (event) => {
                 if (event.lengthComputable) {
                     console.log("upload progress:", (100 * event.loaded) / event.total);
@@ -101,11 +102,15 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
             xhr.open("PUT", signedURL, true);
             xhr.setRequestHeader("Content-Type", "application/octet-stream");
             xhr.send(formData);
+        })
+        .catch(error => {
+            console.log(error);
+            setWarningToastOpen(true);
         });
 
-        console.log("success:", success);
+        console.log("success:", isXHRSuccess);
 
-        if (success) {
+        if (isXHRSuccess) {
             setIsFileUpload(false);
         }            
     }
@@ -119,6 +124,17 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
             }
         },
         [isCancel] // Run only when isCancel changes
+    )
+
+    useEffect(
+        () => {
+            if (warningToastOpen) {
+                setTimeout(() => {
+                    setWarningToastOpen(false);
+                }, 5000);
+            }
+        },
+        [warningToastOpen] // Run only when warningToastOpen changes
     )
 
     if (!open) return null;
@@ -178,6 +194,28 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                     </div>
                 </div>
             </div>
+                    <div className={`absolute bottom-5 right-5 sm:right-2 max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-all linear duration-500 ${warningToastOpen ? "opacity-100":"opacity-0" }`}>
+                        <div className="flex p-4">
+                            <div className="flex-shrink-0">
+                            <svg className="h-4 w-4 text-orange-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                            </svg>
+                            </div>
+                            <div className="ml-3">
+                            <p className="text-sm text-gray-700 dark:text-gray-400">
+                                File upload has been canceled.
+                            </p>
+                            </div>
+                        </div>
+                    </div>
+            {/* {
+                warningToastOpen ? (
+
+                ) :
+                (
+                    <></>
+                )
+            } */}
         </div>
     )
 };
