@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FileDropzone from './FileDropzone/FileDropzone'
 import FileDropzonePreview from './FileDropzone/FileDropzonePreview'
 
@@ -28,7 +28,11 @@ async function initVirtualDiskBuild(fileName: string) {
  * @param fileName 
  * @returns 
  */
-async function getSignedUploadURL(fileName: string) {
+async function getSignedUploadURL(
+    fileName: string, 
+    setErrorToastOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsCancel: React.Dispatch<React.SetStateAction<boolean>>
+    ) {
     // Get Signed URL for Upload
     const signedURLResponse = await fetch("http://localhost:8080/storage/signed", {
         method: "POST",
@@ -40,7 +44,9 @@ async function getSignedUploadURL(fileName: string) {
 
 
     if (!signedURLResponse.ok) {
-        throw new Error("Network response failed.");
+        // throw new Error("Network response failed.");
+        setErrorToastOpen(true);
+        setIsCancel(true);
     }
 
     const signedURLResult: SignedURLResult = await signedURLResponse.json();
@@ -61,6 +67,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
 
     // Toast
     const [warningToastOpen, setWarningToastOpen] = useState(false);
+    const [errorToastOpen, setErrorToastOpen] = useState(false);
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -73,7 +80,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
         setIsFileUpload(true);
 
         // Obtain GCP signed URL for upload
-        const signedURL = await getSignedUploadURL(fileSelected!.name);
+        const signedURL = await getSignedUploadURL(fileSelected!.name, setErrorToastOpen, setIsCancel);
         console.log(signedURL);
 
         const formData = new FormData();
@@ -111,6 +118,7 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
         console.log("success:", isXHRSuccess);
 
         if (isXHRSuccess) {
+            initVirtualDiskBuild(fileSelected!.name);
             setIsFileUpload(false);
         }            
     }
@@ -135,6 +143,17 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
             }
         },
         [warningToastOpen] // Run only when warningToastOpen changes
+    )
+
+    useEffect(
+        () => {
+            if (errorToastOpen) {
+                setTimeout(() => {
+                    setErrorToastOpen(false);
+                }, 5000);
+            }
+        },
+        [errorToastOpen] // Run only when warningToastOpen changes
     )
 
     if (!open) return null;
@@ -194,28 +213,34 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                     </div>
                 </div>
             </div>
-                    <div className={`absolute bottom-5 right-5 sm:right-2 max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-all linear duration-500 ${warningToastOpen ? "opacity-100":"opacity-0" }`}>
-                        <div className="flex p-4">
-                            <div className="flex-shrink-0">
-                            <svg className="h-4 w-4 text-orange-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                            </svg>
-                            </div>
-                            <div className="ml-3">
-                            <p className="text-sm text-gray-700 dark:text-gray-400">
-                                File upload has been canceled.
-                            </p>
-                            </div>
-                        </div>
+            <div className={`absolute bottom-5 right-5 sm:right-2 max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-all linear duration-500 ${warningToastOpen ? "opacity-100":"opacity-0" }`}>
+                <div className="flex p-4">
+                    <div className="flex-shrink-0">
+                    <svg className="h-4 w-4 text-orange-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
                     </div>
-            {/* {
-                warningToastOpen ? (
-
-                ) :
-                (
-                    <></>
-                )
-            } */}
+                    <div className="ml-3">
+                    <p className="text-sm text-gray-700 dark:text-gray-400">
+                        File upload has been canceled.
+                    </p>
+                    </div>
+                </div>
+            </div>
+            <div className={`absolute bottom-5 right-5 sm:right-2 max-w-xs bg-white border rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700 transition-all linear duration-500 ${errorToastOpen ? "opacity-100":"opacity-0" }`}>
+                <div className="flex p-4">
+                    <div className="flex-shrink-0">
+                    <svg className="h-4 w-4 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                    </svg>
+                    </div>
+                    <div className="ml-3">
+                    <p className="text-sm text-gray-700 dark:text-gray-400">
+                        File upload has failed.
+                    </p>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 };
