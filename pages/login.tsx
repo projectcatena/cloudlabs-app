@@ -1,17 +1,82 @@
-import React from 'react'
 import { Inter } from 'next/font/google'
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import Head from 'next/head'
+import Link from 'next/link'
+import { useSnackbar } from "notistack"
+import { useState } from 'react'
+import { useHistory } from "react-router-dom"
+import { login, setToken } from "../services/auth.service"
 
 const inter = Inter({ subsets: ['latin'] })
 export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
+  /*
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(false);
+    }, []);
+    */
+
+  //const JWT_TOKEN_BASE_URL = "http://localhost:8080/login"
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [username, setUsername]:any = useState();
+  const [password, setPassword]:any = useState();
+
+  //const [loading, setLoading] = useState(false);
+
+  /*
+  useEffect (() => {
+    const sendData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(JWT_TOKEN_BASE_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-urlencoded",
+            "username": username,
+            "password": 
+          },
+          
+        })
+        const jwt = await response.jwt;
+      } catch (error) {
+        
+      }
+    }
+  }
+
+  )
+  */
+
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
   }
+
+  let authStatus = false;
+
+  const handleLogin = (e: any) => {
+    e.preventDefault();
+    login(username, password)
+    .then((response : any) => {
+      setToken(response.jwt);
+      console.log(response.jwt);
+      enqueueSnackbar("Login successful", { variant: "success" });
+      authStatus = true;
+      if (authStatus) {
+        history.push("/module");
+      }
+    })
+    .catch(e => {
+      enqueueSnackbar("Login failed!", {variant: "error" });
+    })
+
+    
+
+  }
+
     return(
       <>
       <Head>
@@ -24,7 +89,7 @@ export default function Login() {
         <div className="border-0">
           <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
-              <div className="p-4 sm:p-7">  
+              <div className="p-4 sm:p-7">
                 <div className="text-center">
                   <h1 className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold white dark:text-white">
                     <span>Cloud</span>
@@ -69,7 +134,7 @@ export default function Login() {
                     Or
                   </div>
                   {/* Form */}
-                  <form>
+                  <form onSubmit={handleLogin}>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
@@ -87,6 +152,8 @@ export default function Login() {
                             required
                             aria-describedby="email-error"
                             placeholder="Email Address"
+                            value={username ?? ""}
+                            onChange={e => setUsername(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
@@ -124,6 +191,8 @@ export default function Login() {
                             required
                             aria-describedby="error"
                             placeholder="Password"
+                            value={password ?? ""}
+                            onChange={e => setPassword(e.target.value)}
                           />
                           <div className="absolute top-3 right-3">
                             <button onClick={togglePasswordVisibility}>
@@ -164,7 +233,7 @@ export default function Login() {
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Dont&apos;t have an account?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup">
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup" onClick={() => history.push("/signup")}>
                             Sign up here
                         </Link>
                         </p>

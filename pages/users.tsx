@@ -1,14 +1,26 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import React from 'react'
-import { Inter } from 'next/font/google'
-import Link from "next/link";
+import { getUserInfo } from "@/services/user.service";
+import { Inter } from 'next/font/google';
 import Head from "next/head";
-import Sidebar from "@/components/modules/sidebar";
+import Link from "next/link";
+import { enqueueSnackbar } from "notistack";
+import { useEffect, useState } from 'react';
 
 const inter = Inter({subsets: ['latin']})
 export default function Users() {
-    return(
 
+    const [user, setUser] = useState();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        getUserInfo()
+            .then((user:any) => setUser(user))
+            .catch(e => enqueueSnackbar(e, { variant: "error" }))
+            .finally(() => setLoading(false));
+    }, []);
+
+    return(
         <>
         <Head>
             <title>Users</title>

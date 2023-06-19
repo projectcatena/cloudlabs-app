@@ -1,13 +1,13 @@
-import React from 'react'
 import { Inter } from 'next/font/google'
-import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
+
+  const history = useHistory();
 
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
@@ -192,7 +192,7 @@ export default function SignUp() {
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/login">
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/login" onClick={() => history.push("/login")}>
                             Sign in here
                         </Link>
                         </p>

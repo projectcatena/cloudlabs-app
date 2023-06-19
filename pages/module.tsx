@@ -1,10 +1,33 @@
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import VirtualMachineCard from '../components/elements/VirtualMachineCard'
-import { Inter } from 'next/font/google'
+import DashboardLayout from '@/components/layouts/DashboardLayout';
+import { Inter } from 'next/font/google';
+import VirtualMachineCard from '../components/elements/VirtualMachineCard';
+
+import { useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { getModuleInfo } from "../services/user.service";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function ModuleDashboard() {
+  const { enqueueSnackbar } = useSnackbar();
+    //const history = useHistory();
+
+    const [user, setUser] = useState();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+        getModuleInfo()
+            .then((user:any) => setUser(user))
+            .catch(e => enqueueSnackbar(e, { variant: "error" }))
+            .finally(() => setLoading(false));
+    }, []);
+    /*
+    const logout = () => {
+        authService.logout();
+        history.push("/");
+    }
+    */
   return (
     <DashboardLayout>
       {/* ========== MAIN CONTENT ========== */}
