@@ -219,7 +219,8 @@ export default function Images({
                             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                 {
                                     data.map((image) => (
-                                        <ImageTableRow 
+                                        <ImageTableRow
+                                            key={image.imageId} 
                                             imageId={image.imageId}
                                             imageName={image.imageName}
                                             imageStatus={image.imageStatus}
