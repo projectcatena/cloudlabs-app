@@ -2,10 +2,18 @@ import DashboardLayout from '@/components/layouts/DashboardLayout'
 import ModuleCard from '../components/elements/ModuleCard'
 import { Inter } from 'next/font/google'
 import React from 'react'
+import { useState } from 'react';
+import ErrorModal from '@/components/elements/ErrorModal';
+import { error } from 'console';
+import CreateModuleModal from '@/components/elements/CreateModuleModal'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function MainDashboard(){
+
+    const [openErrorModal, setOpenErrorModal] = useState(false);
+    const [openCreateVirtualMachineModal, setOpenCreateModuleModal] = useState(false);
+
     return (
         <DashboardLayout>
             {/* ========== MAIN CONTENT ========== */}
@@ -15,6 +23,17 @@ export default function MainDashboard(){
                 <div>
                     <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Modules</h1>
                     <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access your different module&#39;s materials.</p>
+                    <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:gap-3">
+                        {/* TODO: Implement RBAC such that only tutors can Create module */}
+                        <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                        Add Module
+                        </button>
+
+                        {/* TODO: Implement RBAC such that only tutors can Delete module */}
+                        <button className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                        Delete Module
+                        </button>
+                    </div>
                 </div>
                 
                 <div>
@@ -37,6 +56,9 @@ export default function MainDashboard(){
                 
                 {/* End Page Heading */}
             </div>
+            {/* Modals */}
+        <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
+        <CreateModuleModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateModuleModal(false)} subtitle={''} title={''} description={''} />
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
             
