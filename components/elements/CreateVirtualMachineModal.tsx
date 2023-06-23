@@ -1,17 +1,15 @@
 
-import { RSC_MODULE_TYPES } from 'next/dist/shared/lib/constants'
 import { Inter } from 'next/font/google'
-import React, { useState, FormEventHandler } from 'react'
-import { Type } from 'typescript'
+import React, { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export interface Image {
+export interface SourceImage {
     name: string
     project: string
 }
 
-export interface InstanceType {
+export interface MachineType {
     name: string
 }
 
@@ -19,14 +17,14 @@ type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
     // onClose: (value: boolean) => void
-    imageOptions: Image[]
-    instanceTypes: InstanceType[]
+    sourceImages: SourceImage[]
+    machineTypes: MachineType[]
 }
 
-const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}: ModalProps) => {
-    const [name, setName] = useState("");
-    const [selectedImage, setSelectedImage] = useState({ name: "", project: "" });
-    const [selectedInstanceType, setSelectedInstanceType] = useState({ name: "" });
+const CreateVirtualMachineModal = ({open, onClose, sourceImages, machineTypes}: ModalProps) => {
+    const [instanceName, setInstanceName] = useState("");
+    const [sourceImage, setSourceImage] = useState({ name: "", project: "" });
+    const [machineType, setMachineType] = useState({ name: "" });
     const [isChecked, setChecked] = useState(false);
     const [script, setScript] = useState("");
 
@@ -42,7 +40,7 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
 
-        const postData = { name, selectedImage, selectedInstanceType, script };
+        const postData = { instanceName, sourceImage, machineType, script };
         console.log(postData);
 
         try {
@@ -100,7 +98,7 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                     <div>
                                         <label htmlFor="name" className="block text-sm mb-2 dark:text-white">Name</label>
                                         <div className="relative">
-                                            <input onChange={(e) => setName(e.target.value)} placeholder="instance-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                            <input onChange={(e) => setInstanceName(e.target.value)} placeholder="instance-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
                                             <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                 <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
@@ -118,9 +116,9 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                         </div>
                                         <div className="relative">
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select onChange={e => setSelectedImage(imageOptions[e.target.value as unknown as number])} id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <select onChange={e => setSourceImage(sourceImages[e.target.value as unknown as number])} id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select a machine image</option>
-                                                {imageOptions.map((image, index) => {
+                                                {sourceImages.map((image, index) => {
                                                     return (
                                                         <option key={index} value={index}>{image.name}</option>
                                                     );
@@ -137,9 +135,9 @@ const CreateVirtualMachineModal = ({open, onClose, imageOptions, instanceTypes}:
                                         </div>
                                         <div className="relative">
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select onChange={e => setSelectedInstanceType(instanceTypes[e.target.value as unknown as number])} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            <select onChange={e => setMachineType(machineTypes[e.target.value as unknown as number])} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select an instance type</option>
-                                                {instanceTypes.map((instance, index) => {
+                                                {machineTypes.map((instance, index) => {
                                                     return (
                                                         <option key={index} value={index}>{instance.name}</option>
                                                     );

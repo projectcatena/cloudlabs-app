@@ -3,19 +3,17 @@ import VirtualMachineCard from '../components/elements/VirtualMachineCard'
 import { Inter } from 'next/font/google'
 import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
-import { error } from 'console';
 import CreateVirtualMachineModal from '@/components/elements/CreateVirtualMachineModal';
-import { Image, InstanceType } from '@/components/elements/CreateVirtualMachineModal';
+import { SourceImage, MachineType } from '@/components/elements/CreateVirtualMachineModal';
 
 const inter = Inter({ subsets: ['latin'] })
-
 
 export default function ModuleDashboard() {
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
 
   // TODO: Test Data
-  const InstanceData: InstanceType[] = [
+  const InstanceData: MachineType[] = [
     {
       name: "e2-micro"
     },
@@ -24,17 +22,18 @@ export default function ModuleDashboard() {
     },
   ]
 
-  const ImageData: Image[] = [
+  const ImageData: SourceImage[] = [
     {
       name: "debian-11",
-      project: "projects/debian-cloud/global/images/family/",
+      project: "debian-cloud",
     },    
     {
-      name: "debian-12",
-      project: "projects/debian-cloud/global/images/family/",
+      name: "rocky-linux-9-optimized-gcp",
+      project: "rocky-linux-cloud",
     },
   ]
 
+  // TODO: Allow user to search and select images
 
   return (
     <DashboardLayout>
@@ -75,7 +74,7 @@ export default function ModuleDashboard() {
       </div>
       {/* Modals */}
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} imageOptions={ImageData} instanceTypes={InstanceData} />
+      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} sourceImages={ImageData} machineTypes={InstanceData} />
       {/* End Content */}
       {/* ========== END MAIN CONTENT ========== */}
     </DashboardLayout>
