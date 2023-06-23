@@ -45,9 +45,9 @@ function logout() {
 }
 
 //Crafting POST Request to get JWT token
-function login(username:string, password:string) {
+function login(email:string, password:string) {
     let params = {
-        username,
+        email,
         password
     };
 
@@ -68,19 +68,46 @@ function login(username:string, password:string) {
     });
 }
 
+//Crafting POST Request to get regster user
+function signup(fullName:string,email:string, password:string) {
+    let params = {
+        fullName,
+        email,
+        password
+    };
+
+    const data = Object.entries(params)
+        .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+        .join('&');
+
+    return new Promise((resolve, reject) => {
+        client.post('signup', data, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            resolve(console.log(response.data));
+        }).catch(reason => {
+            reject(console.log(reason));
+        })
+    });
+}
+
 const authService = {
     login,
     logout,
     setToken,
     getToken,
     checkLoggedIn,
-    checkRole
+    checkRole,
+    signup
 };
 
 export {
     checkLoggedIn, checkRole, getToken, login,
     logout,
-    setToken
+    setToken,
+    signup
 };
 
 export default authService;

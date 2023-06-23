@@ -1,5 +1,7 @@
+import { signup } from '@/services/auth.service'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
+import { enqueueSnackbar } from 'notistack'
 import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
@@ -8,6 +10,22 @@ export default function SignUp() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
   const history = useHistory();
+
+  const [name, setName]:any = useState();
+  const [email, setEmail]:any = useState();
+  const [password, setPassword]:any = useState();
+
+  const handleSignUp = (e: any) => {
+    e.preventDefault();
+    signup(name, email, password)
+      .then((response :any) => {
+        enqueueSnackbar("User had been created",{ variant: "success" });
+        history.push("/login");
+      })
+    .catch((e : any) => {
+      enqueueSnackbar("Sign up unsuccessful", {variant: "error" });
+    })
+  }
 
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
@@ -62,7 +80,7 @@ export default function SignUp() {
                     Or
                   </div>
                   {/* Form */}
-                  <form>
+                  <form onSubmit={handleSignUp}>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
@@ -80,6 +98,8 @@ export default function SignUp() {
                             required
                             aria-describedby="fullname-error"
                             placeholder="Full Name"
+                            value={name ?? ""}
+                            onChange={e => setName(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
@@ -115,6 +135,8 @@ export default function SignUp() {
                             required
                             aria-describedby="email-error"
                             placeholder="Email Address"
+                            value={email ?? ""}
+                            onChange={e => setEmail(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
@@ -152,6 +174,8 @@ export default function SignUp() {
                             required
                             aria-describedby="error"
                             placeholder="Password"
+                            value={password ?? ""}
+                            onChange={e => setPassword(e.target.value)}
                           />
                           <div className="absolute top-3 right-3">
                             <button onClick={togglePasswordVisibility}>

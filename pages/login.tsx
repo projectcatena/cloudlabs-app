@@ -22,34 +22,8 @@ export default function Login() {
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [username, setUsername]:any = useState();
+  const [email, setEmail]:any = useState();
   const [password, setPassword]:any = useState();
-
-  //const [loading, setLoading] = useState(false);
-
-  /*
-  useEffect (() => {
-    const sendData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(JWT_TOKEN_BASE_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-urlencoded",
-            "username": username,
-            "password": 
-          },
-          
-        })
-        const jwt = await response.jwt;
-      } catch (error) {
-        
-      }
-    }
-  }
-
-  )
-  */
 
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
@@ -59,10 +33,9 @@ export default function Login() {
 
   const handleLogin = (e: any) => {
     e.preventDefault();
-    login(username, password)
+    login(email, password)
     .then((response : any) => {
       setToken(response.jwt);
-      console.log(response.jwt);
       enqueueSnackbar("Login successful", { variant: "success" });
       authStatus = true;
       if (authStatus) {
@@ -152,8 +125,8 @@ export default function Login() {
                             required
                             aria-describedby="email-error"
                             placeholder="Email Address"
-                            value={username ?? ""}
-                            onChange={e => setUsername(e.target.value)}
+                            value={email ?? ""}
+                            onChange={e => setEmail(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
