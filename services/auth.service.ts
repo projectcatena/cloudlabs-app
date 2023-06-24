@@ -12,7 +12,6 @@ function checkLoggedIn(acceptedRole:string) {
         payload = JSON.parse(atob(payload));
         let role: string[] = payload["roles"].split(" ");
         let roleAuth = checkRole(role, acceptedRole);
-        console.log(role,roleAuth)
         if(roleAuth){
             return payload["exp"] && payload["exp"] > Date.now() / 1000;
         }

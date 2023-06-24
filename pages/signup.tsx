@@ -19,7 +19,7 @@ export default function SignUp() {
     e.preventDefault();
     signup(name, email, password)
       .then((response :any) => {
-        enqueueSnackbar("User had been created",{ variant: "success" });
+        enqueueSnackbar("Sign up successful",{ variant: "success" });
         history.push("/login");
       })
     .catch((e : any) => {
@@ -168,7 +168,7 @@ export default function SignUp() {
                         <div className="relative">
                           <input
                             type={isPasswordVisible ? "text" : "password"}
-                            id="password" 
+                            id="password"
                             name="password"
                             className="py-3 px-4 block w-full border rounded-md text-sm focus:border-white focus:ring-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-900"
                             required
@@ -212,7 +212,6 @@ export default function SignUp() {
                           8+ Characters required
                         </p>
                       </div>
-                      {/* End Form Group */}
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?
@@ -224,6 +223,7 @@ export default function SignUp() {
                       <button
                         type="submit"
                         className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                        
                       >
                         Sign up
                       </button>
@@ -232,7 +232,7 @@ export default function SignUp() {
                   {/* End Form */}
                 </div>
               </div>
-            </div>  
+            </div>
           </main>
         </div>
         <div className="hidden md:block border-0">
