@@ -1,6 +1,7 @@
 
+import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
-import React, { useState } from 'react'
+import React, { useDeferredValue, useEffect, useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,19 +19,50 @@ type ModalProps = {
     onClose: React.Dispatch<React.SetStateAction<boolean>>
     // onClose: (value: boolean) => void
     sourceImages: SourceImage[]
-    machineTypes: MachineType[]
 }
 
-const CreateVirtualMachineModal = ({open, onClose, sourceImages, machineTypes}: ModalProps) => {
+const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
-    const [sourceImage, setSourceImage] = useState({ name: "", project: "" });
-    const [machineType, setMachineType] = useState({ name: "" });
+    const [sourceImage, setSourceImage] = useState<SourceImage>();
+    const [machineType, setMachineType] = useState<MachineType>();
     const [isChecked, setChecked] = useState(false);
     const [script, setScript] = useState("");
+    const [machineTypes, setMachineTypes] = useState<MachineType[]>();
+    const [machineTypesQuery, setMachineTypesQuery] = useState("");
+    const [isMachineTypeSelected, setIsMachineTypeSelected] = useState(false);
+    const deferredMachineTypesQuery = useDeferredValue(machineTypesQuery);
 
     const handleCheck = () => {
         setChecked(!isChecked);
     }
+
+    useEffect(
+        () => {
+            if (deferredMachineTypesQuery != "") {
+                fetch(`http://localhost:8080/api/compute/list?query=${deferredMachineTypesQuery}`)
+                    .then(res => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        throw res;
+                    })
+                    .then(data => {
+                        setMachineTypes(data);
+                    })
+                    .catch(error => {
+                        console.error("Error: ", error);
+                        // setIsError(true);
+                    })
+                    .finally(() => {
+                        // setIsLoading(false);
+                        console.log(machineTypes);
+                    })
+            } else {
+              setMachineTypes(undefined);
+            }
+        },
+        [deferredMachineTypesQuery]
+    )
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -63,6 +95,12 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages, machineTypes}: 
         } catch (error) {
             console.log("Error:", error);
         }
+    }
+
+    function handleMachineTypeSelection(selectedMachineType: MachineType) {
+        setMachineType(selectedMachineType);
+        console.log(selectedMachineType);
+        setIsMachineTypeSelected(true);
     }
 
     if (!open) return null;
@@ -129,26 +167,40 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages, machineTypes}: 
                                     </div>
                                     {/* End Form Group */}
                                     {/* Form Group */}
-                                    <div>
+                                    <div className='z-40'>
                                         <div className="flex justify-between items-center">
                                             <label htmlFor="instance" className="block text-sm mb-2 dark:text-white">Instance Type</label>
                                         </div>
                                         <div className="relative">
                                             {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select onChange={e => setMachineType(machineTypes[e.target.value as unknown as number])} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                            {/* <select onChange={e => setMachineTypesQuery(e.target.value)} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
                                                 <option selected>Select an instance type</option>
-                                                {machineTypes.map((instance, index) => {
+                                                {machineTypes?.map((instance, index) => {
                                                     return (
                                                         <option key={index} value={index}>{instance.name}</option>
                                                     );
                                                 })}
-                                            </select>
+                                            </select> */}
+                                            <input value={machineType?.name} autoComplete='off' type='text' placeholder='Search for supported machine types' onChange={e => setMachineTypesQuery(e.target.value)} id='instance' name='instance' className="relative py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" />
+                                            <div className={`absolute mt-2 space-y-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${machineTypes ? "" : "hidden"} ${!isMachineTypeSelected ? "" : "hidden"}`}>
+                                                {machineTypes?.slice(0,5).map((machineTypeOption, index) => {
+                                                    return (
+                                                        <div
+                                                        key={index}
+                                                        onClick={() => handleMachineTypeSelection(machineTypeOption)}
+                                                        className="py-3 px-4 hover:bg-blue-500 cursor-pointer"
+                                                        >
+                                                        {machineTypeOption.name}   
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
                                         <p className="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required</p>
                                     </div>
                                     {/* End Form Group */}
                                     {/* Card */}
-                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <div className="z-10 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="hs-meetups-near-you" className="flex p-4 md:p-5">
                                             <span className="flex mr-5">
                                                 {/* <svg className="flex-shrink-0 mt-1 w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
