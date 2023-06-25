@@ -2,9 +2,9 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Inter } from 'next/font/google';
 import VirtualMachineCard from '../components/elements/VirtualMachineCard';
 
+import { useRouter } from 'next/router';
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { getModuleInfo } from "../services/user.service";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,20 +14,30 @@ export default function ModuleDashboard() {
 
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
-        setLoading(true);
-        getModuleInfo()
-            .then((user:any) => setUser(user))
-            .catch(e => enqueueSnackbar(e, { variant: "error" }))
-            .finally(() => setLoading(false));
+      setLoading(true)
+      fetchContent()
     }, []);
-    /*
-    const logout = () => {
-        authService.logout();
-        history.push("/");
+
+    async function fetchContent() {
+      const res = await fetch("http://localhost:8080/api/module", {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem("token"),
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*"
+        }
+      })
+      if (!res.ok){
+        enqueueSnackbar("Unable to fetch data", { variant:"error" })
+        throw new Error("failed to fetch data")
+      }
+      
+      return res.json;
     }
-    */
+    
+
   return (
     <DashboardLayout>
       {/* ========== MAIN CONTENT ========== */}

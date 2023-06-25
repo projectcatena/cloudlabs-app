@@ -1,20 +1,53 @@
-import { signup } from '@/services/auth.service'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import { enqueueSnackbar } from 'notistack'
+import { useRouter } from 'next/router'
+import { useSnackbar } from 'notistack'
 import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
-
-  const history = useHistory();
+  const [loading, setLoading]:any = useState(false);
 
   const [name, setName]:any = useState();
   const [email, setEmail]:any = useState();
   const [password, setPassword]:any = useState();
 
+  async function handleSubmit(e:any) {
+    e.preventDefault();
+    setLoading(true);
+    let params = {
+      name,
+      email,
+      password
+  };
+
+  const data = Object.entries(params)
+      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+      .join('&');
+
+  const res = await fetch("http://localhost:8080/api/signup", {
+      method: 'POST',
+      body: data,
+      headers: {
+        "content-type": "application/x-www-form-urlencoded"
+      }
+    })
+    if(res.ok){
+      enqueueSnackbar("Sign up successful",{ variant: "success" });
+      router.push("/login");
+      setLoading(false);
+    }
+    else{
+      router.push("/signup");
+      enqueueSnackbar("Sign up unsuccessful", {variant: "error" });
+    }
+  }
+
+
+  /*
   const handleSignUp = (e: any) => {
     e.preventDefault();
     signup(name, email, password)
@@ -26,6 +59,7 @@ export default function SignUp() {
       enqueueSnackbar("Sign up unsuccessful", {variant: "error" });
     })
   }
+  */
 
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
@@ -80,23 +114,23 @@ export default function SignUp() {
                     Or
                   </div>
                   {/* Form */}
-                  <form onSubmit={handleSignUp}>
+                  <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
                         <label
-                          htmlFor="fullname"
+                          htmlFor="name"
                           className="block text-sm mb-2 dark:text-white"
                         >
                         </label>
                         <div className="relative">
                           <input
-                            type="fullname"
-                            id="fullname"
-                            name="fullname"
+                            type="name"
+                            id="name"
+                            name="name"
                             className="py-3 px-4 block w-full border rounded-md text-sm focus:border-white focus:ring-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-900"
                             required
-                            aria-describedby="fullname-error"
+                            aria-describedby="name-error"
                             placeholder="Full Name"
                             value={name ?? ""}
                             onChange={e => setName(e.target.value)}
@@ -215,7 +249,7 @@ export default function SignUp() {
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/login" onClick={() => history.push("/login")}>
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/login">
                             Sign in here
                         </Link>
                         </p>
@@ -223,7 +257,7 @@ export default function SignUp() {
                       <button
                         type="submit"
                         className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-                        
+
                       >
                         Sign up
                       </button>

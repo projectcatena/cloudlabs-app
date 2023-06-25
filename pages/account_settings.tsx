@@ -1,8 +1,6 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { getModuleInfo } from "@/services/user.service";
 import Head from "next/head";
 import Image from "next/image";
-import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
 {/* Done by Tristan */}
@@ -12,12 +10,22 @@ export default function Settings() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
-        getModuleInfo()
-            .then((user:any) => setUser(user))
-            .catch(e => enqueueSnackbar(e, { variant: "error" }))
-            .finally(() => setLoading(false));
+        console.log("use")
+        setLoading(true)
+        fetchContent()
     }, []);
+
+    async function fetchContent() {
+        const res = await fetch("http://localhost:8080/api/account", {
+            method: "GET",
+            headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+            }
+        })
+        if (res.ok) {
+            setLoading(false)
+        }
+    }
 
     return (
         <>

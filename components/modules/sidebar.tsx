@@ -1,20 +1,11 @@
 import authService from '@/services/auth.service'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import { useHistory } from 'react-router-dom'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Sidebar() {
 
-    
-    const history = useHistory();
-    /*
-    const logout = () => {
-        authService.logout();
-        history.push("/");
-    }
-    */
   return (
     <div>
         {/* Sidebar Toggle (Mobile) */}
@@ -248,7 +239,7 @@ export default function Sidebar() {
                 </nav>
             </div>
             <div className="flex flex-col gap-3">
-                <Link className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="/account_settings" onClick={() => history.push("/account_settings")}>
+                <Link className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="/account_settings">
                     <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                         <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>

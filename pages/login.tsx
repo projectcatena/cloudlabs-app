@@ -1,25 +1,16 @@
+import { setToken } from '@/services/auth.service'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useSnackbar } from "notistack"
 import { useState } from 'react'
-import { useHistory } from "react-router-dom"
-import { login, setToken } from "../services/auth.service"
 
 const inter = Inter({ subsets: ['latin'] })
 export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
-  /*
-  const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(false);
-    }, []);
-    */
-
-  //const JWT_TOKEN_BASE_URL = "http://localhost:8080/login"
-  const history = useHistory();
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const [email, setEmail]:any = useState();
@@ -29,8 +20,58 @@ export default function Login() {
     SetIsPasswordVisible((prevState)=>!prevState)
   }
 
-  let authStatus = false;
+  //let authStatus = false;
 
+  async function handleSubmit(e:any) {
+    e.preventDefault();
+    let params = {
+      email,
+      password
+  };
+
+  const data = Object.entries(params)
+      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+      .join('&');
+      
+  const res = await fetch("http://localhost:8080/api/login",{
+      method: "POST",
+      body: data,
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*"
+      }
+    }).then(function(response){
+      return response.json();
+    }).then(function(data){
+      console.log(data["jwt"]);
+      setToken(data["jwt"]);
+      if (data["jwt"]){
+        enqueueSnackbar("Login successful", { variant: "success" });
+        router.push("/module");
+      }
+      else{
+        enqueueSnackbar("Login failed!", {variant: "error" });
+      }
+    })
+/*
+    if(res.ok){
+      console.log(res);
+      console.log(res.body);
+      const response = new LoginResponse(res.body());
+      console.log(response);
+      setToken(response.jwt);
+      console.log(response.jwt);
+      enqueueSnackbar("Login successful", { variant: "success" });
+      router.push("/module");
+    }
+    else{
+      enqueueSnackbar("Login failed!", {variant: "error" });
+    }
+*/
+  }
+
+  /*
   const handleLogin = (e: any) => {
     e.preventDefault();
     login(email, password)
@@ -45,10 +86,7 @@ export default function Login() {
     .catch(e => {
       enqueueSnackbar("Login failed!", {variant: "error" });
     })
-
-    
-
-  }
+    */
 
     return(
       <>
@@ -107,7 +145,7 @@ export default function Login() {
                     Or
                   </div>
                   {/* Form */}
-                  <form onSubmit={handleLogin}>
+                  <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
@@ -206,7 +244,7 @@ export default function Login() {
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Dont&apos;t have an account?
-                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup" onClick={() => history.push("/signup")}>
+                        <Link className="text-blue-600 decoration-2 hover:underline font-medium ml-1" href="/signup">
                             Sign up here
                         </Link>
                         </p>

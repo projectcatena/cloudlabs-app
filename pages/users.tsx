@@ -1,9 +1,7 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { getUserInfo } from "@/services/user.service";
 import { Inter } from 'next/font/google';
 import Head from "next/head";
 import Link from "next/link";
-import { enqueueSnackbar } from "notistack";
 import { useEffect, useState } from 'react';
 
 const inter = Inter({subsets: ['latin']})
@@ -13,12 +11,21 @@ export default function Users() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
-        getUserInfo()
-            .then((user:any) => setUser(user))
-            .catch(e => enqueueSnackbar(e, { variant: "error" }))
-            .finally(() => setLoading(false));
+        setLoading(true)
+        fetchContent()
     }, []);
+
+    async function fetchContent() {
+        const res = await fetch("http://localhost:8080/api/users", {
+            method: "GET",
+            headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+        })
+        if (res.ok) {
+            setLoading(false)
+        }
+    }
 
     return(
         <>
