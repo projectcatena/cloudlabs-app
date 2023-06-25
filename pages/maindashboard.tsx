@@ -1,18 +1,46 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import ModuleCard from '../components/elements/ModuleCard'
 import { Inter } from 'next/font/google'
-import React from 'react'
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import ErrorModal from '@/components/elements/ErrorModal';
 import { error } from 'console';
 import CreateModuleModal from '@/components/elements/CreateModuleModal'
+import DeleteModuleModal from '@/components/elements/DeleteModuleModal'
 
 const inter = Inter({ subsets: ['latin'] })
+
+interface Module {
+    moduleId: number;
+    moduleSubtitle: string;
+    moduleName: string;
+    moduleDescription: string;
+}
 
 export default function MainDashboard(){
 
     const [openErrorModal, setOpenErrorModal] = useState(false);
-    const [openCreateVirtualMachineModal, setOpenCreateModuleModal] = useState(false);
+    const [openCreateModuleModal, setOpenCreateModuleModal] = useState(false);
+    const [openDeleteModuleModal, setOpenDeleteModuleModal] = useState(false);
+    const [moduleData, setModuleData] = useState<Module[]>([]);
+
+    useEffect(() => {
+        fetchModules();
+      }, []);
+
+      const fetchModules = async () => {
+        try {
+          const response = await fetch("http://localhost:8080/api/Modules"); // Fetch data from backend endpoint
+          // If successful, adds the modules to "modules"
+          if (response.ok) {
+            const modules = await response.json();
+            setModuleData(modules);
+          } else {
+            throw new Error("Error fetching module data");
+          }
+        } catch (error) {
+          console.error("Error fetching module data", error)
+        }
+      }
 
     return (
         <DashboardLayout>
@@ -30,26 +58,33 @@ export default function MainDashboard(){
                         </button>
 
                         {/* TODO: Implement RBAC such that only tutors can Delete module */}
-                        <button className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                        <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
                         Delete Module
                         </button>
                     </div>
                 </div>
                 
                 <div>
+                    {moduleData.length > 0 ? (
+                        moduleData.map((module) => (
+                        <div className="mb-5" key={module.moduleId}>
+                            {/* Card */}
+                            <ModuleCard
+                            subtitle={module.moduleSubtitle}
+                            title={module.moduleName}
+                            description={module.moduleDescription}
+                            href="#"
+                            />
+                            {/* End of Card */}
+                        </div>
+                        ))
+                    ) : (
+                        <p>No modules available.</p>
+                    )}
+
                     <div className="mb-5">
                         {/* Card */}
-                        <ModuleCard subtitle="1_EH_011800" title="Ethical Hacking" content="Explore various methods to extract valuable information from targeted systems without causing harm and gain practical experience in executing controlled attacks to simulate real-world scenarios, enabling the identification and mitigation of security weaknesses." href="/module"></ModuleCard>
-                        {/* End of Card */}
-                    </div>
-                    <div className="mb-5">
-                        {/* Card */}
-                        <ModuleCard subtitle="1_WAPT_011800" title="Web Application Pen-Testing" content="Delve into the process of identifying and exploiting vulnerabilities in web applications to assess their resilience against cyberattacks and gain hands-on experience with tools and techniques specifically designed for web application testing, such as vulnerability scanners, proxy tools, and manual testing methodologies." href="#"></ModuleCard>
-                        {/* End of Card */}
-                    </div>
-                    <div className="mb-5">
-                        {/* Card */}
-                        <ModuleCard subtitle="1_MATT_011800" title="Malware Analysis Tools & Techniques" content="Explore methods to extract information from malware without execution, execute malware in controlled environments, deconstruct malware binaries, and observe malware behavior." href="#"></ModuleCard>
+                        <ModuleCard subtitle="1_WAPT_011800" title="Web Application Pen-Testing" description="Delve into the process of identifying and exploiting vulnerabilities in web applications to assess their resilience against cyberattacks and gain hands-on experience with tools and techniques specifically designed for web application testing, such as vulnerability scanners, proxy tools, and manual testing methodologies." href="#"></ModuleCard>
                         {/* End of Card */}
                     </div>
                 </div>
@@ -58,7 +93,8 @@ export default function MainDashboard(){
             </div>
             {/* Modals */}
         <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-        <CreateModuleModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateModuleModal(false)} subtitle={''} title={''} description={''} />
+        <CreateModuleModal open={openCreateModuleModal} onClose={() => setOpenCreateModuleModal(false)} subtitle={''} title={''} description={''} />
+        <DeleteModuleModal open={openDeleteModuleModal} onClose={() => setOpenDeleteModuleModal(false)} />
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
             

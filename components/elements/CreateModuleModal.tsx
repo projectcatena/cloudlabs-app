@@ -55,7 +55,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
             // Get the response data from server as JSON
             const result = await response.json();
             alert(`Result: ${JSON.stringify(result)}`);
-            // If server returns the name submitted, that means the form works.
+            // If server returns the module submitted, that means the form works.
             return result;
         } catch (error) {
             console.log("Error:", error);
@@ -108,7 +108,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end items-center gap-x-2 py-3 px-4 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">
+                            <div className="flex justify-end items-center mt-6 gap-x-2 py-3 px-4 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">
                                 <button type="button" onClick={() => onClose(false)} className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                                     Cancel
                                 </button>
