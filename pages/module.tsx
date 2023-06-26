@@ -4,23 +4,13 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal from '@/components/elements/CreateVirtualMachineModal';
-import { SourceImage, MachineType } from '@/components/elements/CreateVirtualMachineModal';
+import { SourceImage } from '@/components/elements/CreateVirtualMachineModal';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function ModuleDashboard() {
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
-
-  // TODO: Test Data
-  const InstanceData: MachineType[] = [
-    {
-      name: "e2-micro"
-    },
-    {
-      name:"e2-medium"
-    },
-  ]
 
   const ImageData: SourceImage[] = [
     {
@@ -74,7 +64,7 @@ export default function ModuleDashboard() {
       </div>
       {/* Modals */}
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} sourceImages={ImageData} machineTypes={InstanceData} />
+      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} sourceImages={ImageData} />
       {/* End Content */}
       {/* ========== END MAIN CONTENT ========== */}
     </DashboardLayout>

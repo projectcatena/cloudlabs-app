@@ -1,5 +1,5 @@
 
-import { GetServerSideProps } from 'next'
+import { Combobox } from '@headlessui/react'
 import { Inter } from 'next/font/google'
 import React, { useDeferredValue, useEffect, useState } from 'react'
 
@@ -9,7 +9,6 @@ export interface SourceImage {
     name: string
     project: string
 }
-
 export interface MachineType {
     name: string
 }
@@ -24,13 +23,14 @@ type ModalProps = {
 const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
     const [sourceImage, setSourceImage] = useState<SourceImage>();
-    const [machineType, setMachineType] = useState<MachineType>();
     const [isChecked, setChecked] = useState(false);
     const [script, setScript] = useState("");
-    const [machineTypes, setMachineTypes] = useState<MachineType[]>();
-    const [machineTypesQuery, setMachineTypesQuery] = useState("");
-    const [isMachineTypeSelected, setIsMachineTypeSelected] = useState(false);
-    const deferredMachineTypesQuery = useDeferredValue(machineTypesQuery);
+
+    // Machine Type Input
+    const [machineTypeQuery, setMachineTypeQuery] = useState("");
+    const [machineType, setMachineType] = useState<MachineType>();
+    const [machineTypeData, setMachineTypeData] = useState<MachineType[]>();
+    const deferredMachineTypesQuery = useDeferredValue(machineTypeQuery);
 
     const handleCheck = () => {
         setChecked(!isChecked);
@@ -47,7 +47,7 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
                         throw res;
                     })
                     .then(data => {
-                        setMachineTypes(data);
+                        setMachineTypeData(data);
                     })
                     .catch(error => {
                         console.error("Error: ", error);
@@ -55,10 +55,8 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
                     })
                     .finally(() => {
                         // setIsLoading(false);
-                        console.log(machineTypes);
+                        console.log(machineTypeData);
                     })
-            } else {
-              setMachineTypes(undefined);
             }
         },
         [deferredMachineTypesQuery]
@@ -95,12 +93,6 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
         } catch (error) {
             console.log("Error:", error);
         }
-    }
-
-    function handleMachineTypeSelection(selectedMachineType: MachineType) {
-        setMachineType(selectedMachineType);
-        console.log(selectedMachineType);
-        setIsMachineTypeSelected(true);
     }
 
     if (!open) return null;
@@ -181,20 +173,25 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
                                                     );
                                                 })}
                                             </select> */}
-                                            <input value={machineType?.name} autoComplete='off' type='text' placeholder='Search for supported machine types' onChange={e => setMachineTypesQuery(e.target.value)} id='instance' name='instance' className="relative py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" />
-                                            <div className={`absolute mt-2 space-y-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 ${machineTypes ? "" : "hidden"} ${!isMachineTypeSelected ? "" : "hidden"}`}>
-                                                {machineTypes?.slice(0,5).map((machineTypeOption, index) => {
-                                                    return (
-                                                        <div
-                                                        key={index}
-                                                        onClick={() => handleMachineTypeSelection(machineTypeOption)}
-                                                        className="py-3 px-4 hover:bg-blue-500 cursor-pointer"
-                                                        >
-                                                        {machineTypeOption.name}   
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
+
+                                            <Combobox value={machineType || ""} onChange={setMachineType}>
+                                                <Combobox.Input displayValue={(selected: MachineType) => selected.name} autoComplete="off" onChange={(event) => setMachineTypeQuery(event.target.value)} className="relative py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"/>
+                                                <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                                {machineTypeData?.slice(0, 5).map((machineType) => (
+                                                    <Combobox.Option 
+                                                    key={machineType.name} 
+                                                    value={machineType}
+                                                    className={({ active }) =>
+                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                        active ? 'bg-blue-500 text-white' : 'text-gray-400'
+                                                        }`
+                                                    }
+                                                    >
+                                                    {machineType.name}
+                                                    </Combobox.Option>
+                                                ))}
+                                                </Combobox.Options>
+                                            </Combobox>
                                         </div>
                                         <p className="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required</p>
                                     </div>
