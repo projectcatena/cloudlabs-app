@@ -1,14 +1,18 @@
 
-import { Combobox } from '@headlessui/react'
+import { Combobox, Listbox } from '@headlessui/react'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { Inter } from 'next/font/google'
 import React, { useDeferredValue, useEffect, useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export interface SourceImage {
-    name: string
-    project: string
+    imageId: string
+    imageName: string
+    imageStatus: string
+    creationTimestamp: string
 }
+
 export interface MachineType {
     name: string
 }
@@ -16,15 +20,17 @@ export interface MachineType {
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
-    // onClose: (value: boolean) => void
     sourceImages: SourceImage[]
 }
 
-const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) => {
+const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
-    const [sourceImage, setSourceImage] = useState<SourceImage>();
     const [isChecked, setChecked] = useState(false);
     const [script, setScript] = useState("");
+
+    // Source Image
+    const [sourceImage, setSourceImage] = useState<SourceImage>();
+    const [sourceImageData, setSourceImageData] = useState<SourceImage[]>();
 
     // Machine Type Input
     const [machineTypeQuery, setMachineTypeQuery] = useState("");
@@ -62,6 +68,29 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
         [deferredMachineTypesQuery]
     )
 
+    useEffect(
+        () => {
+            fetch(`http://localhost:8080/api/image/list`)
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    throw res;
+                })
+                .then(data => {
+                    setSourceImageData(data);
+                })
+                .catch(error => {
+                    console.error("Error: ", error);
+                    // setIsError(true);
+                })
+                .finally(() => {
+                    // setIsLoading(false);
+                })
+        },
+        [sourceImage]
+    )
+
     /**
      * Handle form submission manually by posting data to the API endpoint.
      * @param event 
@@ -70,7 +99,13 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
 
-        const postData = { instanceName, sourceImage, machineType, script };
+        const postData = { instanceName, 
+            sourceImage: {
+                name: sourceImage?.imageName
+            }, 
+            machineType, 
+            script 
+        };
         console.log(postData);
 
         try {
@@ -145,15 +180,33 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
                                             <label htmlFor="image" className="block text-sm mb-2 dark:text-white">Image</label>
                                         </div>
                                         <div className="relative">
-                                            {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            <select onChange={e => setSourceImage(sourceImages[e.target.value as unknown as number])} id='image' name='image' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                                                <option selected>Select a machine image</option>
-                                                {sourceImages.map((image, index) => {
-                                                    return (
-                                                        <option key={index} value={index}>{image.name}</option>
-                                                    );
-                                                })}
-                                            </select>
+                                            {/*TODO: Allow user to specify and use public image */}
+                                            <Listbox value={sourceImage} onChange={setSourceImage}>
+                                                {/* relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm */}
+                                                <Listbox.Button className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                                    {sourceImage?.imageName || "Select an image"}
+                                                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4 text-gray-400">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                        </svg>
+                                                    </span>
+                                                </Listbox.Button>
+                                                <Listbox.Options className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                                    {sourceImageData?.map((image: SourceImage) => (
+                                                        <Listbox.Option
+                                                            key={image.imageId}
+                                                            value={image}
+                                                            className={({ active }) =>
+                                                                `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                                active ? 'bg-blue-500 text-white' : 'text-gray-400'
+                                                                }`
+                                                            }
+                                                        >
+                                                            {image.imageName}
+                                                        </Listbox.Option>
+                                                    ))}
+                                                </Listbox.Options>
+                                            </Listbox>
                                         </div>
                                         <p className="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required</p>
                                     </div>
@@ -164,19 +217,9 @@ const CreateVirtualMachineModal = ({open, onClose, sourceImages}: ModalProps) =>
                                             <label htmlFor="instance" className="block text-sm mb-2 dark:text-white">Instance Type</label>
                                         </div>
                                         <div className="relative">
-                                            {/* <select id="af-submit-app-category" className="py-2 px-3 pr-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"> */}
-                                            {/* <select onChange={e => setMachineTypesQuery(e.target.value)} id='instance' name='instance' className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                                                <option selected>Select an instance type</option>
-                                                {machineTypes?.map((instance, index) => {
-                                                    return (
-                                                        <option key={index} value={index}>{instance.name}</option>
-                                                    );
-                                                })}
-                                            </select> */}
-
                                             <Combobox value={machineType || ""} onChange={setMachineType}>
                                                 <Combobox.Input displayValue={(selected: MachineType) => selected.name} autoComplete="off" onChange={(event) => setMachineTypeQuery(event.target.value)} className="relative py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"/>
-                                                <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                                <Combobox.Options className="border-gray-200 absolute mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
                                                 {machineTypeData?.slice(0, 5).map((machineType) => (
                                                     <Combobox.Option 
                                                     key={machineType.name} 
