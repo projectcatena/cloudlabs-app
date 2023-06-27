@@ -1,5 +1,0 @@
-pullRequests: 
-  rules:
-    - format: "Feat: CRUD for module details"
-      types:
-        - feat
