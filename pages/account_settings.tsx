@@ -1,31 +1,49 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import authService, { checkLoggedIn } from "@/services/auth.service";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
 {/* Done by Tristan */}
 export default function Settings() {
 
-    const [user, setUser] = useState();
+    //const { user } = useUser()
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        console.log("use")
         setLoading(true)
-        fetchContent()
+        const authStatus = checkLoggedIn(authService.Roles.user.toString())
+        if (authStatus){
+            fetchContent()
+            setLoading(false)
+        }
+        else {
+            enqueueSnackbar("Insufficient credentials", { variant:"error" })
+            router.push("/login");
+        }
     }, []);
 
     async function fetchContent() {
-        const res = await fetch("http://localhost:8080/api/account", {
+
+        try {
+            const res = await fetch("http://localhost:8080/api/module", {
             method: "GET",
             headers: {
             "Authorization": "Bearer " + localStorage.getItem("token"),
             }
         })
-        if (res.ok) {
-            setLoading(false)
+        
+        return res.json;
         }
-    }
+        catch (error) {
+            enqueueSnackbar("Unable to fetch data", { variant:"error" })
+            router.push("/login");
+            }
+        }
 
     return (
         <>
@@ -64,7 +82,7 @@ export default function Settings() {
                             <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
                         </svg>
                         Upload photo
-                        </button>
+                        </button> {/* onclick={} */}
                     </div>
                     </div>
                 </div>

@@ -2,41 +2,52 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Inter } from 'next/font/google';
 import VirtualMachineCard from '../components/elements/VirtualMachineCard';
 
+import authService, { checkLoggedIn } from '@/services/auth.service';
 import { useRouter } from 'next/router';
-import { useSnackbar } from "notistack";
+import { useSnackbar } from 'notistack';
 import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ['latin'] })
 
+
 export default function ModuleDashboard() {
-  const { enqueueSnackbar } = useSnackbar();
-    //const history = useHistory();
-
-    const [user, setUser] = useState();
+  const [user, setUser] = useState();
     const [loading, setLoading] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
     const router = useRouter();
-
-    useEffect(() => {
+    
+  
+  useEffect(() => {
       setLoading(true)
-      fetchContent()
-    }, []);
+      const authStatus = checkLoggedIn(authService.Roles.user.toString())
+        if (authStatus){
+            fetchContent()
+            setLoading(false)
+        }
+        else {
+            enqueueSnackbar("Insufficient credentials", { variant:"error" })
+            router.push("/login");
+        }
+  }, []);
 
     async function fetchContent() {
-      const res = await fetch("http://localhost:8080/api/module", {
+
+      try {
+        const res = await fetch("http://localhost:8080/api/module", {
+        method: "GET",
         headers: {
           "Authorization": "Bearer " + localStorage.getItem("token"),
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*"
         }
       })
-      if (!res.ok){
-        enqueueSnackbar("Unable to fetch data", { variant:"error" })
-        throw new Error("failed to fetch data")
-      }
       
       return res.json;
     }
-    
+      catch (error) {
+        enqueueSnackbar("Unable to fetch data", { variant:"error" })
+        router.push("/login");
+      }
+    }
+        
 
   return (
     <DashboardLayout>

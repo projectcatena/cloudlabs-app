@@ -1,3 +1,8 @@
+enum Roles {
+    admin = "ADMIN",
+    tutor = "TUTOR",
+    user = "USER"
+}
 
 function checkLoggedIn(acceptedRole:string) {
     let token = localStorage.getItem("token");
@@ -47,10 +52,11 @@ const authService = {
     getToken,
     checkLoggedIn,
     checkRole,
+    Roles
 };
 
 export {
-    checkLoggedIn, checkRole, getToken,
+    Roles, checkLoggedIn, checkRole, getToken,
     logout,
     setToken
 };

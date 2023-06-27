@@ -54,39 +54,7 @@ export default function Login() {
         enqueueSnackbar("Login failed!", {variant: "error" });
       }
     })
-/*
-    if(res.ok){
-      console.log(res);
-      console.log(res.body);
-      const response = new LoginResponse(res.body());
-      console.log(response);
-      setToken(response.jwt);
-      console.log(response.jwt);
-      enqueueSnackbar("Login successful", { variant: "success" });
-      router.push("/module");
-    }
-    else{
-      enqueueSnackbar("Login failed!", {variant: "error" });
-    }
-*/
   }
-
-  /*
-  const handleLogin = (e: any) => {
-    e.preventDefault();
-    login(email, password)
-    .then((response : any) => {
-      setToken(response.jwt);
-      enqueueSnackbar("Login successful", { variant: "success" });
-      authStatus = true;
-      if (authStatus) {
-        history.push("/module");
-      }
-    })
-    .catch(e => {
-      enqueueSnackbar("Login failed!", {variant: "error" });
-    })
-    */
 
     return(
       <>
