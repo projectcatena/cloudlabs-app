@@ -1,22 +1,55 @@
 import { Inter } from 'next/font/google'
-import React, { useState, FormEventHandler } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Type } from 'typescript'
 
 const inter = Inter({ subsets: ['latin'] })
 
-type CreateModuleModalProps = {
+type EditModuleModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
+    moduleId: number
     subtitle: string
     title: string
     description: string
 }
 
-const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
+type Module = {
+    moduleId: number
+    moduleSubtitle: string
+    moduleName: string
+    moduleDescription: string
+}
 
-    const [subtitle, setSubtitle] = useState("");
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
+    
+    const [modules, setModules] = useState<Module[]>([]);
+    const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+    const [subtitleValue, setSubtitleValue] = useState("");
+    const [titleValue, setTitleValue] = useState("");
+    const [descriptionValue, setDescriptionValue] = useState("");
+
+    useEffect(() => {
+        fetchModules();
+      }, [moduleId]);
+
+    const fetchModules = async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/api/Modules/${moduleId}`); // Fetch data from backend endpoint
+          // If successful, adds the modules to "modules"
+          if (response.ok) {
+            const moduleDetails = await response.json();
+            setSelectedModule(moduleDetails);
+            setSubtitleValue(moduleDetails.moduleSubtitle);
+            setTitleValue(moduleDetails.moduleName);
+            setDescriptionValue(moduleDetails.moduleDescription);
+            console.log(moduleDetails);
+          } else {
+            throw new Error("Error fetching module data");
+          }
+        } catch (error) {
+          console.error("Error fetching module data", error);
+        }
+      };
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -24,22 +57,22 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
      * @returns 
      */
     // Handles the submit event on form submit.
-    async function createModule(event: React.SyntheticEvent) {
+    async function editModule(event: React.SyntheticEvent) {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault()
-     
+
         // Get data from the form.
         const postData = {
-            subtitle: subtitle,
-            title: title,
-            description: description
+            subtitle: subtitleValue,
+            title: titleValue,
+            description: descriptionValue
         };
         console.log(postData);
 
         try {
-            const response = await fetch("http://localhost:8080/api/Modules/create", {
-                // The method is POST because we are sending data.
-                method: "POST",
+            const response = await fetch(`http://localhost:8080/api/Modules/update/${moduleId}`, {
+                // The method is PUT because we are sending edited data.
+                method: "PUT",
                 // Tell the server we're sending JSON.
                 headers: {
                 'Content-Type': 'application/json',
@@ -84,30 +117,30 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                     <div className="p-4 sm:p-10 overflow-y-auto">
                         <div className="mb-6 text-center">
                             <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-200">
-                                Add Module
+                                Edit Module
                             </h3>
                             <p className="text-gray-500">
-                                Enter the details of the module
+                                Edit the details of the module
                             </p>
                         </div>
                         
-                        <form id="create-module-form" onSubmit={createModule}>
+                        <form id="create-module-form" onSubmit={editModule}>
                             <div className="space-y-4">
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="subtitle" className="flex">
-                                        <input onChange={(e) => setSubtitle(e.target.value)} id="subtitle" name="subtitle" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's subtitle"></input>
+                                        <input onChange={(e) => setSubtitleValue(e.target.value)} id="subtitle" name="subtitle" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={subtitleValue}></input>
                                     </label>
                                 </div>
 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="title" className="flex">
-                                        <input onChange={(e) => setTitle(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's title"></input>
+                                        <input onChange={(e) => setTitleValue(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={titleValue}></input>
                                     </label>
                                 </div>
-                                
+                                    
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="description" className="flex">
-                                        <textarea onChange={(e) => setDescription(e.target.value)} id="description" name="description" placeholder="Enter the Module's description" className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"></textarea>
+                                        <textarea onChange={(e) => setDescriptionValue(e.target.value)} id="description" name="description" value={descriptionValue} className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"></textarea>
                                     </label>
                                 </div>
                             </div>
@@ -117,7 +150,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                                     Cancel
                                 </button>
                                 <button type="submit" className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                                    Add Module
+                                    Edit Module
                                 </button>
                             </div>
                         </form> 
@@ -126,6 +159,6 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
             </div>
         </div>
     )
-};
+}
 
-export default CreateModuleModal;
+export default EditModuleModal;

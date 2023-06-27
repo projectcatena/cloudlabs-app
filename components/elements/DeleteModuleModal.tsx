@@ -10,7 +10,7 @@ type DeleteModuleModalProps = {
     onClose: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface Module {
+type Module = {
     moduleId: number
     moduleName: string
 }
@@ -41,29 +41,32 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
         }
       };
 
-      const handleDelete = async (event: React.FormEvent) => {
-        // Stop the form from submitting and refreshing the page.
-        event.preventDefault();
-    
-        if (!selectedModuleId) {
-          return;
+      /**
+     * Handle form submission manually by posting data to the API endpoint.
+     * @param event 
+     * @returns 
+     */
+    // Handles the submit event on form submit.
+    async function deleteModule(event: React.SyntheticEvent) {
+      // Stop the form from submitting and refreshing the page.
+      event.preventDefault()
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/Modules/delete/${selectedModuleId}`, {
+          method: 'DELETE', // Method is post beacuse we are deleting the module
+        });
+
+        if (response.ok) {
+          // Module deleted successfully
+          console.log('Module deleted');
+
+          // Reload the page to show the updated module 
+          window.location.reload();
+        } else {
+          throw new Error("Error deleting module");
         }
-    
-        try {
-          const response = await fetch(`http://localhost:8080/api/Modules/delete/${selectedModuleId}`, {
-            method: 'DELETE', // Method is post beacuse we are deleting the module
-          });
 
-          console.log(selectedModuleId)
-          
-          if (response.ok) {
-            // Module deleted successfully
-            console.log('Module deleted');
-          } else {
-            throw new Error("Error deleting module");
-          }
-
-          onClose(false);
+        onClose(false);
           
         } catch (error) {
           console.error("Error deleting module", error);
@@ -78,7 +81,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
       if (!open) return null;
 
       return(
-        <div id="add-users" className="hs-overlay w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
+        <div id="add-users" className="hs-overlay w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto backdrop-blur-sm">
             <div id="add-users" className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
                 <div className="relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
@@ -100,7 +103,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
                             </p>
                         </div>
                         
-                        <form id="delete-module-form" onSubmit={handleDelete}>
+                        <form id="delete-module-form" onSubmit={deleteModule}>
                             <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                 <label htmlFor="subtitle" className="flex">
                                     <select value={selectedModuleId} onChange={(event) => setSelectedModuleId(event.target.value)} className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400">

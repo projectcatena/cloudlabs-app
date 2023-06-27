@@ -74,6 +74,7 @@ export default function MainDashboard(){
                             title={module.moduleName}
                             description={module.moduleDescription}
                             href="#"
+                            moduleId={module.moduleId}
                             />
                             {/* End of Card */}
                         </div>
@@ -81,12 +82,6 @@ export default function MainDashboard(){
                     ) : (
                         <p>No modules available.</p>
                     )}
-
-                    <div className="mb-5">
-                        {/* Card */}
-                        <ModuleCard subtitle="1_WAPT_011800" title="Web Application Pen-Testing" description="Delve into the process of identifying and exploiting vulnerabilities in web applications to assess their resilience against cyberattacks and gain hands-on experience with tools and techniques specifically designed for web application testing, such as vulnerability scanners, proxy tools, and manual testing methodologies." href="#"></ModuleCard>
-                        {/* End of Card */}
-                    </div>
                 </div>
                 
                 {/* End Page Heading */}
