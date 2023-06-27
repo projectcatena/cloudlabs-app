@@ -3,27 +3,35 @@ import VirtualMachineCard from '../components/elements/VirtualMachineCard'
 import { Inter } from 'next/font/google'
 import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
-import CreateVirtualMachineModal from '@/components/elements/CreateVirtualMachineModal';
+import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import { SourceImage } from '@/components/elements/CreateVirtualMachineModal';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function ModuleDashboard() {
+type Address = {
+    ipv4Address: string,
+}
+
+export type ComputeInstance = {
+    machineType: MachineType,
+    instanceName: string,
+    address: Address,
+}
+
+export const getServerSideProps: GetServerSideProps<{
+  data: [ComputeInstance]
+}> = async () => {
+  const res = await fetch('http://localhost:8080/api/compute/list');
+  const data = await res.json();
+  return { props: { data } }
+}
+
+export default function ModuleDashboard({
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
-
-  const ImageData: SourceImage[] = [
-    {
-      name: "debian-11",
-      project: "debian-cloud",
-    },    
-    {
-      name: "rocky-linux-9-optimized-gcp",
-      project: "rocky-linux-cloud",
-    },
-  ]
-
-  // TODO: Allow user to search and select images
 
   return (
     <DashboardLayout>
@@ -58,13 +66,17 @@ export default function ModuleDashboard() {
           </div>
 
           {/* Card */}
-          <VirtualMachineCard></VirtualMachineCard>
+          {
+            data.map((computeInstance) => {
+                return (<VirtualMachineCard computeInstance={computeInstance}></VirtualMachineCard>)
+            })
+          }
           {/* End of Card */}
           {/* End Page Heading */}
       </div>
       {/* Modals */}
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} sourceImages={ImageData} />
+      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} />
       {/* End Content */}
       {/* ========== END MAIN CONTENT ========== */}
     </DashboardLayout>

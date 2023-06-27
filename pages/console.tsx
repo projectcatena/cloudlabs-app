@@ -1,10 +1,12 @@
 import { Inter } from 'next/font/google'
-import { connect, connectKeyboard, IHostEntity } from '../utils/guacamole'
+import { connect, IHostEntity } from '../utils/guacamole'
 import { useEffect, useState } from 'react'
 import LoadingModal from "../components/elements/LoadingModal"
 import ErrorModal from "../components/elements/ErrorModal"
 import ConsoleBar from "../components/modules/consolebar"
 import Guacamole from 'guacamole-common-js'
+import { useRouter } from 'next/router'
+import { ComputeInstance } from './module'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,16 +15,29 @@ export default function Console() {
   // Otherwise, connect() will be called during SSR, 
   // causes document to be undefined.
 
-  // Hardcoded properties of a connection, should be dynamic
+    const router = useRouter();
+    const hostData: ComputeInstance = JSON.parse(router.query.data as string);
+
+
   const host: IHostEntity = {
-    name: "Windows 11",
+    name: hostData.instanceName,
     protocol: "rdp",
-    hostname: "10.10.1.11",
+    hostname: hostData.address.ipv4Address,
     port: 3389,
-    username: "Admin",
+    username: "Administrator",
     password: "Pa$$w0rd",
     ignoreCert: true,
   }
+  // Hardcoded properties of a connection, should be dynamic
+//   const host: IHostEntity = {
+//     name: "Windows 11",
+//     protocol: "rdp",
+//     hostname: "10.10.1.11",
+//     port: 3389,
+//     username: "Admin",
+//     password: "Pa$$w0rd",
+//     ignoreCert: true,
+//   }
 
   const [openLoadingModal, setOpenLoadingModal] = useState(false);
   const [openErrorModal, setOpenErrorModal] = useState(false);
@@ -48,9 +63,6 @@ export default function Console() {
       setOpenLoadingModal(false);
       setOpenErrorModal(true);
     };
-
-    connectKeyboard(document, guac);
-
   }, []);
   
   return (

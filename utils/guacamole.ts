@@ -26,7 +26,7 @@ export function connect(host: IHostEntity) {
 
   var guac = new Guacamole.Client(
     // True to enable CORS
-    new Guacamole.HTTPTunnel('http://localhost:8080/tunnel', true, params)
+    new Guacamole.HTTPTunnel('http://localhost:8080/api/tunnel', true, params)
   );
 
   // Add client to display div
@@ -43,6 +43,15 @@ export function connect(host: IHostEntity) {
   };
 
   // Keyboard was originally here
+  var keyboard = new Guacamole.Keyboard(document)
+
+  keyboard.onkeydown = function (keysym: any) {
+    guac.sendKeyEvent(1, keysym);
+  };
+
+  keyboard.onkeyup = function (keysym: any) {
+    guac.sendKeyEvent(0, keysym);
+  };
 
   // Mouse
   var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
@@ -64,19 +73,4 @@ export function connect(host: IHostEntity) {
   }
 
   return guac;
-}
-
-
-export function connectKeyboard(document: Document, guac: Guacamole.Client) {
-  var keyboard = new Guacamole.Keyboard(document)
-
-  keyboard.onkeydown = function (keysym: any) {
-    guac.sendKeyEvent(1, keysym);
-  };
-
-  keyboard.onkeyup = function (keysym: any) {
-    guac.sendKeyEvent(0, keysym);
-  };
-
-  return keyboard
 }

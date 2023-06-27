@@ -20,7 +20,6 @@ export interface MachineType {
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
-    sourceImages: SourceImage[]
 }
 
 const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
@@ -41,7 +40,7 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
     useEffect(
         () => {
             if (deferredMachineTypesQuery != "") {
-                fetch(`http://localhost:8080/api/compute/list?query=${deferredMachineTypesQuery}`)
+                fetch(`http://localhost:8080/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`)
                     .then(res => {
                         if (res.ok) {
                             return res.json();
