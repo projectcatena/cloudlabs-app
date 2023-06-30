@@ -3,6 +3,7 @@ import { Combobox, Listbox } from '@headlessui/react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { Inter } from 'next/font/google'
 import React, { useDeferredValue, useEffect, useState } from 'react'
+import ErrorToast from './ErrorToast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,6 +38,10 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
     const [machineTypeData, setMachineTypeData] = useState<MachineType[]>();
     const deferredMachineTypesQuery = useDeferredValue(machineTypeQuery);
 
+    // Event States
+    const [isError, setIsError] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+
     useEffect(
         () => {
             if (deferredMachineTypesQuery != "") {
@@ -52,11 +57,11 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
                     })
                     .catch(error => {
                         console.error("Error: ", error);
-                        // setIsError(true);
+                        setIsError(true);
+                        setIsCreating(false);
                     })
                     .finally(() => {
-                        // setIsLoading(false);
-                        console.log(machineTypeData);
+                        setIsCreating(false);
                     })
             }
         },
@@ -77,13 +82,24 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
                 })
                 .catch(error => {
                     console.error("Error: ", error);
-                    // setIsError(true);
+                    setIsError(true);
                 })
                 .finally(() => {
                     // setIsLoading(false);
                 })
         },
         [sourceImage]
+    )
+
+    useEffect(
+        () => {
+            if (isError) {
+                setTimeout(() => {
+                    setIsError(false);
+                }, 5000);
+            }
+        },
+        [isError] // Run only when errorToastOpen changes
     )
 
     /**
@@ -93,6 +109,8 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
      */
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
+
+        setIsCreating(true);
 
         const postData = { instanceName, 
             sourceImage: {
@@ -115,11 +133,16 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
 
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                setIsError(true);
+                // throw new Error("Network response failed.");
             }
 
+            setIsCreating(false);
+
             const result = await response.json();
+            
             return result;
+
         } catch (error) {
             console.log("Error:", error);
         }
@@ -284,12 +307,22 @@ const CreateVirtualMachineModal = ({open, onClose}: ModalProps) => {
                         <button type="button" onClick={() => onClose(false)} className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                             Cancel
                         </button>
-                        <button type="submit" form='createVirtualMachineForm' className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                            Create
+                        <button type="submit" form='createVirtualMachineForm' className="w-24 h-10 py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800 disabled:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isCreating}>
+                            <svg className={`animate-spin h-4 w-4 text-white ${isCreating ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span className={`${ isCreating ? "hidden" : ""}`}>
+                                Create
+                            </span>
                         </button>
+                        {/* <button type="submit" form='createVirtualMachineForm' className="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                            Create
+                        </button> */}
                     </div>
                 </div>
             </div>
+            <ErrorToast errorMessage="Virtual machine creation has failed." isOpen={isError}></ErrorToast>
         </div>
     )
 };

@@ -1,7 +1,6 @@
 import Dropdown from './Dropdown'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import { Menu, Transition } from '@headlessui/react'
 import { ComputeInstance } from '@/pages/module'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -37,7 +36,7 @@ export default function VirtualMachineCard({ computeInstance } : VirtualMachineC
             className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-bl-xl font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm sm:p-4 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
                 View Console
             </Link>
-            <Dropdown></Dropdown>
+            <Dropdown instanceName={computeInstance.instanceName}></Dropdown>
         </div>
     </div>
   )
