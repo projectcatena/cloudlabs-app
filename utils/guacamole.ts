@@ -1,4 +1,4 @@
-import Guacamole from 'guacamole-common-js';
+import Guacamole, { Client } from 'guacamole-common-js';
 
 // No need this to work, but may use this later to enhance implementation
 export interface IHostEntity {
@@ -20,7 +20,7 @@ export interface IHostEntity {
  * @param host: IHsotEntity
  * @returns guacd: Guacamole.Client
  */
-export function connect(host: IHostEntity) {
+export function connect(host: IHostEntity, callback: (guac: Client) => void) {
   const display = document.getElementById('display');
   const params = { ...host } as unknown as Record<string, string>;
 
@@ -38,18 +38,18 @@ export function connect(host: IHostEntity) {
   guac.connect();
 
   // Disconnect on close
-  window.onunload = function () {
+  window.onunload = function() {
     guac.disconnect();
   };
 
   // Keyboard was originally here
   var keyboard = new Guacamole.Keyboard(document)
 
-  keyboard.onkeydown = function (keysym: any) {
+  keyboard.onkeydown = function(keysym: any) {
     guac.sendKeyEvent(1, keysym);
   };
 
-  keyboard.onkeyup = function (keysym: any) {
+  keyboard.onkeyup = function(keysym: any) {
     guac.sendKeyEvent(0, keysym);
   };
 
@@ -61,16 +61,16 @@ export function connect(host: IHostEntity) {
   }
 
   // TODO: Clipboard
-  guac.onclipboard = function (stream: any, mimetype: string) {
-    console.log("onclipboard ...",stream, mimetype);
-    stream.onblob = function (data: any) {
+  guac.onclipboard = function(stream: any, mimetype: string) {
+    console.log("onclipboard ...", stream, mimetype);
+    stream.onblob = function(data: any) {
       const stringdata = atob(data);
-      console.log("data blob ...",stringdata);
+      console.log("data blob ...", stringdata);
       navigator.clipboard.writeText(stringdata).catch(() => {
         console.error("clipboard write error ...");
       })
     }
   }
 
-  return guac;
+  return callback(guac);
 }

@@ -1,61 +1,93 @@
 import { Inter } from 'next/font/google'
-import { connect, IHostEntity } from '../utils/guacamole'
 import { useEffect, useState } from 'react'
-import LoadingModal from "../components/elements/LoadingModal"
-import ErrorModal from "../components/elements/ErrorModal"
-import ConsoleBar from "../components/modules/consolebar"
-import Guacamole from 'guacamole-common-js'
-import { useRouter } from 'next/router'
+import { Client } from 'guacamole-common-js'
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
 import { ComputeInstance } from './module'
+import { IHostEntity, connect } from '@/utils/guacamole'
+import ConsoleBar from '@/components/modules/consolebar'
+import LoadingModal from '@/components/elements/LoadingModal'
+import ErrorModal from '@/components/elements/ErrorModal'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Console() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const instanceName = context.query.instance;
+  const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`);
+  const data = await res.json();
+  return { props: { data } };
+}
+
+export default function Console({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // The useEffect hook calls connect() aftech component renders.
   // Otherwise, connect() will be called during SSR, 
   // causes document to be undefined.
+  const [computeInstance, setComputeInstance] = useState<ComputeInstance>(data);
 
-    const router = useRouter();
-    const hostData: ComputeInstance = JSON.parse(router.query.data as string);
-
-
-  const host: IHostEntity = {
-    name: hostData.instanceName,
-    protocol: "rdp",
-    hostname: hostData.address.ipv4Address,
-    port: 3389,
-    username: "Administrator",
-    password: "Pa$$w0rd",
-    ignoreCert: true,
-  }
-  // Hardcoded properties of a connection, should be dynamic
-//   const host: IHostEntity = {
-//     name: "Windows 11",
-//     protocol: "rdp",
-//     hostname: "10.10.1.11",
-//     port: 3389,
-//     username: "Admin",
-//     password: "Pa$$w0rd",
-//     ignoreCert: true,
-//   }
+  // Form State
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [protocol, setProtocol] = useState("");
 
   const [openLoadingModal, setOpenLoadingModal] = useState(false);
   const [openErrorModal, setOpenErrorModal] = useState(false);
+  const [openCredentialsModal, setOpenCredentialsModal] = useState(true);
+  const [guac, setGuac] = useState<Client>();
 
-  var guac: Guacamole.Client | undefined;
 
-  useEffect(() => {
+  const host: IHostEntity = {
+    name: computeInstance.instanceName,
+    protocol: protocol,
+    hostname: computeInstance.address?.ipv4Address, // TODO: Get ip address from database
+    port: 3389,
+    username: username,
+    password: password,
+    ignoreCert: true,
+  }
+
+  const callback = () => {
     setOpenLoadingModal(true);
 
-    guac = connect(host)
+    connect(host, (guac: Client) => {
+      setGuac(guac);
+      setOpenCredentialsModal(false);
+
+      // When a display is present, close modal
+      guac.onsync = () => {
+        setOpenLoadingModal(false);
+      }
+
+      // Error handler
+      guac.onerror = function(error: any) {
+        // throw new Error("Connection failed: ", error);
+        console.log("Guac error", error);
+        guac!.disconnect();
+
+        setOpenLoadingModal(false);
+        setOpenErrorModal(true);
+      };
+    });
+
+  };
+
+  useEffect(() => {
+    if (password) {
+      setOpenCredentialsModal(true);
+    }
+  }, [password])
+
+  /* useEffect(() => {
+    setOpenLoadingModal(true);
+
+    setGuac(connect(host));
 
     // When a display is present, close modal
-    guac.onsync = () => {
+    guac!.onsync = () => {
       setOpenLoadingModal(false);
     }
 
     // Error handler
-    guac.onerror = function (error: any) {
+    guac!.onerror = function(error: any) {
       // throw new Error("Connection failed: ", error);
       console.log("Guac error", error);
       guac!.disconnect();
@@ -63,8 +95,9 @@ export default function Console() {
       setOpenLoadingModal(false);
       setOpenErrorModal(true);
     };
-  }, []);
-  
+  }, [guac, host]); */
+
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}
@@ -77,6 +110,18 @@ export default function Console() {
               Open modal
           </button>
       </div> */}
+      {/* TODO: Modal to prompt user for username, password, and protocol */}
+      <GuacCredentialsModal
+        username={username}
+        password={password}
+        protocol={protocol}
+        setUsername={setUsername}
+        setPassword={setPassword}
+        setProtocol={setProtocol}
+        open={openCredentialsModal}
+        onClose={setOpenCredentialsModal}
+        callback={callback}
+      />
       <LoadingModal open={openLoadingModal} onClose={() => setOpenLoadingModal(false)} />
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
     </main>
