@@ -14,15 +14,14 @@ const inter = Inter({ subsets: ['latin'] })
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const instanceName = context.query.instance;
   const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`);
-  const data = await res.json();
-  return { props: { data } };
+  const computeInstance: ComputeInstance = await res.json();
+  return { props: { computeInstance } };
 }
 
-export default function Console({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Console({ computeInstance }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // The useEffect hook calls connect() aftech component renders.
   // Otherwise, connect() will be called during SSR, 
   // causes document to be undefined.
-  const [computeInstance, setComputeInstance] = useState<ComputeInstance>(data);
 
   // Form State
   const [username, setUsername] = useState("");
@@ -32,8 +31,6 @@ export default function Console({ data }: InferGetServerSidePropsType<typeof get
   const [openLoadingModal, setOpenLoadingModal] = useState(false);
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [openCredentialsModal, setOpenCredentialsModal] = useState(true);
-  const [guac, setGuac] = useState<Client>();
-
 
   const host: IHostEntity = {
     name: computeInstance.instanceName,
@@ -49,7 +46,6 @@ export default function Console({ data }: InferGetServerSidePropsType<typeof get
     setOpenLoadingModal(true);
 
     connect(host, (guac: Client) => {
-      setGuac(guac);
       setOpenCredentialsModal(false);
 
       // When a display is present, close modal
@@ -110,11 +106,9 @@ export default function Console({ data }: InferGetServerSidePropsType<typeof get
               Open modal
           </button>
       </div> */}
-      {/* TODO: Modal to prompt user for username, password, and protocol */}
       <GuacCredentialsModal
         username={username}
         password={password}
-        protocol={protocol}
         setUsername={setUsername}
         setPassword={setPassword}
         setProtocol={setProtocol}

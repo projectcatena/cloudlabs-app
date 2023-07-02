@@ -1,13 +1,12 @@
 import ModalTitle from "./partials/ModalTitle";
 import { Listbox } from "@headlessui/react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import ModalTextInput from "./partials/ModalTextInput";
 import ModalLayout from "@/components/layouts/ModalLayout";
 
 type GuacCredentialsModalProps = {
   username: string,
   password: string,
-  protocol: string,
   setUsername: React.Dispatch<React.SetStateAction<string>>,
   setPassword: React.Dispatch<React.SetStateAction<string>>,
   setProtocol: React.Dispatch<React.SetStateAction<string>>,
@@ -16,14 +15,15 @@ type GuacCredentialsModalProps = {
   callback: () => void;
 }
 
+// Must convert to lower case
+const protocols: string[] = ['RDP', 'VNC', 'SSH'];
+
 export default function GuacCredentialsModal({
-  username, password, protocol, setUsername, setPassword, setProtocol, open, onClose, callback
+  username, password, setUsername, setPassword, setProtocol, open, onClose, callback
 }: GuacCredentialsModalProps) {
 
   const usernameInput = useRef<HTMLInputElement>();
   const passwordInput = useRef<HTMLInputElement>();
-
-  const protocols: string[] = ['rdp', 'vnc', "ssh"];
 
   if (!open) return null;
 
@@ -83,7 +83,7 @@ export default function GuacCredentialsModal({
                     id="password"
                     name="password"
                     value={password}
-                    type="pasword"
+                    type="password"
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     ref={passwordInput}
@@ -104,14 +104,24 @@ export default function GuacCredentialsModal({
                   <label htmlFor="protocol" className="block text-sm mb-2 dark:text-white">Protocol</label>
                 </div>
                 <div className="relative">
-                  <Listbox value={protocol} onChange={setProtocol}>
+                  <Listbox name="protocol" defaultValue={protocols[0]}>
                     <Listbox.Button className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
-                      Select a protocol
-                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4 text-gray-400">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                      </span>
+                      {
+                        ({ value }) => {
+                          setProtocol(value.toLowerCase())
+                          return (
+                            <>
+                              {value}
+                              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4 text-gray-400">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                </svg>
+                              </span>
+
+                            </>
+                          )
+                        }
+                      }
                     </Listbox.Button>
                     <Listbox.Options className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
                       {protocols.map((protocol, key) => (
