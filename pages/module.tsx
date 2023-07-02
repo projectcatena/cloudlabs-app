@@ -97,8 +97,8 @@ export default function ModuleDashboard({
                     </div>
                 </div>
                 {
-                    data.map((computeInstance) => {
-                        return (<VirtualMachineCard computeInstance={computeInstance}></VirtualMachineCard>)
+                    data.map((computeInstance, key) => {
+                        return (<VirtualMachineCard key={key} computeInstance={computeInstance}></VirtualMachineCard>)
                     })
                 }
                 {/* End of Card */}
