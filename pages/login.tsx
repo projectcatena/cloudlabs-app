@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useSnackbar } from "notistack"
 import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -11,7 +10,6 @@ export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
 
   const [email, setEmail]:any = useState();
   const [password, setPassword]:any = useState();
@@ -47,11 +45,7 @@ export default function Login() {
       console.log(data["jwt"]);
       setToken(data["jwt"]);
       if (data["jwt"]){
-        enqueueSnackbar("Login successful", { variant: "success" });
         router.push("/module");
-      }
-      else{
-        enqueueSnackbar("Login failed!", {variant: "error" });
       }
     })
   }

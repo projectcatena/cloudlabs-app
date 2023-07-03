@@ -3,7 +3,6 @@ import authService, { checkLoggedIn } from "@/services/auth.service";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 
 {/* Done by Tristan */}
@@ -12,7 +11,6 @@ export default function Settings() {
     //const { user } = useUser()
     const [loading, setLoading] = useState(true);
     const router = useRouter();
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         setLoading(true)
@@ -22,7 +20,6 @@ export default function Settings() {
             setLoading(false)
         }
         else {
-            enqueueSnackbar("Insufficient credentials", { variant:"error" })
             router.push("/login");
         }
     }, []);
@@ -40,7 +37,6 @@ export default function Settings() {
         return res.json;
         }
         catch (error) {
-            enqueueSnackbar("Unable to fetch data", { variant:"error" })
             router.push("/login");
             }
         }

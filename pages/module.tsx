@@ -4,7 +4,6 @@ import VirtualMachineCard from '../components/elements/VirtualMachineCard';
 
 import authService, { checkLoggedIn } from '@/services/auth.service';
 import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
 import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ['latin'] })
@@ -13,7 +12,6 @@ const inter = Inter({ subsets: ['latin'] })
 export default function ModuleDashboard() {
   const [user, setUser] = useState();
     const [loading, setLoading] = useState(false);
-    const { enqueueSnackbar } = useSnackbar();
     const router = useRouter();
     
   
@@ -25,7 +23,6 @@ export default function ModuleDashboard() {
             setLoading(false)
         }
         else {
-            enqueueSnackbar("Insufficient credentials", { variant:"error" })
             router.push("/login");
         }
   }, []);
@@ -43,7 +40,6 @@ export default function ModuleDashboard() {
       return res.json;
     }
       catch (error) {
-        enqueueSnackbar("Unable to fetch data", { variant:"error" })
         router.push("/login");
       }
     }

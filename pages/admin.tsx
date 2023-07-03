@@ -3,7 +3,6 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { Inter } from 'next/font/google';
 import { useRouter } from "next/router";
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
-import { useSnackbar } from "notistack";
 import { Fragment, useEffect, useState } from "react";
 
 import UserTableRow from '@/components/elements/UserTableRow';
@@ -46,8 +45,6 @@ export default function admin({
     initialData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-    //const [loading, setLoading] = useState(false);
-    const { enqueueSnackbar } = useSnackbar();
     const router = useRouter();
 
     const [isRefresh, setIsRefresh] = useState(false);
@@ -69,10 +66,8 @@ export default function admin({
         if (authStatus){
             fetchContent()
             //setLoading(false)
-            enqueueSnackbar("Success", {variant:"success"})
         }
         else {
-            enqueueSnackbar("Insufficient credentials", { variant:"error" })
             router.push("/module");
         }
     }, []);
@@ -146,13 +141,11 @@ export default function admin({
             body: data
         }).then(res => {
             if(res.ok){
-                enqueueSnackbar("Role added successfully",{ variant: "success" });
                 return res.json;
             }
             throw res;
         })
         .catch(error => {
-            enqueueSnackbar("Unsuccessful",{ variant: "success" });
             console.error("Error: ", error);
             // setIsError(true);
         })
@@ -185,12 +178,10 @@ export default function admin({
             body: data
         }).then(res => {
             if(res.ok){
-                enqueueSnackbar("Role deleted successfully",{ variant: "success" });
                 return res.json;
             }
             throw res;
         }).catch(error => {
-            enqueueSnackbar("Unable to delete role",{ variant: "success" });
             console.error("Error: ", error);
             // setIsError(true);
         })

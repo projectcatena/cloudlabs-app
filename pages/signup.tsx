@@ -1,13 +1,11 @@
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack'
 import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {
   const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
   const [loading, setLoading]:any = useState(false);
 
@@ -36,13 +34,11 @@ export default function SignUp() {
       body: data
     })
     if(res.ok){
-      enqueueSnackbar("Sign up successful",{ variant: "success" });
       router.push("/login");
       setLoading(false);
     }
     else{
       router.push("/signup");
-      enqueueSnackbar("Sign up unsuccessful", {variant: "error" });
     }
   }
 
