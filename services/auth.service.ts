@@ -1,64 +1,59 @@
+
 enum Roles {
     admin = "ADMIN",
     tutor = "TUTOR",
     user = "USER"
 }
 
-function checkLoggedIn(acceptedRole:string) {
-    let token = localStorage.getItem("token");
-    if (!token) {
-        return false;
-    }
+function checkLoggedIn(acceptedRole: string, token: string) {
+    // let token = localStorage.getItem("token");
+    // let token = getCookie('jwt');
+    //
+    // if (!token) {
+    //     return false;
+    // }
 
     try {
-        let payload:any = token.split(".")[1];
+
+        let payload: any = token.split(".")[1];
         payload = JSON.parse(atob(payload));
+        console.log(payload);
         let role: string[] = payload["roles"].split(" ");
         let roleAuth = checkRole(role, acceptedRole);
-        if(roleAuth){
+        if (roleAuth) {
             return payload["exp"] && payload["exp"] > Date.now() / 1000;
         }
         //else return false;
-        
+
     } catch (e) {
         return false;
     }
 }
 
-function checkRole(role:string[], acceptRole:string) {
+function checkRole(role: string[], acceptRole: string) {
     for (var i in role) {
-        if (role[i] == acceptRole){
+        if (role[i] == acceptRole) {
             return true
         }
     }
     return false;
 }
 
-function setToken(token:any) {
-    localStorage.setItem("token", token);
-}
-
-function getToken() {
-    return localStorage.getItem("token");
-}
-
-function logout() {
-    localStorage.removeItem("token");
+function getCookie(context:any) {
+    let token = context.req.cookies["jwt"];
+    console.log(token);
+    return token;
 }
 
 const authService = {
-    logout,
-    setToken,
-    getToken,
     checkLoggedIn,
     checkRole,
-    Roles
+    Roles,
+    getCookie
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, getToken,
-    logout,
-    setToken
+    Roles, checkLoggedIn, checkRole, getCookie
 };
 
 export default authService;

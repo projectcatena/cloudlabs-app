@@ -1,11 +1,26 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { getCookie } from "@/services/auth.service";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Inter } from 'next/font/google';
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from 'react';
 
 const inter = Inter({subsets: ['latin']})
-export default function Users() {
+
+export const getServerSideProps:GetServerSideProps<{
+    token:string
+}> = async (context) => {
+    const token:string = getCookie(context);
+    if (!token) {
+        throw new Error("cookie not found");
+    }
+    return { props: { token } } ;
+}
+
+export default function Users({
+    token
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
@@ -19,7 +34,7 @@ export default function Users() {
         const res = await fetch("http://localhost:8080/api/users", {
             method: "GET",
             headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token")
+            "Authorization": "Bearer " + token
         }
         })
         if (res.ok) {

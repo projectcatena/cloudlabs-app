@@ -1,9 +1,8 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import authService, { checkLoggedIn } from "@/services/auth.service";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 {/* Done by Tristan */}
 export default function Settings() {
@@ -12,6 +11,7 @@ export default function Settings() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    /*
     useEffect(() => {
         setLoading(true)
         const authStatus = checkLoggedIn(authService.Roles.user.toString())
@@ -40,6 +40,7 @@ export default function Settings() {
             router.push("/login");
             }
         }
+        */
 
     return (
         <>

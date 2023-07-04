@@ -6,7 +6,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types
 import { Fragment, useEffect, useState } from "react";
 
 import UserTableRow from '@/components/elements/UserTableRow';
-import authService, { checkLoggedIn } from '@/services/auth.service';
+import authService, { checkLoggedIn, getCookie } from '@/services/auth.service';
 import DashboardLayout from "../components/layouts/DashboardLayout";
 
 const inter = Inter({subsets: ['latin'] })
@@ -30,19 +30,31 @@ const ERole = [
     ]
 
 export const getServerSideProps: GetServerSideProps<{
-    initialData : [User]
-    }> = async () => {
-        const res = await fetch("http://localhost:8080/api/admin/list");
+    initialData : [User],
+    token: string
+    }> = async (context) => {
+        const token = getCookie(context);
+        const res = await fetch("http://localhost:8080/api/admin/list", {
+            method: "GET",
+            //credentials: "include",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*"
+            },
+        });
         if (!res.ok){
+            console.log(res);
             throw new Error("Unable to retrieve data");
         }
         const initialData = await res.json();
         console.log(initialData);
-        return { props: { initialData } }
+        return { props: { initialData, token } }
+        
     }
 
 export default function admin({
-    initialData
+    initialData, token
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const router = useRouter();
@@ -62,26 +74,26 @@ export default function admin({
     //console.log(role);
     useEffect(() => {
         //setLoading(true)
-        const authStatus = checkLoggedIn(authService.Roles.admin.toString())
+        //let token = getCookie(context);
+        const authStatus = checkLoggedIn(authService.Roles.admin.toString(), token);
         if (authStatus){
-            fetchContent()
+            fetchContent(token)
             //setLoading(false)
         }
         else {
-            router.push("/module");
+            router.push("/login");
         }
     }, []);
-
-    async function fetchContent() {
+    async function fetchContent(token: string) {
         setIsRefresh(true);
+        
         fetch("http://localhost:8080/api/admin", {
             method: "GET",
             headers: {
-            "Authorization": "Bearer " + localStorage.getItem("token"),
+            "Authorization": "Bearer " + token,
             }})
             .then(res => {
                 if (res.ok) {
-                    console.log(localStorage.getItem("token"))
                     return res.text();
                 }
                 throw res;
@@ -98,7 +110,14 @@ export default function admin({
     
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/admin/list")
+        fetch("http://localhost:8080/api/admin/list", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*"
+            },
+        })
         .then(res => {
             if(!res.ok){
                 throw new Error("Unable to fetch data");
@@ -135,7 +154,7 @@ export default function admin({
         fetch("http://localhost:8080/api/admin/add",{
             method: "PUT",
             headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token"),
+                "Authorization": "Bearer " + token,
                 "content-type": "application/x-www-form-urlencoded"
             },
             body: data
@@ -170,7 +189,7 @@ export default function admin({
         fetch("http://localhost:8080/api/admin/delete",{
             method: "DELETE",
             headers: {
-                "Authorization": "Bearer " + localStorage.getItem("token"),
+                "Authorization": "Bearer " + token,
                 "content-type": "application/x-www-form-urlencoded",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*"
