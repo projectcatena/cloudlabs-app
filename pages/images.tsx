@@ -35,17 +35,6 @@ export default function Images({
     initialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-// Test data
-// export default function Images() {
-    // const initialData = [
-    //     {
-    //         imageId: "test1213",
-    //         imageName: "windows-server",
-    //         imageStatus: "READY",
-    //         creationTimestamp: "2011-05-03T11:58:01Z"
-    //     }
-    // ];
-
     const [isAddImageModalOpen, setAddImageModalOpen] = useState(false);
     const [data, setData] = useState(initialData);
     const [isRefresh, setIsRefresh] = useState(false);

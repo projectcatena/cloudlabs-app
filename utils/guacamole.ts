@@ -1,4 +1,4 @@
-import Guacamole from 'guacamole-common-js';
+import Guacamole, { Client } from 'guacamole-common-js';
 
 // No need this to work, but may use this later to enhance implementation
 export interface IHostEntity {
@@ -20,13 +20,13 @@ export interface IHostEntity {
  * @param host: IHsotEntity
  * @returns guacd: Guacamole.Client
  */
-export function connect(host: IHostEntity) {
+export function connect(host: IHostEntity, callback: (guac: Client) => void) {
   const display = document.getElementById('display');
   const params = { ...host } as unknown as Record<string, string>;
 
   var guac = new Guacamole.Client(
     // True to enable CORS
-    new Guacamole.HTTPTunnel('http://localhost:8080/tunnel', true, params)
+    new Guacamole.HTTPTunnel('http://localhost:8080/api/tunnel', true, params)
   );
 
   // Add client to display div
@@ -38,11 +38,20 @@ export function connect(host: IHostEntity) {
   guac.connect();
 
   // Disconnect on close
-  window.onunload = function () {
+  window.onunload = function() {
     guac.disconnect();
   };
 
   // Keyboard was originally here
+  var keyboard = new Guacamole.Keyboard(document)
+
+  keyboard.onkeydown = function(keysym: any) {
+    guac.sendKeyEvent(1, keysym);
+  };
+
+  keyboard.onkeyup = function(keysym: any) {
+    guac.sendKeyEvent(0, keysym);
+  };
 
   // Mouse
   var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
@@ -52,31 +61,16 @@ export function connect(host: IHostEntity) {
   }
 
   // TODO: Clipboard
-  guac.onclipboard = function (stream: any, mimetype: string) {
-    console.log("onclipboard ...",stream, mimetype);
-    stream.onblob = function (data: any) {
+  guac.onclipboard = function(stream: any, mimetype: string) {
+    console.log("onclipboard ...", stream, mimetype);
+    stream.onblob = function(data: any) {
       const stringdata = atob(data);
-      console.log("data blob ...",stringdata);
+      console.log("data blob ...", stringdata);
       navigator.clipboard.writeText(stringdata).catch(() => {
         console.error("clipboard write error ...");
       })
     }
   }
 
-  return guac;
-}
-
-
-export function connectKeyboard(document: Document, guac: Guacamole.Client) {
-  var keyboard = new Guacamole.Keyboard(document)
-
-  keyboard.onkeydown = function (keysym: any) {
-    guac.sendKeyEvent(1, keysym);
-  };
-
-  keyboard.onkeyup = function (keysym: any) {
-    guac.sendKeyEvent(0, keysym);
-  };
-
-  return keyboard
+  return callback(guac);
 }
