@@ -39,15 +39,31 @@ function getCookie(context: GetServerSidePropsContext) {
     return token;
 }
 
+async function logout() {
+
+    const res = await fetch("http://localhost:8080/api/signout", {
+        method: "POST",
+        credentials: "include", // please include this in every request to backend
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+        },
+    }).then(function(response) {
+        return response.json();
+    })
+
+}
+
 const authService = {
     checkLoggedIn,
     checkRole,
     Roles,
-    getCookie
+    getCookie,
+    logout
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, getCookie
+    Roles, checkLoggedIn, checkRole, getCookie, logout
 };
 
 export default authService;

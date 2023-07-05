@@ -33,23 +33,34 @@ export const getServerSideProps: GetServerSideProps<{
     token: string
 }> = async (context) => {
     const token = getCookie(context);
-    const res = await fetch("http://localhost:8080/api/admin/list", {
-        method: "GET",
-        //credentials: "include",
-        headers: {
-            "Authorization": "Bearer " + token,
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "*"
-        },
-    });
-    if (!res.ok) {
-        console.log(res);
-        throw new Error("Unable to retrieve data");
-    }
-    const initialData = await res.json();
-    console.log(initialData);
-    return { props: { initialData, token } }
 
+    if (typeof token === "string") {
+
+        const res = await fetch("http://localhost:8080/api/admin/list", {
+            method: "GET",
+            //credentials: "include",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*"
+            },
+        });
+        if (!res.ok) {
+            console.log(res);
+            throw new Error("Unable to retrieve data");
+        }
+        const initialData: [User] = await res.json();
+        console.log(initialData);
+
+        return { props: { initialData, token } }
+    }
+
+    return {
+        redirect: {
+            permanent: false,
+            destination: "/maindashboard",
+        },
+    }
 }
 
 export default function Admin({
