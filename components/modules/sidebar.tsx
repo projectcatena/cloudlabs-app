@@ -6,7 +6,12 @@ import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Sidebar() {
+type SidebarProps = {
+    username: string,
+    email: string,
+}
+
+export default function Sidebar({ username, email }: SidebarProps) {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
     return (
@@ -59,7 +64,7 @@ export default function Sidebar() {
                             <ul className="space-y-1.5">
                                 <li>
                                     {/* Can use dark:bg-gray-800 to indicate selected */}
-                                    <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/maindashboard">
+                                    <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/dashboard">
                                         <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
                                             <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
@@ -79,23 +84,23 @@ export default function Sidebar() {
                         </nav>
                     </div>
                     <div className="flex flex-col gap-3">
-                        <Link className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="/settings">
+                        <Link className="flex flex-row items-center gap-x-3.5 px-6" href="/settings">
                             <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                                 <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                             </svg>
                             <div className="text-sm truncate ">
-                                <p>Charlie Toh Keng Boon</p>
-                                <p className="text-slate-700 dark:text-slate-400 truncate ">s13922394@connect.np.edu.sg</p>
+                                <p>{username}</p>
+                                <p className="text-slate-700 dark:text-slate-400 truncate ">{email}</p>
                             </div>
                         </Link>
                         <div className="px-4 w-full">
-                            <a className="w-full inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800" href="#" target="_blank">
+                            <Link className="w-full inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800" href="/" onClick={authService.signout}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                                 </svg>
                                 Log Out
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -116,7 +121,7 @@ export default function Sidebar() {
                         <ul className="space-y-1.5">
                             <li>
                                 {/* Can use dark:bg-gray-800 to indicate selected */}
-                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/maindashboard">
+                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/dashboard">
                                     <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
                                         <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
@@ -313,14 +318,14 @@ export default function Sidebar() {
                     </nav>
                 </div>
                 <div className="flex flex-col gap-3">
-                    <Link className="flex flex-row justify-between items-center gap-x-3.5 px-6" href="/settings">
+                    <Link className="flex flex-row items-center gap-x-3.5 px-6" href="/settings">
                         <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                         </svg>
                         <div className="text-sm truncate ">
-                            <p>Charlie Toh Keng Boon</p>
-                            <p className="text-slate-700 dark:text-slate-400 truncate ">s13922394@connect.np.edu.sg</p>
+                            <p>{username}</p>
+                            <p className="text-slate-700 dark:text-slate-400 truncate ">{email}</p>
                         </div>
                     </Link>
                     <div className="px-4 w-full">

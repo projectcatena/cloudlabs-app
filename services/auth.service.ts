@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from "next";
+import { User } from "@/entity/entity";
 
 enum Roles {
     admin = "ADMIN",
@@ -6,11 +6,15 @@ enum Roles {
     user = "USER"
 }
 
+function parseToken(token: string) {
+    let payload: any = token.split(".")[1];
+    payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+    return payload;
+}
+
 function checkLoggedIn(acceptedRole: string, token: string) {
     try {
-
-        let payload: any = token.split(".")[1];
-        payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+        let payload = parseToken(token);
 
         let role: string[] = payload["roles"].split(" ");
         let roleAuth = checkRole(role, acceptedRole);
@@ -22,6 +26,17 @@ function checkLoggedIn(acceptedRole: string, token: string) {
     } catch (e) {
         return false;
     }
+}
+
+function getUser(token: string) {
+    let payload = parseToken(token);
+
+    let username = payload["sub"];
+    let email = payload["email"];
+    let role: string[] = payload["roles"].split(" ");
+    let user = new User(username, role, email);
+
+    return user;
 }
 
 function checkRole(role: string[], acceptRole: string) {
@@ -44,7 +59,7 @@ async function signout() {
         },
     }).then(function(response) {
         return response.json();
-    })
+    });
 
 }
 
@@ -52,11 +67,12 @@ const authService = {
     checkLoggedIn,
     checkRole,
     Roles,
-    signout
+    signout,
+    getUser
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, signout
+    Roles, checkLoggedIn, checkRole, signout, getUser
 };
 
 export default authService;
