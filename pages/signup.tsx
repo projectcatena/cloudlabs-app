@@ -1,13 +1,61 @@
-import React from 'react'
 import { Inter } from 'next/font/google'
-import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {
+  const router = useRouter();
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
+  const [loading, setLoading]:any = useState(false);
+
+  const [name, setName]:any = useState();
+  const [email, setEmail]:any = useState();
+  const [password, setPassword]:any = useState();
+
+  async function handleSubmit(e:any) {
+    e.preventDefault();
+    setLoading(true);
+    let params = {
+      name,
+      email,
+      password
+  };
+
+  const data = Object.entries(params)
+      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+      .join('&');
+
+  const res = await fetch("http://localhost:8080/api/signup", {
+      method: 'POST',
+      headers: {
+        "content-type": "application/x-www-form-urlencoded"
+      },
+      body: data
+    })
+    if(res.ok){
+      router.push("/login");
+      setLoading(false);
+    }
+    else{
+      router.push("/signup");
+    }
+  }
+
+
+  /*
+  const handleSignUp = (e: any) => {
+    e.preventDefault();
+    signup(name, email, password)
+      .then((response :any) => {
+        enqueueSnackbar("Sign up successful",{ variant: "success" });
+        history.push("/login");
+      })
+    .catch((e : any) => {
+      enqueueSnackbar("Sign up unsuccessful", {variant: "error" });
+    })
+  }
+  */
 
   function togglePasswordVisibility() {
     SetIsPasswordVisible((prevState)=>!prevState)
@@ -62,24 +110,26 @@ export default function SignUp() {
                     Or
                   </div>
                   {/* Form */}
-                  <form>
+                  <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">
                       {/* Form Group */}
                       <div className="flex-auto">
                         <label
-                          htmlFor="fullname"
+                          htmlFor="name"
                           className="block text-sm mb-2 dark:text-white"
                         >
                         </label>
                         <div className="relative">
                           <input
-                            type="fullname"
-                            id="fullname"
-                            name="fullname"
+                            type="name"
+                            id="name"
+                            name="name"
                             className="py-3 px-4 block w-full border rounded-md text-sm focus:border-white focus:ring-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-900"
                             required
-                            aria-describedby="fullname-error"
+                            aria-describedby="name-error"
                             placeholder="Full Name"
+                            value={name ?? ""}
+                            onChange={e => setName(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
@@ -115,6 +165,8 @@ export default function SignUp() {
                             required
                             aria-describedby="email-error"
                             placeholder="Email Address"
+                            value={email ?? ""}
+                            onChange={e => setEmail(e.target.value)}
                           />
                           <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                             <svg
@@ -146,15 +198,17 @@ export default function SignUp() {
                         <div className="relative">
                           <input
                             type={isPasswordVisible ? "text" : "password"}
-                            id="password" 
+                            id="password"
                             name="password"
                             className="py-3 px-4 block w-full border rounded-md text-sm focus:border-white focus:ring-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:hover:bg-gray-900"
                             required
                             aria-describedby="error"
                             placeholder="Password"
+                            value={password ?? ""}
+                            onChange={e => setPassword(e.target.value)}
                           />
                           <div className="absolute top-3 right-3">
-                            <button onClick={togglePasswordVisibility}>
+                            <button type='button' onClick={togglePasswordVisibility}>
                               {isPasswordVisible ? (
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="2-6 h-6">
                                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
@@ -188,7 +242,6 @@ export default function SignUp() {
                           8+ Characters required
                         </p>
                       </div>
-                      {/* End Form Group */}
                       <div className="text-center">
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?
@@ -200,6 +253,7 @@ export default function SignUp() {
                       <button
                         type="submit"
                         className="flex-auto py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+
                       >
                         Sign up
                       </button>
@@ -208,7 +262,7 @@ export default function SignUp() {
                   {/* End Form */}
                 </div>
               </div>
-            </div>  
+            </div>
           </main>
         </div>
         <div className="hidden md:block border-0">

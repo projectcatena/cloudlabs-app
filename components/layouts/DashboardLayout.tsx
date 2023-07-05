@@ -1,6 +1,6 @@
+import { Inter } from 'next/font/google';
 import React from "react";
 import Sidebar from "../modules/sidebar";
-import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 

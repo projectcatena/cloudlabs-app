@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
-import { SourceImage } from '@/components/elements/CreateVirtualMachineModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const inter = Inter({ subsets: ['latin'] })
@@ -21,9 +20,23 @@ export type ComputeInstance = {
 
 export const getServerSideProps: GetServerSideProps<{
     data: [ComputeInstance]
-}> = async () => {
-    const res = await fetch('http://localhost:8080/api/compute/list');
+}> = async (context) => {
+    const jwt = context.req.cookies["jwt"];
+
+    const res = await fetch("http://localhost:8080/api/compute/list", {
+        credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+        headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Authorization": "Bearer " + jwt,
+        },
+    }).then(function(response) {
+        return response.json();
+    })
+
     const data = await res.json();
+
     return { props: { data } }
 }
 
