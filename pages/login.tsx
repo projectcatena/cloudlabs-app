@@ -1,4 +1,4 @@
-import authService, { checkLoggedIn, getCookie } from '@/services/auth.service'
+import authService, { checkLoggedIn } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const token = getCookie(context);
+  const token = context.req.cookies["jwt"];
 
   if (token) {
     const authStatus = checkLoggedIn(authService.Roles.user.toString(), token);

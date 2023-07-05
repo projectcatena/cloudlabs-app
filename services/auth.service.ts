@@ -33,13 +33,7 @@ function checkRole(role: string[], acceptRole: string) {
     return false;
 }
 
-function getCookie(context: GetServerSidePropsContext) {
-    let token = context.req.cookies["jwt"];
-
-    return token;
-}
-
-async function logout() {
+async function signout() {
 
     const res = await fetch("http://localhost:8080/api/signout", {
         method: "POST",
@@ -58,12 +52,11 @@ const authService = {
     checkLoggedIn,
     checkRole,
     Roles,
-    getCookie,
-    logout
+    signout
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, getCookie, logout
+    Roles, checkLoggedIn, checkRole, signout
 };
 
 export default authService;

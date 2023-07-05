@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import authService, { checkLoggedIn, getCookie } from "./services/auth.service";
+import authService, { checkLoggedIn } from "./services/auth.service";
 
 export function middleware(request: NextRequest) {
   // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
