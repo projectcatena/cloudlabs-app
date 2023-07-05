@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { getUser } from '@/services/auth.service';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,36 +19,57 @@ export type ComputeInstance = {
     address: Address,
 }
 
+
 export const getServerSideProps: GetServerSideProps<{
     data: [ComputeInstance]
+    userData: string
 }> = async (context) => {
     const jwt = context.req.cookies["jwt"];
 
-    const res = await fetch("http://localhost:8080/api/compute/list", {
-        credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
-        headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "*",
-            "Authorization": "Bearer " + jwt,
+    if (jwt) {
+        const user = getUser(jwt);
+        // Cannot directly return object, need to use this hack to serialize
+        const userData = JSON.parse(JSON.stringify(user));
+
+        // list based on VMs that are tied to a module
+        const res = await fetch("http://localhost:8080/api/compute/list", {
+            credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": "Bearer " + jwt,
+            },
+        });
+
+        const data: [ComputeInstance] = await res.json();
+
+        return {
+            props: {
+                data,
+                userData
+            }
+        }
+    }
+
+    return {
+        redirect: {
+            permanent: false,
+            destination: "/login",
         },
-    }).then(function(response) {
-        return response.json();
-    })
-
-    const data = await res.json();
-
-    return { props: { data } }
+    }
 }
 
 export default function ModuleDashboard({
     data,
+    userData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
+    const user = JSON.parse(JSON.stringify(userData));
 
     return (
-        <DashboardLayout>
+        <DashboardLayout user={user}>
             {/* ========== MAIN CONTENT ========== */}
             {/* Content */}
             <div className={`w-full pt-10 px-4 ${Number(data.length) === 0 ? 'space-y-8' : 'space-y-4'} sm:px-6 md:px-8 lg:pl-72`}>

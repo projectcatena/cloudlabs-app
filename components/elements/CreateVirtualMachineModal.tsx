@@ -45,7 +45,15 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
     useEffect(
         () => {
             if (deferredMachineTypesQuery != "") {
-                fetch(`http://localhost:8080/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`)
+                fetch(`http://localhost:8080/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`, {
+                    credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+                    headers: {
+                        "content-type": "application/x-www-form-urlencoded",
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "*",
+                        "Authorization": "Bearer " + jwt,
+                    },
+                })
                     .then(res => {
                         if (res.ok) {
                             return res.json();
