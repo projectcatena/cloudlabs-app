@@ -12,8 +12,8 @@ const UserTableRow = (props: UserProps) => {
 
     return (
         <>
-        <tr>
-            {/* 
+            <tr>
+                {/* 
             <td className="h-px w-px whitespace-nowrap">
                 <div className="pl-6 py-3">
                     <label htmlFor="hs-at-with-checkboxes-1" className="flex">
@@ -23,7 +23,7 @@ const UserTableRow = (props: UserProps) => {
                 </div>
             </td>
             */}
-            {/*
+                {/*
             <td className="h-px w-px whitespace-nowrap">
                 <div className="pl-6 lg:pl-3 xl:pl-0 pr-6 py-3">
                     <div className="flex items-center gap-x-3">
@@ -36,13 +36,13 @@ const UserTableRow = (props: UserProps) => {
                 </div>
             </td>
             */}
-            <td className="h-px w-72 whitespace-nowrap">
-            <div className="px-6 py-3">
-                {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                <span className="block text-sm text-gray-500">{props.name}</span>
-            </div>
-            </td>
-            {/* 
+                <td className="h-px w-72 whitespace-nowrap">
+                    <div className="px-6 py-3">
+                        {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
+                        <span className="block text-sm text-gray-500">{props.name}</span>
+                    </div>
+                </td>
+                {/* 
             <td className="h-px w-px whitespace-nowrap">
             <div className="px-6 py-3">
                 {
@@ -80,7 +80,7 @@ const UserTableRow = (props: UserProps) => {
             </div>
             </td>
             */}
-            {/* <td className="h-px w-px whitespace-nowrap">
+                {/* <td className="h-px w-px whitespace-nowrap">
                 <div className="px-6 py-3">
                     <div className="flex items-center gap-x-3">
                     <span className="text-xs text-gray-500">1/5</span>
@@ -90,29 +90,29 @@ const UserTableRow = (props: UserProps) => {
                     </div>
                 </div>
             </td> */}
-            <td className="h-px w-px whitespace-nowrap">
-            <div className="px-6 py-3">
-                {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
-                <span className="text-sm text-gray-500">
-                    {props.email}
-                </span>
-            </div>
-            </td>
-            <td className="h-px w-px whitespace-nowrap">
-            <div className="px-6 py-3">
-                {
-                    props.roles.map((role:Role) => {
-                        //console.log(role.name);
-                        return (
-                            <span className="text-sm text-gray-500">
-                                {role.name + " "}
-                            </span>
-                        )
-                })}
-            </div>
-            </td>
-        </tr>
-    </>
+                <td className="h-px w-px whitespace-nowrap">
+                    <div className="px-6 py-3">
+                        {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
+                        <span className="text-sm text-gray-500">
+                            {props.email}
+                        </span>
+                    </div>
+                </td>
+                <td className="h-px w-px whitespace-nowrap">
+                    <div className="px-6 py-3">
+                        {
+                            props.roles.map((role: Role, key) => {
+                                //console.log(role.name);
+                                return (
+                                    <span key={key} className="text-sm text-gray-500">
+                                        {role.name + " "}
+                                    </span>
+                                )
+                            })}
+                    </div>
+                </td>
+            </tr>
+        </>
     )
 }
 
