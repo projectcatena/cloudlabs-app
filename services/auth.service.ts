@@ -1,3 +1,4 @@
+import { GetServerSidePropsContext } from "next";
 
 enum Roles {
     admin = "ADMIN",
@@ -6,24 +7,17 @@ enum Roles {
 }
 
 function checkLoggedIn(acceptedRole: string, token: string) {
-    // let token = localStorage.getItem("token");
-    // let token = getCookie('jwt');
-    //
-    // if (!token) {
-    //     return false;
-    // }
-
     try {
 
         let payload: any = token.split(".")[1];
-        payload = JSON.parse(atob(payload));
-        console.log(payload);
+        payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+
         let role: string[] = payload["roles"].split(" ");
         let roleAuth = checkRole(role, acceptedRole);
+
         if (roleAuth) {
             return payload["exp"] && payload["exp"] > Date.now() / 1000;
         }
-        //else return false;
 
     } catch (e) {
         return false;
@@ -39,9 +33,9 @@ function checkRole(role: string[], acceptRole: string) {
     return false;
 }
 
-function getCookie(context:any) {
+function getCookie(context: GetServerSidePropsContext) {
     let token = context.req.cookies["jwt"];
-    console.log(token);
+
     return token;
 }
 

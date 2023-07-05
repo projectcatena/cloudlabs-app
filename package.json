@@ -1,36 +1,37 @@
 {
-  "name": "cloudlabs-app",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@headlessui/react": "^1.7.15",
-    "@heroicons/react": "^2.0.18",
-    "@types/node": "18.16.3",
-    "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.1",
-    "autoprefixer": "10.4.14",
-    "axios": "^1.4.0",
-    "eslint": "8.39.0",
-    "eslint-config-next": "13.3.1",
-    "guacamole-common-js": "^1.5.0",
-    "next": "13.3.1",
-    "postcss": "8.4.23",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.3.2",
-    "typescript": "5.0.4"
-  },
-  "devDependencies": {
-    "@types/guacamole-common-js": "^1.3.2",
-    "@types/react-router-dom": "^5.3.3",
-    "react-router-dom": "^5.3.4"
-  }
+    "name": "cloudlabs-app",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "test": "jest --coverage"
+    },
+    "dependencies": {
+        "@headlessui/react": "^1.7.15",
+        "@types/node": "18.16.3",
+        "@types/react": "18.2.0",
+        "@types/react-dom": "18.2.1",
+        "autoprefixer": "10.4.14",
+        "axios": "^1.4.0",
+        "eslint": "8.39.0",
+        "eslint-config-next": "13.3.1",
+        "guacamole-common-js": "^1.5.0",
+        "next": "13.3.1",
+        "postcss": "8.4.23",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "tailwindcss": "3.3.2",
+        "typescript": "5.0.4"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.3",
+        "@testing-library/jest-dom": "^5.16.5",
+        "@testing-library/react": "^14.0.0",
+        "@types/guacamole-common-js": "^1.3.2",
+        "jest": "^29.5.0",
+        "jest-environment-jsdom": "^29.5.0"
+    }
 }

@@ -1,3 +1,5 @@
+import authService, { checkLoggedIn, getCookie } from '@/services/auth.service'
+import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -5,6 +7,27 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const token = getCookie(context);
+
+  if (token) {
+    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token);
+    if (authStatus) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/maindashboard",
+        },
+      }
+    }
+  }
+
+  return { props: {} }
+}
+
+
 export default function Login() {
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
