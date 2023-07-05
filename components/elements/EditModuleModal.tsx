@@ -8,9 +8,9 @@ type EditModuleModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
     moduleId: number
-    subtitle: string
-    title: string
-    description: string
+    moduleSubtitle: string
+    moduleName: string
+    moduleDescription: string
 }
 
 type Module = {
@@ -25,7 +25,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
     const [modules, setModules] = useState<Module[]>([]);
     const [selectedModule, setSelectedModule] = useState<Module | null>(null);
     const [subtitleValue, setSubtitleValue] = useState("");
-    const [titleValue, setTitleValue] = useState("");
+    const [nameValue, setTitleValue] = useState("");
     const [descriptionValue, setDescriptionValue] = useState("");
 
     useEffect(() => {
@@ -63,9 +63,9 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
 
         // Get data from the form.
         const postData = {
-            subtitle: subtitleValue,
-            title: titleValue,
-            description: descriptionValue
+            moduleSubtitle: subtitleValue,
+            moduleName: nameValue,
+            moduleDescription: descriptionValue
         };
         console.log(postData);
 
@@ -134,7 +134,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="title" className="flex">
-                                        <input onChange={(e) => setTitleValue(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={titleValue}></input>
+                                        <input onChange={(e) => setTitleValue(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={nameValue}></input>
                                     </label>
                                 </div>
                                     
