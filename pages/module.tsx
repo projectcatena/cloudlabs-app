@@ -1,11 +1,11 @@
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import VirtualMachineCard from '../components/elements/VirtualMachineCard'
-import { Inter } from 'next/font/google'
-import { useState } from 'react';
-import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
-import { SourceImage } from '@/components/elements/CreateVirtualMachineModal';
+import ErrorModal from '@/components/elements/ErrorModal';
+import { Snapshots } from '@/components/elements/SnapshotModal';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { Inter } from 'next/font/google';
+import { useState } from 'react';
+import VirtualMachineCard from '../components/elements/VirtualMachineCard';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,14 +21,18 @@ export type ComputeInstance = {
 
 export const getServerSideProps: GetServerSideProps<{
     data: [ComputeInstance]
+    snapshotData: [Snapshots]
 }> = async () => {
     const res = await fetch('http://localhost:8080/api/compute/list');
     const data = await res.json();
-    return { props: { data } }
+
+    const response = await fetch("http://localhost:8080/api/snapshot/list");
+    const snapshotData = await response.json();
+    return { props: { data, snapshotData } }
 }
 
 export default function ModuleDashboard({
-    data,
+    data
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
