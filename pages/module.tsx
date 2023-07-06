@@ -23,8 +23,13 @@ export type ComputeInstance = {
 export const getServerSideProps: GetServerSideProps<{
     data: [ComputeInstance]
     userData: string
+    jwt: string
 }> = async (context) => {
     const jwt = context.req.cookies["jwt"];
+    console.log(
+        "Incoming headers from req: ",
+        JSON.stringify(context.req.headers, null, 2)
+    );
 
     if (jwt) {
         const user = getUser(jwt);
@@ -35,11 +40,8 @@ export const getServerSideProps: GetServerSideProps<{
         const res = await fetch("http://localhost:8080/api/compute/list", {
             credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
             headers: {
-                "content-type": "application/x-www-form-urlencoded",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
                 "Authorization": "Bearer " + jwt,
-            },
+            }
         });
 
         const data: [ComputeInstance] = await res.json();
@@ -47,7 +49,8 @@ export const getServerSideProps: GetServerSideProps<{
         return {
             props: {
                 data,
-                userData
+                userData,
+                jwt,
             }
         }
     }
@@ -62,7 +65,8 @@ export const getServerSideProps: GetServerSideProps<{
 
 export default function ModuleDashboard({
     data,
-    userData
+    userData,
+    jwt
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const [openCreateVirtualMachineModal, setOpenCreateVirtualMachineModal] = useState(false);
@@ -141,7 +145,7 @@ export default function ModuleDashboard({
             </div>
             {/* Modals */}
             <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-            <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} />
+            <CreateVirtualMachineModal jwt={jwt} open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} />
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
         </DashboardLayout>

@@ -21,9 +21,10 @@ export interface MachineType {
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
+    jwt: string
 }
 
-const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
+const CreateVirtualMachineModal = ({ open, onClose, jwt }: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
     const [isChecked, setChecked] = useState(false);
     const [startupScript, setStartupScript] = useState("");
@@ -48,11 +49,10 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                 fetch(`http://localhost:8080/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`, {
                     credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
                     headers: {
-                        "content-type": "application/x-www-form-urlencoded",
                         "Access-Control-Allow-Origin": "*",
                         "Access-Control-Allow-Headers": "*",
                         "Authorization": "Bearer " + jwt,
-                    },
+                    }
                 })
                     .then(res => {
                         if (res.ok) {
@@ -78,7 +78,14 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
 
     useEffect(
         () => {
-            fetch(`http://localhost:8080/api/image/list`)
+            fetch(`http://localhost:8080/api/image/list`, {
+                credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Authorization": "Bearer " + jwt,
+                }
+            })
                 .then(res => {
                     if (res.ok) {
                         return res.json();
@@ -136,6 +143,9 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                    "Authorization": "Bearer " + jwt,
                 },
                 body: JSON.stringify(postData),
             });
