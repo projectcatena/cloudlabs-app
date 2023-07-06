@@ -11,22 +11,7 @@ export function middleware(request: NextRequest) {
   if (token != null) {
     const authStatus = checkLoggedIn(authService.Roles.user.toString(), token.value);
     if (authStatus) {
-      // Clone the request headers and set a new header `x-hello-from-middleware1`
-      const requestHeaders = new Headers(request.headers)
-      requestHeaders.set('Authorization', 'Bearer ' + token.value);
-      requestHeaders.set('Access-Control-Allow-Origin', "*");
-      requestHeaders.set('Access-Control-Allow-Headers', "*");
-
-      // You can also set request headers in NextResponse.rewrite
-      const response = NextResponse.next({
-        request: {
-          // New request headers
-          headers: requestHeaders,
-        },
-      })
-
-
-      return response;
+      return NextResponse.next();
     }
   }
 

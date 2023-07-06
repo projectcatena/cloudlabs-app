@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import { useEffect, useState } from 'react'
 import { Client } from 'guacamole-common-js'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
 import { ComputeInstance } from './module'
 import { IHostEntity, connect } from '@/utils/guacamole'
@@ -11,14 +11,40 @@ import ErrorModal from '@/components/elements/ErrorModal'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps<{
+  computeInstance: ComputeInstance
+  jwt: string
+}> = async (context) => {
+  const jwt = context.req.cookies["jwt"];
   const instanceName = context.query.instance;
-  const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`);
-  const computeInstance: ComputeInstance = await res.json();
-  return { props: { computeInstance } };
+
+  if (jwt && instanceName) {
+    // list based on VMs that are tied to a module
+    const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`, {
+      credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+      headers: {
+        "Authorization": "Bearer " + jwt,
+      }
+    });
+    const computeInstance = await res.json();
+    return {
+      props: {
+        computeInstance,
+        jwt,
+      }
+    }
+  }
+
+  return {
+    redirect: {
+      permanent: false,
+      destination: "/dashboard",
+    },
+  }
 }
 
-export default function Console({ computeInstance }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+export default function Console({ computeInstance, jwt }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // The useEffect hook calls connect() aftech component renders.
   // Otherwise, connect() will be called during SSR, 
   // causes document to be undefined.
@@ -35,7 +61,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
   const host: IHostEntity = {
     name: computeInstance.instanceName,
     protocol: protocol,
-    hostname: computeInstance.address?.ipv4Address, // TODO: Get ip address from database
+    hostname: computeInstance.address?.ipv4Address,
     port: 3389,
     username: username,
     password: password,
@@ -45,7 +71,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
   const callback = () => {
     setOpenLoadingModal(true);
 
-    connect(host, (guac: Client) => {
+    connect(host, jwt, (guac: Client) => {
       setOpenCredentialsModal(false);
 
       // When a display is present, close modal
@@ -74,20 +100,20 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
 
   /* useEffect(() => {
     setOpenLoadingModal(true);
-
+ 
     setGuac(connect(host));
-
+ 
     // When a display is present, close modal
     guac!.onsync = () => {
       setOpenLoadingModal(false);
     }
-
+ 
     // Error handler
     guac!.onerror = function(error: any) {
       // throw new Error("Connection failed: ", error);
       console.log("Guac error", error);
       guac!.disconnect();
-
+ 
       setOpenLoadingModal(false);
       setOpenErrorModal(true);
     };

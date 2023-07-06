@@ -1,7 +1,7 @@
 import Guacamole, { Client } from 'guacamole-common-js';
 
 // No need this to work, but may use this later to enhance implementation
-export interface IHostEntity {
+/* export interface IHostEntity {
   name: string;
   id?: string;
   protocol: string;
@@ -12,6 +12,16 @@ export interface IHostEntity {
   thumbnail?: string;
   ignoreCert: boolean;
   category?: number;
+} */
+
+export interface IHostEntity {
+  name: string;
+  protocol: string;
+  hostname: string;
+  port: number;
+  username: string;
+  password: string;
+  ignoreCert: boolean;
 }
 
 /**
@@ -20,9 +30,10 @@ export interface IHostEntity {
  * @param host: IHsotEntity
  * @returns guacd: Guacamole.Client
  */
-export function connect(host: IHostEntity, callback: (guac: Client) => void) {
+export function connect(host: IHostEntity, token: string, callback: (guac: Client) => void) {
   const display = document.getElementById('display');
   const params = { ...host } as unknown as Record<string, string>;
+  params["Authorization"] = "Bearer " + token;
 
   var guac = new Guacamole.Client(
     // True to enable CORS
