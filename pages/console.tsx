@@ -4,10 +4,10 @@ import { Client } from 'guacamole-common-js'
 import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
 import { ComputeInstance } from './module'
-import { IHostEntity, connect } from '@/utils/guacamole'
 import ConsoleBar from '@/components/modules/consolebar'
 import LoadingModal from '@/components/elements/LoadingModal'
 import ErrorModal from '@/components/elements/ErrorModal'
+import { IHostEntity, connect } from '@/services/guacamole.service'
 
 const inter = Inter({ subsets: ['latin'] })
 
