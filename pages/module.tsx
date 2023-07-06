@@ -1,6 +1,5 @@
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import ErrorModal from '@/components/elements/ErrorModal';
-import { Snapshots } from '@/components/elements/SnapshotModal';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Inter } from 'next/font/google';
@@ -21,14 +20,10 @@ export type ComputeInstance = {
 
 export const getServerSideProps: GetServerSideProps<{
     data: [ComputeInstance]
-    snapshotData: [Snapshots]
 }> = async () => {
     const res = await fetch('http://localhost:8080/api/compute/list');
     const data = await res.json();
-
-    const response = await fetch("http://localhost:8080/api/snapshot/list");
-    const snapshotData = await response.json();
-    return { props: { data, snapshotData } }
+    return { props: { data } }
 }
 
 export default function ModuleDashboard({

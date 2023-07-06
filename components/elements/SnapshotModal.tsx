@@ -1,14 +1,13 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { Inter } from 'next/font/google'
 import React, { Fragment, useState } from 'react'
-import SnapshotTableRow from './SnapshotTableRow'
 
 const inter = Inter({ subsets: ['latin'] })
 
 type SnapshotModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
-    instance_Name: string
+    instanceName: string
     //initialData: Snapshots[]
 }
 
@@ -35,30 +34,70 @@ export const getServerSideProps: GetServerSideProps<{
 }
 */
 
-const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
+const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
 
     const [snapshotName, setSnapshotName] = useState("");
     const [description, setDescription] = useState("");
-    const [snapshotData, setSnapshotData] = useState("");
+    const [snapshotData, setSnapshotData] = useState<Snapshots[]>();
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showDeleteForm, setShowDeleteForm] = useState(false);
+    const [showRevertForm, setShowRevertForm] = useState(false);
     const [showButton, setShowButton] = useState(true);
-    const diskName = instance_Name;
+    const diskName = instanceName;
+    const filter = "";
     //const [title, setTitle] = useState("");
     //const [description, setDescription] = useState("");
+
+    /*
+    async function handleRefresh() {
+        let params = {
+            filter
+        };
+        const refreshData = Object.entries(params)
+            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+            .join('&');
+        const response = await fetch("http://localhost:8080/api/snapshot/list", {
+            method: "POST",
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+            },
+            body: refreshData,
+        });
+        if (!response.ok) {
+            throw new Error("Unable to fetch snapshots");
+        }
+        const data: [Snapshots] = await response.json();
+        return data;
+    }
+    
+
+    useEffect(() => {
+        const snapshot_data = handleRefresh();
+        console.log(snapshot_data);
+        //setSnapshotData(snapshot_data);
+    })
+    */
 
     function changeButtonState(formType:string) {
         if (formType == "create"){
             setShowCreateForm((prev) => !prev);
             setShowDeleteForm(false);
+            setShowRevertForm(false);
         }
         else if (formType == "delete") {
             setShowDeleteForm((prev) => !prev)
             setShowCreateForm(false);
+            setShowRevertForm(false);
+        }
+        else if (formType == "revert") {
+            setShowCreateForm(false);
+            setShowDeleteForm(false);
+            setShowRevertForm((prev) => !prev);
         }
         else {
             setShowCreateForm(false);
-            setShowDeleteForm(false)
+            setShowDeleteForm(false);
+            setShowRevertForm(false);
         }
         setShowButton((prev) => !prev);
     }
@@ -106,7 +145,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
             }
 
             // Get the response data from server as JSON
-            const result = await response.json();
+            const result = await response.text();
             alert(`Result: ` + result);
             // If server returns the name submitted, that means the form works.
             return result;
@@ -150,8 +189,57 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
             }
 
             // Get the response data from server as JSON
-            const result = await response.json();
+            const result = await response.text();
             alert(`Result: ${JSON.stringify(result)}`);
+            // If server returns the name submitted, that means the form works.
+            return result;
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    }
+
+    async function revertSnapshot(event: React.SyntheticEvent) {
+        // Stop the form from submitting and refreshing the page.
+        event.preventDefault()
+        let params = {
+            instanceName,
+            snapshotName,
+        
+        //diskName,
+        };
+
+        const data = Object.entries(params)
+            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+            .join('&');
+    
+        /* Get data from the form.
+        const postData = {
+            snapshotName: snapshotName
+        };
+        console.log(postData);
+        */
+        try {
+            const response = await fetch("http://localhost:8080/api/snapshot/revert", {
+                // POST request
+                method: "POST",
+                // Tell the server we're sending JSON.
+                headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                //"Authorization": "Bearer " + localStorage.getItem("token"),
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                },
+                // Body of the request is the JSON data we created above.
+                body: data,
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            // Get the response data from server as JSON
+            const result = await response.text();
+            //alert(`Result: ` + result);
             // If server returns the name submitted, that means the form works.
             return result;
         } catch (error) {
@@ -201,7 +289,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                     </div>
                     {/* table/list of snapshots */}
                     {/* Body to show when Empty State */}
-                    <div className={`max-w-sm w-full min-h-[300px] flex flex-col justify-center mx-auto px-6 py-4 ${ snapshotData.length ? "hidden" : "" }`}>
+                    <div className={`max-w-sm w-full min-h-[300px] flex flex-col justify-center mx-auto px-6 py-4 `}> {/* ${ snapshotData.length ? "hidden" : "" } */}
                             <div className="flex justify-center items-center w-[46px] h-[46px] bg-gray-100 rounded-md dark:bg-gray-800">
                                 {/* <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z"/>
@@ -223,7 +311,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                     </div>
                     {/* End of Body */}
                     {/* Table */}
-                    <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 ${ snapshotData.length ? "" : "hidden"}`}> {/*  */}
+                    <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 `}> {/* ${ snapshotData.length ? "" : "hidden"} */}
                     <thead className="bg-gray-50 dark:bg-slate-800">
                     <tr>
                         {/*
@@ -246,7 +334,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                         <th scope="col" className="px-6 py-3 text-left">
                         <div className="flex items-center gap-x-2">
                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            Snapshot Name
+                            Name
                             </span>
                         </div>
                         </th>
@@ -278,7 +366,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                         <th scope="col" className="px-6 py-3 text-right"></th>
                     </tr>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                {
+                                {/*
                                     snapshotData.map((snapshot:Snapshots) => {
                                         return(
                                         <SnapshotTableRow
@@ -380,6 +468,40 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                         )}
                     </div>
                     {/* End Delete Form */}
+                    {/* Revert Form */}
+                    <div>
+                        {showRevertForm && (
+                        <form>
+                            <div className="space-y-4">
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <label htmlFor="snapshotName" className="flex">
+                                        <input onChange={(e) => setSnapshotName(e.target.value)} id="snapshotName" name="snapshotName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Snapshot name"></input>
+                                    </label>
+                                </div>
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <label htmlFor="diskName" className="flex">
+                                        <input onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Filter Name"></input>
+                                    </label>
+                                </div>
+                            </div>
+                            <button
+                            type="submit"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={revertSnapshot} //open hidden form
+                            >
+                            Revert
+                            </button>
+                            <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={() => changeButtonState("close")} //close hidden form
+                            >
+                            Close
+                            </button>
+                        </form>
+                        )}
+                    </div>
+                    {/* End Revert Form */}
 
                     {showButton && (
                     <div className="mt-4">
@@ -396,7 +518,13 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
                         onClick={() => changeButtonState("delete")}
                         >
-                        Delete Snapshot
+                        Delete
+                        </button>
+                        <button type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                        onClick={() => changeButtonState("revert")}
+                        >
+                        Revert
                         </button>
                         <button
                         type="button"
@@ -405,6 +533,7 @@ const SnapshotModal = ({open, onClose, instance_Name}: SnapshotModalProps) => {
                         >
                         Close
                         </button>
+                        
                     </div>
                     )}
                     </Dialog.Panel>

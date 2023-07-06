@@ -69,7 +69,7 @@ export default function Dropdown({ instanceName } : DropdownProps) {
                 </div>
             </div>
             {/* Modal */}
-            <SnapshotModal open={openModal} onClose={() => setOpenModal((prev) => !prev)} instance_Name={instanceName} />
+            <SnapshotModal open={openModal} onClose={() => setOpenModal((prev) => !prev)} instanceName={instanceName} />
     </div>
     )
 }
