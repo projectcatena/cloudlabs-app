@@ -444,11 +444,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                                         <input onChange={(e) => setSnapshotName(e.target.value)} id="snapshotName" name="snapshotName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Snapshot name"></input>
                                     </label>
                                 </div>
+                                {/* 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="diskName" className="flex">
                                         <input onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Filter Name"></input>
                                     </label>
                                 </div>
+                                */}
                             </div>
                             <button
                             type="submit"
