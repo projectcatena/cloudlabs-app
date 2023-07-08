@@ -1,4 +1,5 @@
 import { useState } from "react";
+import StatusModal from "./VirtualMachineStatusModal";
 
 type DropdownProps = {
         instanceName: string
@@ -7,6 +8,8 @@ type DropdownProps = {
 export default function Dropdown({ instanceName } : DropdownProps) {
     const [dropdown, setDropdown] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
+    const [StatusModalOpen, setStatusModalOpen] = useState(false);
+    const [statusMessage, setStatusMessage] = useState("");
 
     async function handleDelete() {
 
@@ -35,6 +38,98 @@ export default function Dropdown({ instanceName } : DropdownProps) {
             console.log("Error:", error);
         }
     }
+
+    async function handleStop() {
+        const postData = {
+            instanceName,
+        };
+
+        try{
+            const getStatusResponse = await fetch("http://localhost:8080/api/compute/status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if (!getStatusResponse.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            const statusResult = await getStatusResponse.json();
+
+            if (statusResult.status === "TERMINATED") {
+                setStatusMessage("This Virtual Machine is already terminated!");
+                setStatusModalOpen(true);
+                return;
+            } else {
+                const response = await fetch("http://localhost:8080/api/compute/stop", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if(!response.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            const result = await response.json();
+
+            return result;
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    }
+
+    async function handleStart() {
+        const postData = {
+            instanceName,
+        };
+
+        try{
+            const getStatusResponse = await fetch("http://localhost:8080/api/compute/status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if (!getStatusResponse.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            const statusResult = await getStatusResponse.json();
+
+            if (statusResult.status === "RUNNING") {
+                setStatusMessage("This Virtual Machine is already running!");
+                setStatusModalOpen(true);
+                return;
+            } else {
+                const response = await fetch("http://localhost:8080/api/compute/start", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+            });
+
+            if(!response.ok) {
+                throw new Error("Network response failed.");
+            }
+
+            const result = await response.json();
+
+            return result;
+            }
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    }
         
     return (
         <div className="hs-dropdown relative inline-flex w-full">
@@ -52,12 +147,12 @@ export default function Dropdown({ instanceName } : DropdownProps) {
             </button> */}
             <div className={`${dropdown? 'block absolute right-0 top-14': 'hidden'}`}>
                 <div className="transition-[opacity,margin] duration-[0.1ms] z-50 w-72 z-10 mt-2 min-w-[15rem] bg-white shadow-md rounded-lg p-2 dark:bg-gray-800 dark:border dark:border-gray-700 dark:divide-gray-700" aria-labelledby="hs-dropdown-default">
-                    <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                    <button onClick={handleStart} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         Start
-                    </a>
-                    <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" href="#">
+                    </button>
+                    <button onClick={handleStop} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         Stop
-                    </a>
+                    </button>
                     <button onClick={handleDelete} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         Destroy
                     </button>
@@ -67,6 +162,7 @@ export default function Dropdown({ instanceName } : DropdownProps) {
                 </div>
  
             </div>
+            <StatusModal open={StatusModalOpen} onClose={() => setStatusModalOpen(false)} statusMessage={statusMessage} />
        </div>
     )
 }
