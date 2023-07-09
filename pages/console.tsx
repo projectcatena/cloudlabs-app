@@ -98,7 +98,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
     <main
       className={`flex min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}
     >
-      <ConsoleBar />
+      <ConsoleBar instanceName = {computeInstance.instanceName}></ConsoleBar>
       <div id="display" className="z-40">
       </div>
       {/* <div className="text-center">
