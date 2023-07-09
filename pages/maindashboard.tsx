@@ -1,46 +1,35 @@
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import ModuleCard from '../components/elements/ModuleCard'
-import { Inter } from 'next/font/google'
-import React, { useEffect, useState } from 'react'
+import DashboardLayout from '@/components/layouts/DashboardLayout';
+import ModuleCard from '../components/elements/ModuleCard';
+import { Inter } from 'next/font/google';
+import React, { useEffect, useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import { error } from 'console';
-import CreateModuleModal from '@/components/elements/CreateModuleModal'
-import DeleteModuleModal from '@/components/elements/DeleteModuleModal'
+import CreateModuleModal from '@/components/elements/CreateModuleModal';
+import DeleteModuleModal from '@/components/elements/DeleteModuleModal';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const inter = Inter({ subsets: ['latin'] })
 
-interface Module {
+export type Module = {
     moduleId: number;
     moduleSubtitle: string;
     moduleName: string;
     moduleDescription: string;
 }
 
-export default function MainDashboard(){
+export const getServerSideProps: GetServerSideProps<{
+    data: [Module]
+}> = async () => {
+    const response = await fetch("http://localhost:8080/api/Modules"); // Fetch data from backend endpoint
+        const data = await response.json();
+          return {props: { data } }
+}
+
+export default function MainDashboard( { data }: InferGetServerSidePropsType<typeof getServerSideProps>){
 
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const [openCreateModuleModal, setOpenCreateModuleModal] = useState(false);
     const [openDeleteModuleModal, setOpenDeleteModuleModal] = useState(false);
-    const [moduleData, setModuleData] = useState<Module[]>([]);
-
-    useEffect(() => {
-        fetchModules();
-      }, []);
-
-      const fetchModules = async () => {
-        try {
-          const response = await fetch("http://localhost:8080/api/Modules"); // Fetch data from backend endpoint
-          // If successful, adds the modules to "modules"
-          if (response.ok) {
-            const modules = await response.json();
-            setModuleData(modules);
-          } else {
-            throw new Error("Error fetching module data");
-          }
-        } catch (error) {
-          console.error("Error fetching module data", error)
-        }
-      }
 
     return (
         <DashboardLayout>
@@ -65,8 +54,8 @@ export default function MainDashboard(){
                 </div>
                 
                 <div>
-                    {moduleData.length > 0 ? (
-                        moduleData.map((module) => (
+                    {data.length > 0 ? (
+                        data.map((module) => (
                         <div className="mb-5" key={module.moduleId}>
                             {/* Card */}
                             <ModuleCard
@@ -88,7 +77,7 @@ export default function MainDashboard(){
             </div>
             {/* Modals */}
         <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-        <CreateModuleModal open={openCreateModuleModal} onClose={() => setOpenCreateModuleModal(false)} subtitle={''} title={''} description={''} />
+        <CreateModuleModal open={openCreateModuleModal} onClose={() => setOpenCreateModuleModal(false)} moduleSubtitle={''} moduleName={''} moduleDescription={''} />
         <DeleteModuleModal open={openDeleteModuleModal} onClose={() => setOpenDeleteModuleModal(false)} />
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}

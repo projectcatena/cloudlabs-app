@@ -49,7 +49,7 @@ export default function ModuleCard({ subtitle, title, description, href, moduleI
             </div>
         </div>
 
-        <EditModuleModal open={openEditModuleModal} onClose={() => setOpenEditModuleModal(false)} subtitle={''} title={''} description={''} moduleId={moduleId} />
+        <EditModuleModal open={openEditModuleModal} onClose={() => setOpenEditModuleModal(false)} moduleSubtitle={''} moduleName={''} moduleDescription={''} moduleId={moduleId} />
         </>
     )
 }
