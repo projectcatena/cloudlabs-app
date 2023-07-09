@@ -26,7 +26,8 @@ type Image = {
 // Get initial data while on server
 export const getServerSideProps: GetServerSideProps<{
     initialData: [Image],
-    userData: string
+    userData: string,
+    jwt: string
 }> = async (context) => {
 
     const jwt = context.req.cookies["jwt"]
@@ -52,7 +53,8 @@ export const getServerSideProps: GetServerSideProps<{
         return {
             props: {
                 initialData,
-                userData
+                userData,
+                jwt
             }
         }
     }
@@ -68,6 +70,7 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Images({
     initialData,
     userData,
+    jwt,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const [isAddImageModalOpen, setAddImageModalOpen] = useState(false);
@@ -79,7 +82,15 @@ export default function Images({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/image/list")
+        fetch("http://localhost:8080/api/image/list", {
+            credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+                "Authorization": "Bearer " + jwt,
+            },
+        })
             .then(res => {
                 if (res.ok) {
                     return res.json();
@@ -251,6 +262,7 @@ export default function Images({
                                                         imageStatus={image.imageStatus}
                                                         creationTimestamp={image.creationTimestamp}
                                                         handleRefresh={handleRefresh}
+                                                        jwt={jwt}
                                                     ></ImageTableRow>
                                                 ))
                                             }
@@ -295,7 +307,7 @@ export default function Images({
             {/* End Table Section */}
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
-            <AddImageModal open={isAddImageModalOpen} onClose={() => setAddImageModalOpen(false)}></AddImageModal>
+            <AddImageModal jwt={jwt} open={isAddImageModalOpen} onClose={() => setAddImageModalOpen(false)}></AddImageModal>
         </DashboardLayout>
     )
 }

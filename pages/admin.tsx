@@ -5,7 +5,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types
 import { Fragment, useEffect, useState } from "react";
 
 import UserTableRow from '@/components/elements/UserTableRow';
-import authService, { checkLoggedIn } from '@/services/auth.service';
+import { ROLES, checkLoggedIn, getUser } from '@/services/auth.service';
 import DashboardLayout from "../components/layouts/DashboardLayout";
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,48 +30,53 @@ const ERole = [
 
 export const getServerSideProps: GetServerSideProps<{
     initialData: [User],
-    token: string
+    token: string,
+    userData: string
 }> = async (context) => {
     const token = context.req.cookies["jwt"];
 
     if (typeof token === "string") {
+        if (checkLoggedIn(ROLES.ADMIN, token)) {
 
-        const res = await fetch("http://localhost:8080/api/admin/list", {
-            method: "GET",
-            //credentials: "include",
-            headers: {
-                "Authorization": "Bearer " + token,
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*"
-            },
-        });
-        if (!res.ok) {
-            console.log(res);
-            throw new Error("Unable to retrieve data");
+            const user = getUser(token);
+            const userData = JSON.parse(JSON.stringify(user));
+
+            const res = await fetch("http://localhost:8080/api/admin/list", {
+                method: "GET",
+                //credentials: "include",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+            });
+            if (!res.ok) {
+                console.log(res);
+                throw new Error("Unable to retrieve data");
+            }
+            const initialData: [User] = await res.json();
+            console.log(initialData);
+
+            return { props: { initialData, token, userData } }
         }
-        const initialData: [User] = await res.json();
-        console.log(initialData);
-
-        return { props: { initialData, token } }
     }
 
     return {
         redirect: {
             permanent: false,
-            destination: "/maindashboard",
+            destination: "/dashboard",
         },
     }
 }
 
 export default function Admin({
-    initialData, token
+    initialData, token, userData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-    const router = useRouter();
+    const user = JSON.parse(JSON.stringify(userData));
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [data, setData] = useState<User[]>(initialData);
-    //console.log(data);
 
     const [email, setEmail]: any = useState(
         data.map((user: User, index) => {
@@ -79,21 +84,13 @@ export default function Admin({
                 return (user.email);
             }
         }));
-    //console.log(email);
+
     const [role, setRole]: any = useState('USER');
-    //console.log(role);
+
     useEffect(() => {
-        //setLoading(true)
-        //let token = getCookie(context);
-        const authStatus = checkLoggedIn(authService.Roles.admin.toString(), token);
-        if (authStatus) {
-            fetchContent(token)
-            //setLoading(false)
-        }
-        else {
-            router.push("/login");
-        }
+        fetchContent(token)
     }, []);
+
     async function fetchContent(token: string) {
         setIsRefresh(true);
 
@@ -222,7 +219,7 @@ export default function Admin({
     }
 
     return (
-        <DashboardLayout>
+        <DashboardLayout user={user}>
             {/* ========== MAIN CONTENT ========== */}
             {/* Content */}
             <div className="w-full pt-10 pb-5 px-4 space-y-4 sm:px-6 md:px-8 lg:pl-72">

@@ -9,12 +9,12 @@ export class LoginResponse {
 
 export class User {
     username: string;
-    role: string[];
+    roles: string[];
     email: string;
 
-    constructor(username: string, role: string[], email: string) {
+    constructor(username: string, roles: string[], email: string) {
         this.username = username;
-        this.role = role;
+        this.roles = roles;
         this.email = email;
     }
 }

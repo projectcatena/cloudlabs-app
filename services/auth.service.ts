@@ -1,9 +1,9 @@
 import { User } from "@/entity/entity";
 
-enum Roles {
-    admin = "ADMIN",
-    tutor = "TUTOR",
-    user = "USER"
+enum ROLES {
+    ADMIN = "ADMIN",
+    TUTOR = "TUTOR",
+    USER = "USER"
 }
 
 function parseToken(token: string) {
@@ -14,10 +14,9 @@ function parseToken(token: string) {
 
 function checkLoggedIn(acceptedRole: string, token: string) {
     try {
-        let payload = parseToken(token);
 
-        let role: string[] = payload["roles"].split(" ");
-        let roleAuth = checkRole(role, acceptedRole);
+        let payload = parseToken(token);
+        let roleAuth = checkRole(token, acceptedRole);
 
         if (roleAuth) {
             return payload["exp"] && payload["exp"] > Date.now() / 1000;
@@ -33,19 +32,18 @@ function getUser(token: string) {
 
     let username = payload["sub"];
     let email = payload["email"];
-    let role: string[] = payload["roles"].split(" ");
-    let user = new User(username, role, email);
+    let roles: string[] = payload["roles"].split(" ");
+    let user = new User(username, roles, email);
+    console.log(user);
 
     return user;
 }
 
-function checkRole(role: string[], acceptRole: string) {
-    for (var i in role) {
-        if (role[i] == acceptRole) {
-            return true
-        }
-    }
-    return false;
+function checkRole(jwt: string, acceptRole: string) {
+    let payload = parseToken(jwt);
+    let roles: string[] = payload["roles"].split(" ");
+
+    return roles.some((item) => item === acceptRole);
 }
 
 async function signout() {
@@ -66,13 +64,13 @@ async function signout() {
 const authService = {
     checkLoggedIn,
     checkRole,
-    Roles,
+    ROLES,
     signout,
     getUser
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, signout, getUser
+    ROLES, checkLoggedIn, checkRole, signout, getUser
 };
 
 export default authService;

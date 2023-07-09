@@ -1,4 +1,5 @@
-import authService from '@/services/auth.service'
+import { User } from '@/entity/entity'
+import authService, { ROLES } from '@/services/auth.service'
 import { Dialog } from '@headlessui/react'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
@@ -7,11 +8,10 @@ import { useState } from 'react'
 const inter = Inter({ subsets: ['latin'] })
 
 type SidebarProps = {
-    username: string,
-    email: string,
+    user: User
 }
 
-export default function Sidebar({ username, email }: SidebarProps) {
+export default function Sidebar({ user }: SidebarProps) {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
     return (
@@ -80,6 +80,47 @@ export default function Sidebar({ username, email }: SidebarProps) {
                                         Images
                                     </Link>
                                 </li>
+                                {
+                                    user.roles.some((e) => e == ROLES.ADMIN) ?
+                                        <>
+
+                                            <li>
+                                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/admin">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                    </svg>
+                                                    Admin
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/admin">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                    </svg>
+                                                    Users
+                                                </Link>
+                                            </li>
+                                        </>
+                                        :
+                                        <></>
+                                }
+
+                                {
+                                    user.roles.some((e) => e == ROLES.TUTOR) ?
+                                        <>
+                                            <li>
+                                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/users">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                    </svg>
+                                                    Users
+                                                </Link>
+                                            </li>
+                                        </>
+                                        :
+                                        <></>
+
+                                }
                             </ul>
                         </nav>
                     </div>
@@ -90,8 +131,8 @@ export default function Sidebar({ username, email }: SidebarProps) {
                                 <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                             </svg>
                             <div className="text-sm truncate ">
-                                <p>{username}</p>
-                                <p className="text-slate-700 dark:text-slate-400 truncate ">{email}</p>
+                                <p>{user.username}</p>
+                                <p className="text-slate-700 dark:text-slate-400 truncate ">{user.email}</p>
                             </div>
                         </Link>
                         <div className="px-4 w-full">
@@ -137,6 +178,47 @@ export default function Sidebar({ username, email }: SidebarProps) {
                                     Images
                                 </Link>
                             </li>
+                            {
+                                user.roles.some((e) => e == ROLES.ADMIN) ?
+                                    <>
+
+                                        <li>
+                                            <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/admin">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                </svg>
+                                                Admin
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/users">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                </svg>
+                                                Users
+                                            </Link>
+                                        </li>
+                                    </>
+                                    :
+                                    <></>
+
+                            }
+                            {
+                                user.roles.some((e) => e == ROLES.TUTOR) ?
+                                    <>
+                                        <li>
+                                            <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/users">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                </svg>
+                                                Users
+                                            </Link>
+                                        </li>
+                                    </>
+                                    :
+                                    <></>
+
+                            }
                             {/* <li className="hs-accordion" id="users-accordion">
                         <a className="hs-accordion-toggle flex items-center gap-x-3.5 py-2 px-2.5 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent text-sm text-slate-700 rounded-md hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:hs-accordion-active:text-white" href="javascript:;">
                             <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -324,8 +406,8 @@ export default function Sidebar({ username, email }: SidebarProps) {
                             <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                         </svg>
                         <div className="text-sm truncate ">
-                            <p>{username}</p>
-                            <p className="text-slate-700 dark:text-slate-400 truncate ">{email}</p>
+                            <p>{user.username}</p>
+                            <p className="text-slate-700 dark:text-slate-400 truncate ">{user.email}</p>
                         </div>
                     </Link>
                     <div className="px-4 w-full">

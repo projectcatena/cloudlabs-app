@@ -5,7 +5,9 @@ import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { getUser } from '@/services/auth.service';
+import { ROLES, getUser } from '@/services/auth.service';
+import { checkRole } from '@/services/auth.service';
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -93,9 +95,15 @@ export default function ModuleDashboard({
                             Destroy All
                         </a>
                         {/* TODO: Implement RBAC such that only tutors can Create VM */}
-                        <button onClick={() => setOpenCreateVirtualMachineModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                            Create VM
-                        </button>
+                        {
+                            checkRole(jwt, ROLES.TUTOR) ?
+                                <button onClick={() => setOpenCreateVirtualMachineModal(true)} className={`w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800`}>
+                                    Create VM
+                                </button>
+                                :
+                                <></>
+
+                        }
                         {/* <a className="w-full sm:w-auto inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold text-blue-500 hover:text-blue-700 focus:outline-none focus:ring-2 ring-offset-gray-50 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm py-3 px-4 dark:ring-offset-slate-900" href="../examples.html">
                     <svg className="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <path d="M11.2792 1.64001L5.63273 7.28646C5.43747 7.48172 5.43747 7.79831 5.63273 7.99357L11.2792 13.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -127,17 +135,32 @@ export default function ModuleDashboard({
                     </div>
 
                     <div className="mt-5 grid sm:flex gap-2">
-                        <button onClick={() => setOpenCreateVirtualMachineModal(true)} type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
-                            Create a compute instance
-                        </button>
-                        {/* <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
-                        Contact your Teacher
-                    </button> */}
+                        {
+                            checkRole(jwt, ROLES.TUTOR) ?
+
+                                <button onClick={() => setOpenCreateVirtualMachineModal(true)} type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                                    Create a compute instance
+                                </button>
+                                :
+
+                                <Link
+                                    href="#"
+                                    onClick={(e) => {
+                                        window.location.href = "mailto:Contact_ICT@np.edu.sg";
+                                        e.preventDefault();
+                                    }}
+                                    type="button"
+                                    className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
+                                >
+                                    Contact your Teacher
+                                </Link>
+
+                        }
                     </div>
                 </div>
                 {
                     data.map((computeInstance, key) => {
-                        return (<VirtualMachineCard key={key} computeInstance={computeInstance}></VirtualMachineCard>)
+                        return (<VirtualMachineCard key={key} jwt={jwt} computeInstance={computeInstance}></VirtualMachineCard>)
                     })
                 }
                 {/* End of Card */}

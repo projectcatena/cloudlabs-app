@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import authService, { checkLoggedIn } from "./services/auth.service";
+import { ROLES, checkLoggedIn } from "./services/auth.service";
 
 export function middleware(request: NextRequest) {
   // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   console.log(token);
 
   if (token != null) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token.value);
+    const authStatus = checkLoggedIn(ROLES.USER, token.value);
     if (authStatus) {
       return NextResponse.next();
     }

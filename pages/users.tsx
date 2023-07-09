@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { getUser } from "@/services/auth.service";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Inter } from 'next/font/google';
 import Head from "next/head";
@@ -24,7 +25,7 @@ export default function Users({
     token
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-    const [user, setUser] = useState();
+    const user = getUser(token);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -50,7 +51,7 @@ export default function Users({
                 <title>Users</title>
             </Head>
 
-            <DashboardLayout>
+            <DashboardLayout user={user}>
                 <div className="w-full pt-10 px-4 space-y-4 sm:px-6 md:px-8 lg:pl-72">
                     {/* Page Header */}
                     <div >

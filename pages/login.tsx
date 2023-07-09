@@ -1,4 +1,4 @@
-import authService, { checkLoggedIn } from '@/services/auth.service'
+import { ROLES, checkLoggedIn } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -13,12 +13,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = context.req.cookies["jwt"];
 
   if (token) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token);
+    const authStatus = checkLoggedIn(ROLES.USER, token);
     if (authStatus) {
       return {
         redirect: {
           permanent: false,
-          destination: "/maindashboard",
+          destination: "/dashboard",
         },
       }
     }
