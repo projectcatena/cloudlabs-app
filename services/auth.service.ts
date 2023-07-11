@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from "next";
+import { AuthUser, useAuth } from "@/contexts/AuthContext";
 
 enum Roles {
     admin = "ADMIN",
@@ -6,17 +6,34 @@ enum Roles {
     user = "USER"
 }
 
+export function parseToken(jwt: string) {
+
+    let payload: any = jwt.split(".")[1];
+    payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+
+    let role: string[] = payload["roles"].split(" ");
+
+    const user: AuthUser = {
+        email: payload["email"],
+        name: payload["sub"],
+        roles: role,
+        jwt: jwt,
+        expiration: payload["exp"]
+    }
+
+    return user;
+}
+
 function checkLoggedIn(acceptedRole: string, token: string) {
     try {
 
-        let payload: any = token.split(".")[1];
-        payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+        const user = parseToken(token);
 
-        let role: string[] = payload["roles"].split(" ");
-        let roleAuth = checkRole(role, acceptedRole);
+        let roleAuth = checkRole(user.roles, acceptedRole);
 
         if (roleAuth) {
-            return payload["exp"] && payload["exp"] > Date.now() / 1000;
+            return user.expiration && parseInt(user.expiration) > Date.now() / 1000;
+            // return payload["exp"] && payload["exp"] > Date.now() / 1000;
         }
 
     } catch (e) {
@@ -44,8 +61,9 @@ async function signout() {
         },
     }).then(function(response) {
         return response.json();
-    })
-
+    }).finally(() => {
+        localStorage.removeItem('user');
+    });
 }
 
 const authService = {

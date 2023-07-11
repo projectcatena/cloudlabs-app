@@ -1,4 +1,5 @@
-import authService, { checkLoggedIn } from '@/services/auth.service'
+import { AuthUser, useAuth } from '@/contexts/AuthContext'
+import authService, { checkLoggedIn, parseToken } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -18,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/maindashboard",
+          destination: "/users",
         },
       }
     }
@@ -29,6 +30,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
 export default function Login() {
+  const authContext = useAuth();
+
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
   const router = useRouter();
@@ -62,13 +65,25 @@ export default function Login() {
         "Access-Control-Allow-Headers": "*"
       },
       body: data
-    }).then(function(response) {
-
-      router.push("/module");
+    }).then((response) => {
 
       return response.json();
 
-    })
+    }).then((data) => {
+
+      // Returned data is a jwt token
+      const user: AuthUser = parseToken(data["jwt"]);
+      console.log(data["jwt"]);
+      console.log(user.email);
+
+      authContext.setUser(user);
+
+      localStorage.setItem('user', JSON.stringify(user));
+
+    }).finally(() => {
+      router.push('/users');
+    });
+
   }
 
   return (
