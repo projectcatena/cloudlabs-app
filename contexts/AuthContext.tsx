@@ -1,10 +1,15 @@
 import { SetStateAction, createContext, useContext, useEffect, useState } from "react";
 
+export type Role = {
+  id: number,
+  name: string
+}
+
 export type AuthUser = {
   email: string,
-  name: string,
-  jwt: string,
-  roles: string[],
+  username: string,
+  fullname: string,
+  roles: Role[],
   expiration: string
 }
 

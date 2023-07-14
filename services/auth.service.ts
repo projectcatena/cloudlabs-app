@@ -1,25 +1,22 @@
-import { AuthUser, useAuth } from "@/contexts/AuthContext";
-
-enum Roles {
-    admin = "ADMIN",
-    tutor = "TUTOR",
-    user = "USER"
-}
+import { AuthUser, Role, useAuth } from "@/contexts/AuthContext";
 
 export function parseToken(jwt: string) {
 
     let payload: any = jwt.split(".")[1];
     payload = JSON.parse(Buffer.from(payload, 'base64').toString());
 
-    let role: string[] = payload["roles"].split(" ");
+    // let role: Role[] = payload["roles"].split(" ");
+    let role: Role[] = payload["roles"];
 
     const user: AuthUser = {
-        email: payload["email"],
-        name: payload["sub"],
+        email: payload["sub"],
+        fullname: payload["fullname"],
+        username: payload["username"],
         roles: role,
-        jwt: jwt,
         expiration: payload["exp"]
     }
+
+    console.log(user);
 
     return user;
 }
@@ -41,9 +38,9 @@ function checkLoggedIn(acceptedRole: string, token: string) {
     }
 }
 
-function checkRole(role: string[], acceptRole: string) {
+function checkRole(role: Role[], acceptRole: string) {
     for (var i in role) {
-        if (role[i] == acceptRole) {
+        if (role[i].name == acceptRole) {
             return true
         }
     }
@@ -69,12 +66,11 @@ async function signout() {
 const authService = {
     checkLoggedIn,
     checkRole,
-    Roles,
     signout
 };
 
 export {
-    Roles, checkLoggedIn, checkRole, signout
+    checkLoggedIn, checkRole, signout
 };
 
 export default authService;

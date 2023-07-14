@@ -6,10 +6,8 @@ export function middleware(request: NextRequest) {
   // Getting cookies from the request using the `RequestCookies` API
   let token = request.cookies.get('jwt');
 
-  console.log(token);
-
   if (token != null) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token.value);
+    const authStatus = checkLoggedIn("USER", token.value);
     if (authStatus) {
       return NextResponse.next();
     }

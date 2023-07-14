@@ -29,7 +29,6 @@ export const getServerSideProps: GetServerSideProps<{
             "content-type": "application/x-www-form-urlencoded",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
-            "Authorization": "Bearer " + jwt,
         },
     }).then(function(response) {
         return response.json();

@@ -47,24 +47,29 @@ export default function Login() {
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-    let params = {
+    /* let params = {
+      email,
+      password
+    }; */
+
+    /* const data = Object.entries(params)
+      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+      .join('&'); */
+
+    const data = {
       email,
       password
     };
 
-    const data = Object.entries(params)
-      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-      .join('&');
-
-    const res = await fetch("http://localhost:8080/api/login", {
+    const res = await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
       headers: {
-        "content-type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "*"
       },
-      body: data
+      body: JSON.stringify(data)
     }).then((response) => {
 
       return response.json();
