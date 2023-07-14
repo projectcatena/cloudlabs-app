@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = context.req.cookies["jwt"];
 
   if (token) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token);
+    const authStatus = checkLoggedIn("USER", token);
     if (authStatus) {
       return {
         redirect: {
