@@ -1,14 +1,19 @@
+import { useAtom } from "jotai";
 import { useState } from "react";
+import { snapshotAtom } from "./Atoms/atoms";
 import SnapshotModal from "./SnapshotModal";
+
 
 type DropdownProps = {
         instanceName: string
+        //snapshotData: [Snapshots]
 }
 
 export default function Dropdown({ instanceName } : DropdownProps) {
     const [dropdown, setDropdown] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
     const [openModal, setOpenModal] = useState(false);
+    const [snapshotListData, setSnapshotListData] = useAtom(snapshotAtom);
 
     async function handleDelete() {
 
@@ -37,6 +42,24 @@ export default function Dropdown({ instanceName } : DropdownProps) {
             console.log("Error:", error);
         }
     }
+
+    async function loadSnapshotData() {
+        const response = await fetch("http://localhost:8080/api/snapshot/list", {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+            }
+        });
+        if (!response.ok) {
+            throw new Error("Unable to fetch snapshots");
+        }
+        const return_data = await response.json();
+        //setData(return_data);
+        //console.log(return_data);
+        setSnapshotListData(return_data);
+        return return_data;
+    }
         
     return (
         <div className="hs-dropdown relative inline-flex w-full">
@@ -63,12 +86,13 @@ export default function Dropdown({ instanceName } : DropdownProps) {
                     <button onClick={handleDelete} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         Destroy
                     </button>
-                    <button onClick={() => setOpenModal((prev) => !prev)} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                    <button onClick={() => {loadSnapshotData(); setOpenModal((prev) => !prev)}} className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-md text-sm text-gray-800 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         Snapshot
                     </button>
                 </div>
             </div>
             {/* Modal */}
+            
             <SnapshotModal open={openModal} onClose={() => setOpenModal((prev) => !prev)} instanceName={instanceName} />
     </div>
     )

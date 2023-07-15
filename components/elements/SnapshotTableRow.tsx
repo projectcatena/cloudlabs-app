@@ -2,7 +2,7 @@
 type SnapshotProps = {
     //id: number,
     name: string,
-    zone: string,
+    description: string,
     //roles: Role[],
     //handleRefresh: () => void
 }
@@ -35,10 +35,12 @@ const SnapshotTableRow = (props: SnapshotProps) => {
                 </div>
             </td>
             */}
-            <td className="h-px w-72 whitespace-nowrap">
+            <td className="h-px w-px whitespace-nowrap">
             <div className="px-6 py-3">
-                {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                <span className="block text-sm text-gray-500">{props.name}</span>
+                {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
+                <span className="text-sm text-gray-500">
+                    {props.name}
+                </span>
             </div>
             </td>
             {/* 
@@ -93,10 +95,11 @@ const SnapshotTableRow = (props: SnapshotProps) => {
             <div className="px-6 py-3">
                 {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
                 <span className="text-sm text-gray-500">
-                    {props.zone}
+                    {props.description}
                 </span>
             </div>
             </td>
+            {/*
             <td className="h-px w-px whitespace-nowrap">
             <div className="px-6 py-3">
                 {/* 
@@ -109,9 +112,9 @@ const SnapshotTableRow = (props: SnapshotProps) => {
                             </span>
                         )
                 })}
-                */}
             </div>
             </td>
+            */}
         </tr>
     </>
     )
