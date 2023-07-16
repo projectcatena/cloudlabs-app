@@ -1,9 +1,29 @@
 import { AuthUser, useAuth } from '@/contexts/AuthContext'
-import { parseToken } from '@/services/auth.service'
+import { checkLoggedIn, parseToken } from '@/services/auth.service'
+import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const token = context.req.cookies["jwt"];
+
+  if (token) {
+    const authStatus = checkLoggedIn("USER", token);
+    if (authStatus) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/maindashboard",
+        },
+      }
+    }
+  }
+
+  return { props: {} }
+}
 
 const inter = Inter({ subsets: ['latin'] })
 export default function SignUp() {

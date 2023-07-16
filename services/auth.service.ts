@@ -49,7 +49,7 @@ function checkRole(role: Role[], acceptRole: string) {
 
 async function signout() {
 
-    const res = await fetch("http://localhost:8080/api/signout", {
+    const res = await fetch("http://localhost:8080/api/auth/signout", {
         method: "POST",
         credentials: "include", // please include this in every request to backend
         headers: {
