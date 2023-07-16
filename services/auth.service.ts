@@ -1,22 +1,36 @@
-import { GetServerSidePropsContext } from "next";
+import { AuthUser, Role } from "@/contexts/AuthContext";
 
-enum Roles {
-    admin = "ADMIN",
-    tutor = "TUTOR",
-    user = "USER"
+export function parseToken(jwt: string) {
+
+    let payload: any = jwt.split(".")[1];
+    payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+
+    // let role: Role[] = payload["roles"].split(" ");
+    let role: Role[] = payload["roles"];
+
+    const user: AuthUser = {
+        email: payload["sub"],
+        fullname: payload["fullname"],
+        username: payload["username"],
+        roles: role,
+        expiration: payload["exp"]
+    }
+
+    console.log(user);
+
+    return user;
 }
 
-function checkLoggedIn(acceptedRole: string, token: string) {
+export function isLogin(acceptedRole: string, token: string) {
     try {
 
-        let payload: any = token.split(".")[1];
-        payload = JSON.parse(Buffer.from(payload, 'base64').toString());
+        const user = parseToken(token);
 
-        let role: string[] = payload["roles"].split(" ");
-        let roleAuth = checkRole(role, acceptedRole);
+        let roleAuth = isRoleValid(user.roles, acceptedRole);
 
         if (roleAuth) {
-            return payload["exp"] && payload["exp"] > Date.now() / 1000;
+            return user.expiration && parseInt(user.expiration) > Date.now() / 1000;
+            // return payload["exp"] && payload["exp"] > Date.now() / 1000;
         }
 
     } catch (e) {
@@ -24,18 +38,18 @@ function checkLoggedIn(acceptedRole: string, token: string) {
     }
 }
 
-function checkRole(role: string[], acceptRole: string) {
+export function isRoleValid(role: Role[], acceptRole: string) {
     for (var i in role) {
-        if (role[i] == acceptRole) {
+        if (role[i].name == acceptRole) {
             return true
         }
     }
     return false;
 }
 
-async function signout() {
+export async function signOut() {
 
-    const res = await fetch("http://localhost:8080/api/signout", {
+    const res = await fetch("http://localhost:8080/api/auth/signout", {
         method: "POST",
         credentials: "include", // please include this in every request to backend
         headers: {
@@ -44,19 +58,7 @@ async function signout() {
         },
     }).then(function(response) {
         return response.json();
-    })
-
+    }).finally(() => {
+        localStorage.removeItem('user');
+    });
 }
-
-const authService = {
-    checkLoggedIn,
-    checkRole,
-    Roles,
-    signout
-};
-
-export {
-    Roles, checkLoggedIn, checkRole, signout
-};
-
-export default authService;

@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { useAuth } from "@/contexts/AuthContext";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Inter } from 'next/font/google';
 import Head from "next/head";
@@ -23,9 +24,9 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Users({
     token
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
-    const [user, setUser] = useState();
+    const authContext = useAuth();
     const [loading, setLoading] = useState(true);
+    console.log(authContext);
 
     useEffect(() => {
         setLoading(true)

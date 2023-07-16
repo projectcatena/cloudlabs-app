@@ -1,4 +1,5 @@
-import authService, { checkLoggedIn } from '@/services/auth.service'
+import { AuthUser, useAuth } from '@/contexts/AuthContext'
+import { isLogin, parseToken } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
@@ -13,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = context.req.cookies["jwt"];
 
   if (token) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token);
+    const authStatus = isLogin("USER", token);
     if (authStatus) {
       return {
         redirect: {
@@ -29,6 +30,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 
 export default function Login() {
+  const authContext = useAuth();
+
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
   const router = useRouter();
@@ -44,31 +47,48 @@ export default function Login() {
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-    let params = {
+    /* let params = {
+      email,
+      password
+    }; */
+
+    /* const data = Object.entries(params)
+      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+      .join('&'); */
+
+    const data = {
       email,
       password
     };
 
-    const data = Object.entries(params)
-      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-      .join('&');
-
-    const res = await fetch("http://localhost:8080/api/login", {
+    const res = await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
       headers: {
-        "content-type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "*"
       },
-      body: data
-    }).then(function(response) {
-
-      router.push("/module");
+      body: JSON.stringify(data)
+    }).then((response) => {
 
       return response.json();
 
-    })
+    }).then((data) => {
+
+      // Returned data is a jwt token
+      const user: AuthUser = parseToken(data["jwt"]);
+      console.log(data["jwt"]);
+      console.log(user.email);
+
+      authContext.setUser(user);
+
+      localStorage.setItem('user', JSON.stringify(user));
+
+    }).finally(() => {
+      router.push('/users');
+    });
+
   }
 
   return (

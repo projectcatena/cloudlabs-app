@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import authService, { checkLoggedIn } from "./services/auth.service";
+import { isLogin } from "./services/auth.service";
 
 export function middleware(request: NextRequest) {
   // Assume a "Cookie:nextjs=fast" header to be present on the incoming request
   // Getting cookies from the request using the `RequestCookies` API
   let token = request.cookies.get('jwt');
 
-  console.log(token);
-
   if (token != null) {
-    const authStatus = checkLoggedIn(authService.Roles.user.toString(), token.value);
+    const authStatus = isLogin("USER", token.value);
     if (authStatus) {
       return NextResponse.next();
     }
