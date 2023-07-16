@@ -5,8 +5,8 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types
 import { Fragment, useEffect, useState } from "react";
 
 import UserTableRow from '@/components/elements/UserTableRow';
-import authService, { checkLoggedIn } from '@/services/auth.service';
 import DashboardLayout from "../components/layouts/DashboardLayout";
+import { isLogin } from '@/services/auth.service';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -85,7 +85,7 @@ export default function Admin({
     useEffect(() => {
         //setLoading(true)
         //let token = getCookie(context);
-        const authStatus = checkLoggedIn(authService.Roles.admin.toString(), token);
+        const authStatus = isLogin("ADMIN", token);
         if (authStatus) {
             fetchContent(token)
             //setLoading(false)
