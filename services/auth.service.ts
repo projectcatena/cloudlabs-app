@@ -1,4 +1,4 @@
-import { AuthUser, Role, useAuth } from "@/contexts/AuthContext";
+import { AuthUser, Role } from "@/contexts/AuthContext";
 
 export function parseToken(jwt: string) {
 
@@ -21,12 +21,12 @@ export function parseToken(jwt: string) {
     return user;
 }
 
-function checkLoggedIn(acceptedRole: string, token: string) {
+export function isLogin(acceptedRole: string, token: string) {
     try {
 
         const user = parseToken(token);
 
-        let roleAuth = checkRole(user.roles, acceptedRole);
+        let roleAuth = isRoleValid(user.roles, acceptedRole);
 
         if (roleAuth) {
             return user.expiration && parseInt(user.expiration) > Date.now() / 1000;
@@ -38,7 +38,7 @@ function checkLoggedIn(acceptedRole: string, token: string) {
     }
 }
 
-function checkRole(role: Role[], acceptRole: string) {
+export function isRoleValid(role: Role[], acceptRole: string) {
     for (var i in role) {
         if (role[i].name == acceptRole) {
             return true
@@ -47,7 +47,7 @@ function checkRole(role: Role[], acceptRole: string) {
     return false;
 }
 
-async function signout() {
+export async function signOut() {
 
     const res = await fetch("http://localhost:8080/api/auth/signout", {
         method: "POST",
@@ -62,15 +62,3 @@ async function signout() {
         localStorage.removeItem('user');
     });
 }
-
-const authService = {
-    checkLoggedIn,
-    checkRole,
-    signout
-};
-
-export {
-    checkLoggedIn, checkRole, signout
-};
-
-export default authService;

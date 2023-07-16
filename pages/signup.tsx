@@ -1,5 +1,5 @@
 import { AuthUser, useAuth } from '@/contexts/AuthContext'
-import { checkLoggedIn, parseToken } from '@/services/auth.service'
+import { isLogin, parseToken } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = context.req.cookies["jwt"];
 
   if (token) {
-    const authStatus = checkLoggedIn("USER", token);
+    const authStatus = isLogin("USER", token);
     if (authStatus) {
       return {
         redirect: {

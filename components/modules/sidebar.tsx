@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext'
-import authService from '@/services/auth.service'
+import { signOut } from '@/services/auth.service'
 import { Dialog } from '@headlessui/react'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ export default function Sidebar() {
     const authContext = useAuth();
 
     function handleLogout() {
-        authService.signout();
+        signOut();
         authContext.setUser(null);
     }
 
