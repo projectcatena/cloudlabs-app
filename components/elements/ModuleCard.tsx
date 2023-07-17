@@ -4,6 +4,7 @@ import EditModuleModal from '@/components/elements/EditModuleModal'
 import DashboardLayout from '../layouts/DashboardLayout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { AuthProvider, useAuth, Role } from '@/contexts/AuthContext';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,6 +20,11 @@ interface CardProps {
 export default function ModuleCard({ subtitle, title, description, href, moduleId }: CardProps) {
 
     const [openEditModuleModal, setOpenEditModuleModal] = useState(false);
+
+    const { user } = useAuth();
+    const userRoles: Role[] = user?.roles || [];
+
+    const canEditModule = userRoles.some(role => role.name === 'ADMIN' || role.name === 'TUTOR');
 
     return (
         <>
@@ -40,9 +46,11 @@ export default function ModuleCard({ subtitle, title, description, href, moduleI
                     Enter Course
                 </Link>
                 
-                <button onClick={() => setOpenEditModuleModal(true)} type="button" className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-br-xl font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm sm:p-4 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
-                    Edit Module Details
-                </button>
+                {canEditModule && (
+                    <button onClick={() => setOpenEditModuleModal(true)} type="button" className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-br-xl font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm sm:p-4 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                        Edit Module Details
+                    </button>
+                )}
                 {/* <a className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-br-xl font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm sm:p-4 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800" href={href}>
                     Virtual Machines &gt;
                 </a> */}
