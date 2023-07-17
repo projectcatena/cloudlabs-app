@@ -19,8 +19,15 @@ export type Module = {
 
 export const getServerSideProps: GetServerSideProps<{
     data: [Module]
-}> = async () => {
-    const response = await fetch("http://localhost:8080/api/Modules"); // Fetch data from backend endpoint
+}> = async (context) => {
+    const response = await fetch("http://localhost:8080/api/Modules", {
+        credentials: "include",
+        headers: {
+            "cookie": context.req.headers.cookie!,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+        }
+    }); // Fetch data from backend endpoint
         const data = await response.json();
           return {props: { data } }
 }
