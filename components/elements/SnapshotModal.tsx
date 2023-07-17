@@ -46,7 +46,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
     const [showDeleteForm, setShowDeleteForm] = useState(false);
     const [showRevertForm, setShowRevertForm] = useState(false);
     const [showButton, setShowButton] = useState(true);
-    const diskName = instanceName;
+    //const instanceName = instanceName;
     const filter = "";
     const [snapshotListData, setSnapshotListData] = useAtom<Snapshots[]>(snapshotAtom);
 
@@ -115,13 +115,9 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         event.preventDefault()
         let params = {
         snapshotName,
-        diskName,
+        instanceName,
         description
         };
-
-        const data = Object.entries(params)
-            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-            .join('&');
     
         /* Get data from the form.
         const postData = {
@@ -135,13 +131,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                 method: "POST",
                 // Tell the server we're sending JSON.
                 headers: {
-                "content-type": "application/x-www-form-urlencoded",
+                "content-type": "application/json",
                 //"Authorization": "Bearer " + localStorage.getItem("token"),
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*",
                 },
                 // Body of the request is the JSON data we created above.
-                body: data,
+                body: JSON.stringify(params),
             });
 
             if (!response.ok) {
@@ -165,9 +161,6 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         let params = {
             snapshotName,
             };
-        const data = Object.entries(params)
-            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-            .join('&');
         /* Get data from the form.
         const postData = {
             snapshotName: snapshotName
@@ -180,13 +173,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                 method: "DELETE",
                 // Tell the server we're sending JSON.
                 headers: {
-                "content-type": "application/x-www-form-urlencoded",
+                "content-type": "application/json",
                 //"Authorization": "Bearer " + localStorage.getItem("token"),
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*",
                 },
                 // Body of the request is the JSON data we created above.
-                body: data,
+                body: JSON.stringify(params),
             });
 
             if (!response.ok) {
@@ -217,22 +210,18 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
 
             console.log(revert_params);
             
-            const revert_data = Object.entries(revert_params)
-                .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-                .join('&');
-            
             const res = await fetch("http://localhost:8080/api/snapshot/revert", {
             // POST request
             method: "POST",
             // Tell the server we're sending JSON.
             headers: {
-            "content-type": "application/x-www-form-urlencoded",
+            "content-type": "application/json",
             //"Authorization": "Bearer " + localStorage.getItem("token"),
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
             },
             // Body of the request is the JSON data we created above.
-            body: revert_data,
+            body: JSON.stringify(revert_params),
         });
 
         if (!res.ok) {
