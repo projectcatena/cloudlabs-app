@@ -7,7 +7,7 @@ import { error } from 'console';
 import CreateModuleModal from '@/components/elements/CreateModuleModal';
 import DeleteModuleModal from '@/components/elements/DeleteModuleModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { AuthProvider, useAuth, Role } from '@/contexts/AuthContext';
+import { useAuth, Role } from '@/contexts/AuthContext';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -43,8 +43,7 @@ export default function MainDashboard( { data }: InferGetServerSidePropsType<typ
     const { user } = useAuth();
     const userRoles: Role[] = user?.roles || [];
 
-    const canCreateModule = userRoles.some(role => role.name === 'ADMIN' || role.name === 'TUTOR');
-    const canDeleteModule = userRoles.some(role => role.name === 'ADMIN' || role.name === 'TUTOR');
+    const canCreateOrDeleteModule = userRoles.some(role => role.name === 'ADMIN' || role.name === 'TUTOR');
 
     return (
         <DashboardLayout>
@@ -56,16 +55,16 @@ export default function MainDashboard( { data }: InferGetServerSidePropsType<typ
                     <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Modules</h1>
                     <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access your different module&#39;s materials.</p>
                     <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:gap-3">
-                        {canCreateModule && (
-                            <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                            Add Module
-                            </button>
-                        )}
+                        {canCreateOrDeleteModule && (
+                            <>
+                                <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                                Add Module
+                                </button>
 
-                        {canDeleteModule && (
-                            <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                            Delete Module
-                            </button>
+                                <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                                Delete Module
+                                </button>
+                            </>
                         )}
 
                     </div>

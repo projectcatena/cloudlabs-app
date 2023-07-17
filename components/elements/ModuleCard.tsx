@@ -4,7 +4,7 @@ import EditModuleModal from '@/components/elements/EditModuleModal'
 import DashboardLayout from '../layouts/DashboardLayout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { AuthProvider, useAuth, Role } from '@/contexts/AuthContext';
+import { useAuth, Role } from '@/contexts/AuthContext';
 
 
 const inter = Inter({ subsets: ['latin'] })
