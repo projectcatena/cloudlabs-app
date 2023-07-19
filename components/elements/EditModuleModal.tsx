@@ -34,7 +34,9 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
 
     const fetchModules = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/api/Modules/${moduleId}`); // Fetch data from backend endpoint
+          const response = await fetch(`http://localhost:8080/api/Modules/${moduleId}`, {
+            credentials: "include",
+          }); // Fetch data from backend endpoint
           // If successful, adds the modules to "modules"
           if (response.ok) {
             const moduleDetails = await response.json();
@@ -74,6 +76,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
                 // The method is PUT because we are sending edited data.
                 method: "PUT",
                 // Tell the server we're sending JSON.
+                credentials: "include",
                 headers: {
                 'Content-Type': 'application/json',
                 },
