@@ -9,6 +9,7 @@ export function parseToken(jwt: string) {
     let role: Role[] = payload["roles"];
 
     const user: AuthUser = {
+        id: payload["id"],
         email: payload["sub"],
         fullname: payload["fullname"],
         username: payload["username"],
