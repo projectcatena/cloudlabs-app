@@ -85,9 +85,17 @@ export default function Login() {
 
       localStorage.setItem('user', JSON.stringify(user));
 
-    }).finally(() => {
-      router.push('/users');
-    });
+      if (isLogin("ADMIN", data["jwt"])){
+        router.push('/admin');
+      }
+      else if (isLogin("TUTOR", data["jwt"])) {
+        router.push("/users");
+      }
+      else {
+        router.push("/maindashboard");
+      }
+
+    })
 
   }
 
