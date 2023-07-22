@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { useAuth } from "@/contexts/AuthContext";
+import { AuthUser, useAuth } from "@/contexts/AuthContext";
+import { parseToken } from "@/services/auth.service";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Inter } from 'next/font/google';
 import Head from "next/head";
@@ -9,20 +10,27 @@ import { useEffect, useState } from 'react';
 const inter = Inter({ subsets: ['latin'] })
 
 export const getServerSideProps: GetServerSideProps<{
-    token: string
+    user: AuthUser
 }> = async (context) => {
 
-    const token = context.req.cookies["jwt"];
+    const user = parseToken(context.req.cookies["jwt"]!);
 
-    if (!token) {
-        throw new Error("cookie not found");
+    // Check if not TUTOR or ADMIN
+    if (!(user.isTutor || user.isAdmin)) {
+        return {
+            notFound: true,
+            /* redirect: {
+                permanent: false,
+                destination: '/error'
+            } */
+        }
     }
 
-    return { props: { token } };
+    return { props: { user } };
 }
 
 export default function Users({
-    token
+    user
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const authContext = useAuth();
     const [loading, setLoading] = useState(true);

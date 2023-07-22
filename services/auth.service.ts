@@ -13,10 +13,10 @@ export function parseToken(jwt: string) {
         fullname: payload["fullname"],
         username: payload["username"],
         roles: role,
-        expiration: payload["exp"]
+        expiration: payload["exp"],
+        isTutor: isRoleValid(role, "TUTOR"),
+        isAdmin: isRoleValid(role, "ADMIN")
     }
-
-    console.log(user);
 
     return user;
 }

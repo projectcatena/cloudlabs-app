@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/maindashboard",
+          destination: "/dashboard",
         },
       }
     }
@@ -47,14 +47,6 @@ export default function Login() {
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-    /* let params = {
-      email,
-      password
-    }; */
-
-    /* const data = Object.entries(params)
-      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-      .join('&'); */
 
     const data = {
       email,
@@ -78,8 +70,6 @@ export default function Login() {
 
       // Returned data is a jwt token
       const user: AuthUser = parseToken(data["jwt"]);
-      console.log(data["jwt"]);
-      console.log(user.email);
 
       authContext.setUser(user);
 
