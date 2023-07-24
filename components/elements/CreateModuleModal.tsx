@@ -41,6 +41,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                 // The method is POST because we are sending data.
                 method: "POST",
                 // Tell the server we're sending JSON.
+                credentials: "include",
                 headers: {
                 'Content-Type': 'application/json',
                 },

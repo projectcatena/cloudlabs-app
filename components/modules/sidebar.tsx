@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Sidebar() {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
     const authContext = useAuth();
 
     function handleLogout() {
@@ -66,7 +67,7 @@ export default function Sidebar() {
                             <ul className="space-y-1.5">
                                 <li>
                                     {/* Can use dark:bg-gray-800 to indicate selected */}
-                                    <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/maindashboard">
+                                    <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/dashboard">
                                         <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
                                             <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
@@ -74,14 +75,21 @@ export default function Sidebar() {
                                         Dashboard
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/images">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
-                                        </svg>
-                                        Images
-                                    </Link>
-                                </li>
+                                {
+                                    (authContext.user?.isTutor || authContext.user?.isAdmin ?
+                                        <li>
+                                            <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/images">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                                </svg>
+                                                Images
+                                            </Link>
+                                        </li>
+                                        :
+                                        <></>
+                                    )
+                                }
+
                             </ul>
                         </nav>
                     </div>
@@ -123,7 +131,7 @@ export default function Sidebar() {
                         <ul className="space-y-1.5">
                             <li>
                                 {/* Can use dark:bg-gray-800 to indicate selected */}
-                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/maindashboard">
+                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/dashboard">
                                     <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
                                         <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
@@ -131,14 +139,20 @@ export default function Sidebar() {
                                     Dashboard
                                 </Link>
                             </li>
-                            <li>
-                                <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/images">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
-                                    </svg>
-                                    Images
-                                </Link>
-                            </li>
+                            {
+                                (authContext.user?.isTutor || authContext.user?.isAdmin ?
+                                    <li>
+                                        <Link className="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-slate-700 rounded-md hover:bg-gray-700 transition ease-in-out delay-150 duration-300 dark:bg-gray-800 dark:text-white" href="/images">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                                            </svg>
+                                            Images
+                                        </Link>
+                                    </li>
+                                    :
+                                    <></>
+                                )
+                            }
                             {/* <li className="hs-accordion" id="users-accordion">
                         <a className="hs-accordion-toggle flex items-center gap-x-3.5 py-2 px-2.5 hs-accordion-active:text-blue-600 hs-accordion-active:hover:bg-transparent text-sm text-slate-700 rounded-md hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-900 dark:text-slate-400 dark:hover:text-slate-300 dark:hs-accordion-active:text-white" href="javascript:;">
                             <svg className="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
