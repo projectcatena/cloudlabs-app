@@ -1,49 +1,44 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { useAuth } from "@/contexts/AuthContext";
+import { parseToken } from "@/services/auth.service";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { Inter } from 'next/font/google';
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from 'react';
 
-const inter = Inter({ subsets: ['latin'] })
-
+// TODO: Handle and format JSON
 export const getServerSideProps: GetServerSideProps<{
-    token: string
+    data: string
 }> = async (context) => {
 
-    const token = context.req.cookies["jwt"];
+    const user = parseToken(context.req.cookies["jwt"]!);
 
-    if (!token) {
-        throw new Error("cookie not found");
+    // Check if not TUTOR or ADMIN
+    if (!(user.isTutor || user.isAdmin)) {
+        return {
+            notFound: true,
+            /* redirect: {
+                permanent: false,
+                destination: '/error'
+            } */
+        }
     }
 
-    return { props: { token } };
+    const res = await fetch("http://localhost:8080/api/users", {
+        method: "GET",
+        headers: {
+            "cookie": context.req.headers.cookie!,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+        }
+    })
+
+    const data: string = await res.json();
+
+    return { props: { data } }
 }
 
 export default function Users({
-    token
+    data
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    const authContext = useAuth();
-    const [loading, setLoading] = useState(true);
-    console.log(authContext);
-
-    useEffect(() => {
-        setLoading(true)
-        fetchContent()
-    }, []);
-
-    async function fetchContent() {
-        const res = await fetch("http://localhost:8080/api/users", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if (res.ok) {
-            setLoading(false)
-        }
-    }
 
     return (
         <>

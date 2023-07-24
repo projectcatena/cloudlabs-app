@@ -1,5 +1,4 @@
 import { Listbox, Transition } from '@headlessui/react';
-import { Inter } from 'next/font/google';
 import { useRouter } from "next/router";
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 import { Fragment, useEffect, useState } from "react";
@@ -7,8 +6,6 @@ import { Fragment, useEffect, useState } from "react";
 import UserTableRow from '@/components/elements/UserTableRow';
 import DashboardLayout from "../components/layouts/DashboardLayout";
 import { isLogin } from '@/services/auth.service';
-
-const inter = Inter({ subsets: ['latin'] })
 
 export type User = {
     id: number

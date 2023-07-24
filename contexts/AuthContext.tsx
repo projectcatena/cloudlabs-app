@@ -11,6 +11,8 @@ export type AuthUser = {
   fullname: string,
   roles: Role[],
   expiration: string
+  isTutor: boolean,
+  isAdmin: boolean
 }
 
 type AuthContextType = {

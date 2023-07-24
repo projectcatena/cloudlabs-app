@@ -2,11 +2,10 @@ import { Inter } from 'next/font/google'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import Link from 'next/link'
 import AddImageModal from '@/components/elements/AddImageModal'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ImageTableRow from '@/components/elements/ImageTableRow'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
-
-const inter = Inter({ subsets: ['latin'] })
+import { parseToken } from '@/services/auth.service'
 
 export enum ImageStatus {
     READY,
@@ -26,6 +25,20 @@ type Image = {
 export const getServerSideProps: GetServerSideProps<{
     initialData: [Image],
 }> = async (context) => {
+
+    const user = parseToken(context.req.cookies["jwt"]!);
+
+    // Check if not TUTOR or ADMIN
+    if (!(user.isTutor || user.isAdmin)) {
+        return {
+            notFound: true,
+            /* redirect: {
+                permanent: false,
+                destination: '/error'
+            } */
+        }
+    }
+
     const res = await fetch('http://localhost:8080/api/image/list', {
         credentials: "include",
         headers: {
