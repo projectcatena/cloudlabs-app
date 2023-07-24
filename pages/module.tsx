@@ -1,13 +1,10 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import VirtualMachineCard from '../components/elements/VirtualMachineCard'
-import { Inter } from 'next/font/google'
 import { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useAuth } from '@/contexts/AuthContext';
-
-const inter = Inter({ subsets: ['latin'] })
 
 type Address = {
     ipv4Address: string,

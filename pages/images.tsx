@@ -2,13 +2,10 @@ import { Inter } from 'next/font/google'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import Link from 'next/link'
 import AddImageModal from '@/components/elements/AddImageModal'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ImageTableRow from '@/components/elements/ImageTableRow'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
-import { isRoleValid } from '@/services/auth.service'
 import { parseToken } from '@/services/auth.service'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export enum ImageStatus {
     READY,

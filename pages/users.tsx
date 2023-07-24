@@ -1,16 +1,12 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { AuthUser, useAuth } from "@/contexts/AuthContext";
 import { parseToken } from "@/services/auth.service";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { Inter } from 'next/font/google';
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from 'react';
 
-const inter = Inter({ subsets: ['latin'] })
-
+// TODO: Handle and format JSON
 export const getServerSideProps: GetServerSideProps<{
-    user: AuthUser
+    data: string
 }> = async (context) => {
 
     const user = parseToken(context.req.cookies["jwt"]!);
@@ -26,32 +22,23 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    return { props: { user } };
+    const res = await fetch("http://localhost:8080/api/users", {
+        method: "GET",
+        headers: {
+            "cookie": context.req.headers.cookie!,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+        }
+    })
+
+    const data: string = await res.json();
+
+    return { props: { data } }
 }
 
 export default function Users({
-    user
+    data
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    const authContext = useAuth();
-    const [loading, setLoading] = useState(true);
-    console.log(authContext);
-
-    useEffect(() => {
-        setLoading(true)
-        fetchContent()
-    }, []);
-
-    async function fetchContent() {
-        const res = await fetch("http://localhost:8080/api/users", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if (res.ok) {
-            setLoading(false)
-        }
-    }
 
     return (
         <>

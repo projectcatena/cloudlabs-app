@@ -1,16 +1,11 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import ModuleCard from '../components/elements/ModuleCard';
-import { Inter } from 'next/font/google';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ErrorModal from '@/components/elements/ErrorModal';
-import { error } from 'console';
 import CreateModuleModal from '@/components/elements/CreateModuleModal';
 import DeleteModuleModal from '@/components/elements/DeleteModuleModal';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useAuth, Role } from '@/contexts/AuthContext';
-
-
-const inter = Inter({ subsets: ['latin'] })
 
 export type Module = {
     moduleId: number;
@@ -29,12 +24,15 @@ export const getServerSideProps: GetServerSideProps<{
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
         }
-    }); // Fetch data from backend endpoint
-        const data = await response.json();
-          return {props: { data } }
+    });
+
+    // Fetch data from backend endpoint
+    const data = await response.json();
+
+    return { props: { data } }
 }
 
-export default function MainDashboard( { data }: InferGetServerSidePropsType<typeof getServerSideProps>){
+export default function MainDashboard({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const [openErrorModal, setOpenErrorModal] = useState(false);
     const [openCreateModuleModal, setOpenCreateModuleModal] = useState(false);
@@ -58,47 +56,47 @@ export default function MainDashboard( { data }: InferGetServerSidePropsType<typ
                         {canCreateOrDeleteModule && (
                             <>
                                 <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                                Add Module
+                                    Add Module
                                 </button>
 
                                 <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                                Delete Module
+                                    Delete Module
                                 </button>
                             </>
                         )}
 
                     </div>
                 </div>
-                
+
                 <div>
                     {data.length > 0 ? (
                         data.map((module) => (
-                        <div className="mb-5" key={module.moduleId}>
-                            {/* Card */}
-                            <ModuleCard
-                            subtitle={module.moduleSubtitle}
-                            title={module.moduleName}
-                            description={module.moduleDescription}
-                            href="#"
-                            moduleId={module.moduleId}
-                            />
-                            {/* End of Card */}
-                        </div>
+                            <div className="mb-5" key={module.moduleId}>
+                                {/* Card */}
+                                <ModuleCard
+                                    subtitle={module.moduleSubtitle}
+                                    title={module.moduleName}
+                                    description={module.moduleDescription}
+                                    href="#"
+                                    moduleId={module.moduleId}
+                                />
+                                {/* End of Card */}
+                            </div>
                         ))
                     ) : (
                         <p>No modules available.</p>
                     )}
                 </div>
-                
+
                 {/* End Page Heading */}
             </div>
             {/* Modals */}
-        <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-        <CreateModuleModal open={openCreateModuleModal} onClose={() => setOpenCreateModuleModal(false)} moduleSubtitle={''} moduleName={''} moduleDescription={''} />
-        <DeleteModuleModal open={openDeleteModuleModal} onClose={() => setOpenDeleteModuleModal(false)} />
+            <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
+            <CreateModuleModal open={openCreateModuleModal} onClose={() => setOpenCreateModuleModal(false)} moduleSubtitle={''} moduleName={''} moduleDescription={''} />
+            <DeleteModuleModal open={openDeleteModuleModal} onClose={() => setOpenDeleteModuleModal(false)} />
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
-            
+
         </DashboardLayout>
     )
 }

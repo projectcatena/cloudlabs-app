@@ -53,7 +53,7 @@ export default function Login() {
       password
     };
 
-    const res = await fetch("http://localhost:8080/api/auth/login", {
+    await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
       headers: {
@@ -91,7 +91,7 @@ export default function Login() {
           <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
         </div>
         <div className="border-0">
-          <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
+          <main className={`flex justify-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
               <div className="p-4 sm:p-7">
                 <div className="text-center">
