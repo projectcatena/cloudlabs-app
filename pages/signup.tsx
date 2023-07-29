@@ -74,7 +74,7 @@ export default function SignUp() {
       localStorage.setItem('user', JSON.stringify(user));
 
     }).finally(() => {
-      router.push('/users');
+      router.push('/dashboard');
     });
   }
 
