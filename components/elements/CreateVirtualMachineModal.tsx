@@ -3,6 +3,8 @@ import { Combobox, Listbox } from '@headlessui/react'
 import { Inter } from 'next/font/google'
 import React, { useDeferredValue, useEffect, useState } from 'react'
 import ErrorToast from './ErrorToast'
+import CreateSubnetModal from '@/components/elements/CreateSubnetModal';
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +18,11 @@ export interface SourceImage {
 
 export interface MachineType {
     name: string
+}
+
+export interface Subnet {
+    id?: number
+    subnetName?: string
 }
 
 type ModalProps = {
@@ -32,6 +39,10 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
     // Source Image
     const [sourceImage, setSourceImage] = useState<SourceImage>();
     const [sourceImageData, setSourceImageData] = useState<SourceImage[]>();
+
+    // Subnet
+    const [subnet, setSubnet] = useState<Subnet>();
+    const [subnetData, setSubnetData] = useState<Subnet[]>();
 
     // Machine Type Input
     const [machineTypeQuery, setMachineTypeQuery] = useState("");
@@ -102,6 +113,35 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                 })
         },
         [sourceImage]
+    )
+
+    useEffect(
+        () => {
+            fetch(`http://localhost:8080/api/network/list`, {
+                credentials: "include",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                }
+            })
+                .then(res => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    throw res;
+                })
+                .then(data => {
+                    setSubnetData(data);
+                })
+                .catch(error => {
+                    console.error("Error: ", error);
+                    setIsError(true);
+                })
+                .finally(() => {
+                    // setIsLoading(false);
+                })
+        },
+        [subnet]
     )
 
     useEffect(
@@ -323,6 +363,51 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                         <p className="hidden text-xs text-red-600 mt-2" id="password-error">8+ characters required</p>
                                     </div>
                                     {/* End Form Group */}
+                                    {/* Form Group */}
+                                    <div>
+                                        <div className="relative">
+                                            <div className="flex justify-between items-center">
+                                                    <label htmlFor="image" className="block text-sm mb-2 dark:text-white">Subnet</label>
+                                            </div>
+                                            
+                                            <Listbox value={subnet} onChange={setSubnet}>
+                                                {/* relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm */}
+                                                <Listbox.Button className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                                    {subnet?.subnetName || "Select a subnet"}
+                                                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4 text-gray-400">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                        </svg>
+                                                    </span>
+                                                </Listbox.Button>
+                                                <Listbox.Options className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                                    {subnetData?.map((subnet: Subnet) => (
+                                                        <Listbox.Option
+                                                            key={subnet.id}
+                                                            value={subnet}
+                                                            className={({ active }) =>
+                                                                `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-blue-500 text-white' : 'text-gray-400'
+                                                                }`
+                                                            }
+                                                        >
+                                                            {subnet.subnetName}
+                                                        </Listbox.Option>
+                                                    ))}
+                                                </Listbox.Options>
+                                            </Listbox>
+                                        </div>
+                                        <div className="mt-2 text-sm flex">
+                                            <span className="cursor-pointer">
+                                            No subnet?{' '}
+                                            <Link
+                                                className="text-blue-500 underline" href="/subnets"
+                                            >
+                                                Create a new subnet
+                                            </Link>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {/* End Form Group */}
                                     {/* Card */}
                                     <div className="z-10 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="hs-meetups-near-you" className="flex p-4 md:p-5">
@@ -364,6 +449,7 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                         )
                                     }
                                     {/* End Form Group */}
+
                                 </div>
                             </form>
                         </div>
