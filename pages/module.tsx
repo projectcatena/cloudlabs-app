@@ -7,7 +7,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Address = {
-    ipv4Address: string,
+    subnetName: string,
+    privateIPv4Address: string,
 }
 
 export type ComputeInstance = {

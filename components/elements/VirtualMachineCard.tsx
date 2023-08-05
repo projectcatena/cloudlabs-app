@@ -21,7 +21,7 @@ export default function VirtualMachineCard({ computeInstance }: VirtualMachineCa
                     {computeInstance.instanceName}
                 </h3>
                 <p className="mt-3 text-gray-500">
-                    {computeInstance.address.ipv4Address}
+                    {computeInstance.address.privateIPv4Address}
                     {/* Kali Linux is an open-source, Debian-based Linux distribution geared towards various information security tasks.  */}
                 </p>
             </div>
