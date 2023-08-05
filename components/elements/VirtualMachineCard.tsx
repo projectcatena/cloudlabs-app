@@ -1,7 +1,7 @@
 import Dropdown from './Dropdown'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import { ComputeInstance } from '@/pages/module'
+import { ComputeInstance } from '@/pages/modules/[slug]'
 
 const inter = Inter({ subsets: ['latin'] })
 

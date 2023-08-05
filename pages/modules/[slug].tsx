@@ -1,13 +1,23 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-import { ComputeInstance } from '../module';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useState } from 'react';
 import VirtualMachineCard from '@/components/elements/VirtualMachineCard';
 import ErrorModal from '@/components/elements/ErrorModal';
-import CreateVirtualMachineModal from '@/components/elements/CreateVirtualMachineModal';
+import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import { Module } from '../dashboard';
+
+type Address = {
+  subnetName: string,
+  privateIPv4Address: string,
+}
+
+export type ComputeInstance = {
+  machineType: MachineType,
+  instanceName: string,
+  address: Address,
+}
 
 // Get module detail with name
 export const getServerSideProps: GetServerSideProps<{
