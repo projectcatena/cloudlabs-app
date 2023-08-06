@@ -76,10 +76,10 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(user));
 
     }).finally(() => {
-      if (isLogin("ADMIN", data["jwt"])){
+      if (authContext.user?.isAdmin) {
         router.push('/admin');
       }
-      else if (isLogin("TUTOR", data["jwt"])) {
+      else if (authContext.user?.isTutor) {
         router.push("/users");
       }
       else {
