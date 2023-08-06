@@ -27,7 +27,9 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
 
       const fetchModules = async () => {
         try {
-          const response = await fetch("http://localhost:8080/api/Modules"); // Fetch data from backend endpoint
+          const response = await fetch("http://localhost:8080/api/Modules", {
+            credentials: "include",
+          }); // Fetch data from backend endpoint
           // If successful, adds the modules to "modules"
           if (response.ok) {
             const modules = await response.json();
@@ -54,6 +56,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
       try {
         const response = await fetch(`http://localhost:8080/api/Modules/delete/${selectedModuleId}`, {
           method: 'DELETE', // Method is post beacuse we are deleting the module
+          credentials: "include",
         });
 
         if (response.ok) {

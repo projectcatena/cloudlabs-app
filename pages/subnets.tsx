@@ -1,29 +1,22 @@
 import { Inter } from 'next/font/google'
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import Link from 'next/link'
-import AddImageModal from '@/components/elements/AddImageModal'
+import CreateSubnetModal from '@/components/elements/CreateSubnetModal'
 import { useState } from 'react'
-import ImageTableRow from '@/components/elements/ImageTableRow'
+import SubnetTableRow from '@/components/elements/SubnetTableRow'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
 import { parseToken } from '@/services/auth.service'
 
-export enum ImageStatus {
-    READY,
-    FAILED,
-    PENDING,
-}
-
-type Image = {
-    imageId: string,
-    imageName: string,
-    imageStatus: ImageStatus,
-    creationTimestamp: string
+type Subnet = {
+    id: number,
+    subnetName: string,
+    ipv4Range: string
 }
 
 // TODO: Should also display virtual disks that are building, but not yet classified as an Image
 // Get initial data while on server
 export const getServerSideProps: GetServerSideProps<{
-    initialData: [Image],
+    initialData: [Subnet],
 }> = async (context) => {
 
     const user = parseToken(context.req.cookies["jwt"]!);
@@ -39,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const res = await fetch('http://localhost:8080/api/image/list', {
+    const res = await fetch('http://localhost:8080/api/network/list', {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -52,11 +45,11 @@ export const getServerSideProps: GetServerSideProps<{
     return { props: { initialData } }
 }
 
-export default function Images({
+export default function Subnets({
     initialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
-    const [isAddImageModalOpen, setAddImageModalOpen] = useState(false);
+    const [isAddSubnetModalOpen, setAddSubnetModalOpen] = useState(false);
     const [data, setData] = useState(initialData);
     const [isRefresh, setIsRefresh] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +57,9 @@ export default function Images({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/image/list")
+        fetch("http://localhost:8080/api/network/list", {
+            credentials: "include",
+        })
             .then(res => {
                 if (res.ok) {
                     return res.json();
@@ -96,8 +91,8 @@ export default function Images({
             <div className="w-full pt-10 pb-5 px-4 space-y-4 sm:px-6 md:px-8 lg:pl-72">
                 {/* Page Heading */}
                 <div>
-                    <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Images</h1>
-                    <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access all the custom images for your compute instances.</p>
+                    <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Subnets</h1>
+                    <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access all the subnets for your compute instance.</p>
                 </div>
 
                 {/* Table Section */}
@@ -120,11 +115,11 @@ export default function Images({
                                                 Refresh
                                             </button>
 
-                                            <button onClick={() => setAddImageModalOpen(true)} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                                            <button onClick={() => setAddSubnetModalOpen(true)} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                                                 <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                     <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
-                                                Add Image
+                                                Add Subnet
                                             </button>
                                         </div>
                                     </div>
@@ -143,10 +138,10 @@ export default function Images({
                                         </div>
 
                                         <h2 className="mt-5 font-semibold text-gray-800 dark:text-white">
-                                            No images found
+                                            No subnets found
                                         </h2>
                                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            Upload a virtual disk to create a new image.
+                                            Create a new subnet.
                                         </p>
                                         <div>
                                             {/* <a className="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="../docs/index.html">
@@ -158,15 +153,12 @@ export default function Images({
                                         </div>
 
                                         <div className="mt-5 grid sm:flex gap-2">
-                                            <button type="button" onClick={() => setAddImageModalOpen(true)} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                                            <button type="button" onClick={() => setAddSubnetModalOpen(true)} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                                                 <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlnsXlink="http://www.w3.org/2000/svg">
                                                     <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
-                                                Add a new image
+                                                Add a new subnet
                                             </button>
-                                            <Link target='_blank' href="https://cloud.google.com/compute/docs/images#community_supported_images" type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
-                                                Use a Public Image
-                                            </Link>
                                         </div>
                                     </div>
                                     {/* End of Body */}
@@ -193,19 +185,10 @@ export default function Images({
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            ID
+                                                            IPCIDR
                                                         </span>
                                                     </div>
                                                 </th>
-
-                                                <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
-                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Status
-                                                        </span>
-                                                    </div>
-                                                </th>
-
                                                 {/* <th scope="col" className="px-6 py-3 text-left">
                                 <div className="flex items-center gap-x-2">
                                     <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -213,30 +196,20 @@ export default function Images({
                                     </span>
                                 </div>
                                 </th> */}
-
-                                                <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
-                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Created
-                                                        </span>
-                                                    </div>
-                                                </th>
-
                                                 <th scope="col" className="px-6 py-3 text-right"></th>
                                             </tr>
                                         </thead>
 
                                         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                             {
-                                                data.map((image) => (
-                                                    <ImageTableRow
-                                                        key={image.imageId}
-                                                        imageId={image.imageId}
-                                                        imageName={image.imageName}
-                                                        imageStatus={image.imageStatus}
-                                                        creationTimestamp={image.creationTimestamp}
+                                                data.map((subnet) => (
+                                                    <SubnetTableRow
+                                                        key={subnet.id}
+                                                        id={subnet.id}
+                                                        subnetName={subnet.subnetName}
+                                                        ipv4Range={subnet.ipv4Range}
                                                         handleRefresh={handleRefresh}
-                                                    ></ImageTableRow>
+                                                    ></SubnetTableRow>
                                                 ))
                                             }
                                         </tbody>
@@ -280,7 +253,7 @@ export default function Images({
             {/* End Table Section */}
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
-            <AddImageModal open={isAddImageModalOpen} onClose={() => setAddImageModalOpen(false)}></AddImageModal>
+            <CreateSubnetModal open={isAddSubnetModalOpen} onClose={() => setAddSubnetModalOpen(false)} subnetName={''} ipv4Range={''}></CreateSubnetModal>
         </DashboardLayout>
     )
 }

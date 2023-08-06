@@ -13,8 +13,17 @@ const inter = Inter({ subsets: ['latin'] })
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const instanceName = context.query.instance;
-  const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`);
+
+  const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`, {
+    headers: {
+      "cookie": context.req.headers.cookie!,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "*",
+    },
+  });
+
   const computeInstance: ComputeInstance = await res.json();
+
   return { props: { computeInstance } };
 }
 
@@ -98,7 +107,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
     <main
       className={`flex min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}
     >
-      <ConsoleBar />
+      <ConsoleBar instanceName={computeInstance.instanceName}></ConsoleBar>
       <div id="display" className="z-40">
       </div>
       {/* <div className="text-center">

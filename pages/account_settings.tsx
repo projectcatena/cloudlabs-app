@@ -1,19 +1,57 @@
-import DashboardLayout from "@/components/layouts/DashboardLayout"
-import Head from "next/head"
-import Image from "next/image"
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import Head from "next/head";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 {/* Done by Tristan */}
 export default function Settings() {
+
+    //const { user } = useUser()
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    /*
+    useEffect(() => {
+        setLoading(true)
+        const authStatus = checkLoggedIn(authService.Roles.user.toString())
+        if (authStatus){
+            fetchContent()
+            setLoading(false)
+        }
+        else {
+            router.push("/login");
+        }
+    }, []);
+
+    async function fetchContent() {
+
+        try {
+            const res = await fetch("http://localhost:8080/api/module", {
+            method: "GET",
+            headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token"),
+            }
+        })
+        
+        return res.json;
+        }
+        catch (error) {
+            router.push("/login");
+            }
+        }
+        */
+
     return (
         <>
+        <Head>
+            <title>Account Settings</title>
+        </Head>
         <DashboardLayout>
         {/* Card Section */}
         {/* Card */}
-        <div className="h-screen bg-white shadow p-4 sm:p-7 dark:bg-slate-900">
-            <Head>
-                <title>Settings</title>
-            </Head>
-            <div className="mb-8">
+        <div className="h-screen bg-white p-4 sm:p-7 dark:bg-slate-900 lg:pl-72">
+            <div className="mb-8 ">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 Profile
             </h2>
@@ -41,7 +79,7 @@ export default function Settings() {
                             <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
                         </svg>
                         Upload photo
-                        </button>
+                        </button> {/* onclick={} */}
                     </div>
                     </div>
                 </div>

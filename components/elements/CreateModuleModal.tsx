@@ -7,16 +7,16 @@ const inter = Inter({ subsets: ['latin'] })
 type CreateModuleModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
-    subtitle: string
-    title: string
-    description: string
+    moduleSubtitle: string
+    moduleName: string
+    moduleDescription: string
 }
 
 const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
 
-    const [subtitle, setSubtitle] = useState("");
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [moduleSubtitle, setSubtitle] = useState("");
+    const [moduleName, setName] = useState("");
+    const [moduleDescription, setDescription] = useState("");
 
     /**
      * Handle form submission manually by posting data to the API endpoint.
@@ -30,9 +30,9 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
      
         // Get data from the form.
         const postData = {
-            subtitle: subtitle,
-            title: title,
-            description: description
+            moduleSubtitle: moduleSubtitle,
+            moduleName: moduleName,
+            moduleDescription: moduleDescription
         };
         console.log(postData);
 
@@ -41,6 +41,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                 // The method is POST because we are sending data.
                 method: "POST",
                 // Tell the server we're sending JSON.
+                credentials: "include",
                 headers: {
                 'Content-Type': 'application/json',
                 },
@@ -101,7 +102,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="title" className="flex">
-                                        <input onChange={(e) => setTitle(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's title"></input>
+                                        <input onChange={(e) => setName(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's title"></input>
                                     </label>
                                 </div>
                                 
