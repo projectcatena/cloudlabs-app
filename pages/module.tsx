@@ -1,10 +1,8 @@
 import DashboardLayout from '@/components/layouts/DashboardLayout'
 import VirtualMachineCard from '../components/elements/VirtualMachineCard'
 import { useState } from 'react';
-import ErrorModal from '@/components/elements/ErrorModal';
 import CreateVirtualMachineModal, { MachineType } from '@/components/elements/CreateVirtualMachineModal';
 import ErrorModal from '@/components/elements/ErrorModal';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useAuth } from '@/contexts/AuthContext';
 
