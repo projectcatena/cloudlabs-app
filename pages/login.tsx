@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/maindashboard",
+          destination: "/dashboard",
         },
       }
     }
@@ -47,21 +47,13 @@ export default function Login() {
 
   async function handleSubmit(e: any) {
     e.preventDefault();
-    /* let params = {
-      email,
-      password
-    }; */
-
-    /* const data = Object.entries(params)
-      .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-      .join('&'); */
 
     const data = {
       email,
       password
     };
 
-    const res = await fetch("http://localhost:8080/api/auth/login", {
+    await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
       credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
       headers: {
@@ -78,13 +70,12 @@ export default function Login() {
 
       // Returned data is a jwt token
       const user: AuthUser = parseToken(data["jwt"]);
-      console.log(data["jwt"]);
-      console.log(user.email);
 
       authContext.setUser(user);
 
       localStorage.setItem('user', JSON.stringify(user));
 
+    }).finally(() => {
       if (isLogin("ADMIN", data["jwt"])){
         router.push('/admin');
       }
@@ -92,10 +83,9 @@ export default function Login() {
         router.push("/users");
       }
       else {
-        router.push("/maindashboard");
+        router.push("/dashboard");
       }
-
-    })
+    });
 
   }
 
@@ -109,7 +99,7 @@ export default function Login() {
           <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
         </div>
         <div className="border-0">
-          <main className={`flex justify-center items-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
+          <main className={`flex justify-center h-full min-h-screen flex-col items-center dark:bg-slate-900 ${inter.className}`}>
             <div className="flex justify-center items-center h-full bg-inherit border-transparent rounded-xl shadow-sm dark:bg-inherit dark:border-transparent">
               <div className="p-4 sm:p-7">
                 <div className="text-center">

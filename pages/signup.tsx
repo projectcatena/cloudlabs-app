@@ -16,7 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         redirect: {
           permanent: false,
-          destination: "/maindashboard",
+          destination: "/dashboard",
         },
       }
     }
@@ -74,7 +74,7 @@ export default function SignUp() {
       localStorage.setItem('user', JSON.stringify(user));
 
     }).finally(() => {
-      router.push('/users');
+      router.push('/dashboard');
     });
   }
 
