@@ -14,7 +14,7 @@ export default function Sidebar() {
 
     function handleLogout() {
         signOut();
-        authContext.setUser(null);
+        // authContext.setUser(null);
     }
 
     return (

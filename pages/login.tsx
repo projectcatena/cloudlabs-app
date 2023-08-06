@@ -76,7 +76,7 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(user));
 
     }).finally(() => {
-      router.push('/maindashboard');
+      router.push('/dashboard');
     });
 
   }
