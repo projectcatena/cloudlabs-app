@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import { Type } from 'typescript'
 import React, { useEffect, useState } from 'react'
 import ErrorModal from '@/components/elements/ErrorModal';
+import { Listbox } from '@headlessui/react';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -84,7 +85,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
       if (!open) return null;
 
       return(
-        <div id="add-users" className="hs-overlay w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto backdrop-blur-sm">
+        <div id="add-users" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
             <div id="add-users" className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
                 <div className="relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
@@ -106,15 +107,15 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
                             </p>
                         </div>
                         
-                        <form id="delete-module-form" onSubmit={deleteModule}>
+                        <form id="delete-module-form" onSubmit={deleteModule}>                                     
                             <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                 <label htmlFor="subtitle" className="flex">
-                                    <select value={selectedModuleId} onChange={(event) => setSelectedModuleId(event.target.value)} className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400">
-                                        <option disabled value="">
+                                    <select value={selectedModuleId} onChange={(event) => setSelectedModuleId(event.target.value)} className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                        <option disabled value="" className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
                                             Select the module
                                         </option>
                                         {modules.map((module) => (
-                                            <option key={module.moduleId} value={module.moduleId}>
+                                            <option key={module.moduleId} value={module.moduleId} className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
                                             {module.moduleName}
                                             </option>
                                         ))}
