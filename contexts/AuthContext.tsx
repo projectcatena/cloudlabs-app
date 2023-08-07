@@ -6,6 +6,7 @@ export type Role = {
 }
 
 export type AuthUser = {
+  id: number,
   email: string,
   username: string,
   fullname: string,

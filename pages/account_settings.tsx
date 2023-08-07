@@ -1,15 +1,57 @@
 import DashboardLayout from "@/components/layouts/DashboardLayout";
+import { parseToken } from "@/services/auth.service";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 {/* Done by Tristan */}
-export default function Settings() {
+export type User = {
+    fullName: string
+    username: string
+    email: string
+    current_password: string
+    new_password: string
+}
+
+export const getServerSideProps: GetServerSideProps<{
+    initialData: User
+}> = async (context) => {
+    const jwt = context.req.cookies['jwt'];
+    const id = parseToken(jwt!).id.toString();
+    const response = await fetch('http://localhost:8080/api/account/get/' + id, {
+        credentials: "include",
+        headers: {
+            "cookie": context.req.headers.cookie!,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+        },
+    })
+
+    const initialData = await response.json();
+
+    return { props: { initialData } }
+}
+
+export default function Settings({
+    initialData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     //const { user } = useUser()
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    //const authContext = useAuth();
+    const [fullName, setFullName] = useState(initialData.fullName);
+    const [username, setUsername] = useState(initialData.username);
+    const [email, setEmail] = useState(initialData.email);
+    const [currentPassword, setOldPassword] = useState<String>();
+    const [newPassword, setNewPassword] = useState<String>();
+    console.log(fullName);
+    console.log(username);
+    console.log(email);
+    console.log(currentPassword);
+    console.log(newPassword);
 
     /*
     useEffect(() => {
@@ -42,6 +84,44 @@ export default function Settings() {
         }
         */
 
+    async function saveChanges(e: React.SyntheticEvent) {
+        e.preventDefault
+
+        try {
+            let params = {
+                fullName,
+                username,
+                email,
+                currentPassword,
+                newPassword,
+            };
+
+            const response = await fetch("http://localhost:8080/api/account/update", {
+                credentials: "include",
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                },
+                body: JSON.stringify(params),
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to update user info")
+            }
+            const result = await response.json();
+            setFullName(result["fullName"]);
+            setUsername(result["username"]);
+            setEmail(result["email"]);
+            return result;
+        }
+        catch (error) {
+            console.log ("Error: " + error );
+        }
+
+    }
+
     return (
         <>
         <Head>
@@ -59,7 +139,8 @@ export default function Settings() {
                 Manage your name, password and account settings.
             </p>
             </div>
-            <form>
+            {/* Form */}
+            <form onSubmit={saveChanges}>
             {/* Grid */}
             <div className="grid grid-cols-12 gap-4 sm:gap-6">
                 <div className="col-span-3">
@@ -86,7 +167,7 @@ export default function Settings() {
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
-                <label htmlFor="af-account-full-name" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                <label htmlFor="full_name" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
                     Full name
                 </label>
                 <div className="hs-tooltip inline-block">
@@ -104,31 +185,52 @@ export default function Settings() {
                 {/* End Col */}
                 <div className="col-span-9">
                 <div className="sm:flex">
-                    <input id="af-account-full-name" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-t-lg sm:rounded-l-lg sm:mt-0 sm:firstml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="First name" />
-                    <input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-b-lg first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Last name" />
+                    <input onChange={(e) => setFullName(e.target.value)} id="full_name" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-t-lg sm:rounded-l-lg sm:mt-0 sm:firstml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder={fullName} /> {/* authContext?.user?.fullname */}
+                    {/*<input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-b-lg first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Last name" />*/}
                 </div>
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
-                <label htmlFor="af-account-email" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                <label htmlFor="username" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                    Username
+                </label>
+                </div>
+                {/* End Col */}
+                <div className="col-span-9">
+                <input onChange={(e) => setUsername(e.target.value)} id="username" type="text" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder={username} /> {/* authContext?.user?.username */}
+                </div>
+                {/* End Col */}
+                <div className="col-span-3">
+                <label htmlFor="email" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
                     Email
                 </label>
                 </div>
                 {/* End Col */}
                 <div className="col-span-9">
-                <input id="af-account-email" type="email" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="email@email.com" />
+                <input onChange={(e) => setEmail(e.target.value)} id="email" type="email" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder={email} /> {/* authContext?.user?.email */}
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
-                <label htmlFor="af-account-password" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
-                    Password
+                <label htmlFor="current_password" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                    Current Password
                 </label>
                 </div>
                 {/* End Col */}
                 <div className="col-span-9">
                 <div className="space-y-2">
-                    <input id="af-account-password" type="text" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter current password" />
-                    <input type="text" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter new password" />
+                    <input onChange={(e) => setOldPassword(e.target.value)} id="current_password" type="password" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter current password" />
+                </div>
+                </div>
+                {/* End Col */}
+                <div className="col-span-3">
+                <label htmlFor="new_password" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200">
+                    New Password
+                </label>
+                </div>
+                {/* End Col */}
+                <div className="col-span-9">
+                <div className="space-y-2">
+                    <input onChange={(e) => setNewPassword(e.target.value)} id="new_password" type="password" className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Enter new password" />
                 </div>
                 </div>
                 {/* End Col */}
@@ -138,7 +240,7 @@ export default function Settings() {
                 <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
                 Cancel
                 </button>
-                <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                <button type="submit" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                 Save changes
                 </button>
             </div>
