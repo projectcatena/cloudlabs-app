@@ -4,12 +4,13 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types
 import { Fragment, useEffect, useState } from "react";
 
 import UserTableRow from '@/components/elements/UserTableRow';
-import DashboardLayout from "../components/layouts/DashboardLayout";
 import { isLogin } from '@/services/auth.service';
+import DashboardLayout from "../components/layouts/DashboardLayout";
 
 export type User = {
     id: number
-    name: string
+    fullName: string
+    username: string
     email: string
     roles: Role[]
 }
@@ -35,9 +36,9 @@ export const getServerSideProps: GetServerSideProps<{
 
         const res = await fetch("http://localhost:8080/api/admin/list", {
             method: "GET",
-            //credentials: "include",
+            credentials: "include",
             headers: {
-                "Authorization": "Bearer " + token,
+                "cookie": context.req.headers.cookie!,
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*"
             },
@@ -84,44 +85,20 @@ export default function Admin({
         //let token = getCookie(context);
         const authStatus = isLogin("ADMIN", token);
         if (authStatus) {
-            fetchContent(token)
+            router.push("/admin");
             //setLoading(false)
         }
         else {
             router.push("/login");
         }
     }, []);
-    async function fetchContent(token: string) {
-        setIsRefresh(true);
-
-        fetch("http://localhost:8080/api/admin", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token,
-            }
-        })
-            .then(res => {
-                if (res.ok) {
-                    return res.text();
-                }
-                throw res;
-            })
-            .catch(error => {
-                console.error("Error: ", error);
-                // setIsError(true);
-            })
-            .finally(() => {
-                // setIsLoading(false);
-                setIsRefresh(false);
-            })
-    }
 
     async function handleRefresh() {
         setIsRefresh(true);
         fetch("http://localhost:8080/api/admin/list", {
             method: "GET",
+            credentials: "include",
             headers: {
-                "Authorization": "Bearer " + token,
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*"
             },
@@ -150,22 +127,23 @@ export default function Admin({
     async function addRole(e: any) {
         setIsRefresh(true);
         e.preventDefault();
+        const newRole = role;
         let params = {
             email,
-            role
+            newRole,
         };
-
-        const data = Object.entries(params)
-            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-            .join('&');
+        console.log(email);
+        console.log(role);
 
         fetch("http://localhost:8080/api/admin/add", {
             method: "PUT",
+            credentials: "include",
             headers: {
-                "Authorization": "Bearer " + token,
-                "content-type": "application/x-www-form-urlencoded"
+                "content-type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*"
             },
-            body: data
+            body: JSON.stringify(params),
         }).then(res => {
             if (res.ok) {
                 return res.json;
@@ -184,25 +162,22 @@ export default function Admin({
     async function deleteRole(e: any) {
         setIsRefresh(true);
         e.preventDefault();
+        const newRole = role;
         let params = {
             email,
-            role
+            newRole,
         };
         console.log(email);
         console.log(role);
-        const data = Object.entries(params)
-            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-            .join('&');
-        console.log(data);
         fetch("http://localhost:8080/api/admin/delete", {
             method: "DELETE",
+            credentials: "include",
             headers: {
-                "Authorization": "Bearer " + token,
-                "content-type": "application/x-www-form-urlencoded",
+                "content-type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*"
             },
-            body: data
+            body: JSON.stringify(params),
         }).then(res => {
             if (res.ok) {
                 return res.json;
@@ -211,11 +186,10 @@ export default function Admin({
         }).catch(error => {
             console.error("Error: ", error);
             // setIsError(true);
+        }).finally(() => {
+            // setIsLoading(false);
+            handleRefresh();
         })
-            .finally(() => {
-                // setIsLoading(false);
-                handleRefresh();
-            })
     }
 
     return (
@@ -424,27 +398,10 @@ export default function Admin({
                                     <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 ${data.length ? "" : "hidden"}`}> {/*  */}
                                         <thead className="bg-gray-50 dark:bg-slate-800">
                                             <tr>
-                                                {/*
-                                <th scope="col" className="pl-6 lg:pl-3 xl:pl-0 pr-6 py-3 text-left">
-                                <div className="flex items-center gap-x-2">
-                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                    ID
-                                    </span>
-                                </div>
-                                </th>
-                                
-                                <th scope="col" className="px-6 py-3 text-left">
-                                <div className="flex items-center gap-x-2">
-                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                    ID
-                                    </span>
-                                </div>
-                                </th>
-                                */}
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Name
+                                                            Email
                                                         </span>
                                                     </div>
                                                 </th>
@@ -452,7 +409,15 @@ export default function Admin({
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Email
+                                                            Username
+                                                        </span>
+                                                    </div>
+                                                </th>
+
+                                                <th scope="col" className="px-6 py-3 text-left">
+                                                    <div className="flex items-center gap-x-2">
+                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                                                            Name
                                                         </span>
                                                     </div>
                                                 </th>
@@ -484,7 +449,8 @@ export default function Admin({
                                                         <UserTableRow
                                                             key={user.email}
                                                             //id={user.id}
-                                                            name={user.name}
+                                                            username={user.username}
+                                                            fullName={user.fullName}
                                                             email={user.email}
                                                             roles={user.roles}
                                                         //handleRefresh={handleRefresh}

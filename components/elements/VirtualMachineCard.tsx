@@ -1,7 +1,7 @@
 import Dropdown from './Dropdown'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import { ComputeInstance } from '@/pages/module'
+import { ComputeInstance } from '@/pages/modules/[slug]'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +21,7 @@ export default function VirtualMachineCard({ computeInstance }: VirtualMachineCa
                     {computeInstance.instanceName}
                 </h3>
                 <p className="mt-3 text-gray-500">
-                    {computeInstance.address.ipv4Address}
+                    {computeInstance.address.privateIPv4Address}
                     {/* Kali Linux is an open-source, Debian-based Linux distribution geared towards various information security tasks.  */}
                 </p>
             </div>

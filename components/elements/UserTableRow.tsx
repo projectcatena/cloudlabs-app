@@ -2,7 +2,8 @@ import { Role } from "@/pages/admin";
 
 type UserProps = {
     //id: number,
-    name: string,
+    username: string,
+    fullName: string,
     email: string,
     roles: Role[],
     //handleRefresh: () => void
@@ -39,7 +40,13 @@ const UserTableRow = (props: UserProps) => {
                 <td className="h-px w-72 whitespace-nowrap">
                     <div className="px-6 py-3">
                         {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                        <span className="block text-sm text-gray-500">{props.name}</span>
+                        <span className="block text-sm text-gray-500">{props.email}</span>
+                    </div>
+                </td>
+                <td className="h-px w-72 whitespace-nowrap">
+                    <div className="px-6 py-3">
+                        {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
+                        <span className="block text-sm text-gray-500">{props.username}</span>
                     </div>
                 </td>
                 {/* 
@@ -94,7 +101,7 @@ const UserTableRow = (props: UserProps) => {
                     <div className="px-6 py-3">
                         {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
                         <span className="text-sm text-gray-500">
-                            {props.email}
+                            {props.fullName}
                         </span>
                     </div>
                 </td>

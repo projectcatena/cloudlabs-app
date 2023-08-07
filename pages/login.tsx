@@ -76,7 +76,15 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(user));
 
     }).finally(() => {
-      router.push('/dashboard');
+      if (authContext.user?.isAdmin) {
+        router.push('/admin');
+      }
+      else if (authContext.user?.isTutor) {
+        router.push("/users");
+      }
+      else {
+        router.push("/dashboard");
+      }
     });
 
   }
