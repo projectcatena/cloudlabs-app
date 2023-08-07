@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { Client } from 'guacamole-common-js'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
-import { ComputeInstance } from './module'
 import { IHostEntity, connect } from '@/utils/guacamole'
 import ConsoleBar from '@/components/modules/consolebar'
 import LoadingModal from '@/components/elements/LoadingModal'
 import ErrorModal from '@/components/elements/ErrorModal'
+import { ComputeInstance } from './modules/[slug]'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -44,7 +44,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
   const host: IHostEntity = {
     name: computeInstance.instanceName,
     protocol: protocol,
-    hostname: computeInstance.address?.ipv4Address, // TODO: Get ip address from database
+    hostname: computeInstance.address?.privateIPv4Address, // TODO: Get ip address from database
     port: 3389,
     username: username,
     password: password,
