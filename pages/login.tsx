@@ -149,9 +149,6 @@ export default function Login() {
                     Or
                   </div>
 */}
-                  <div className="py-4 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:mb-2 before:border-gray-200 after:flex-[1_1_0%] after:border-t after:mb-2 after:border-gray-200 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600"></div>
-
-
                   {/* Form */}
                   <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">
