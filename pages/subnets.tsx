@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/lis`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,

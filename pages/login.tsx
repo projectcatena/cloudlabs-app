@@ -53,7 +53,7 @@ export default function Login() {
       password
     };
 
-    await fetch("http://localhost:8080/api/auth/login", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
       method: "POST",
       credentials: "include", // IMPORTANT: tell fetch to include jwt cookie
       headers: {
