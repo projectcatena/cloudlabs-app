@@ -28,7 +28,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
 
       const fetchModules = async () => {
         try {
-          const response = await fetch("http://localhost:8080/api/Modules", {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
             credentials: "include",
           }); // Fetch data from backend endpoint
           // If successful, adds the modules to "modules"
@@ -55,7 +55,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
       event.preventDefault()
 
       try {
-        const response = await fetch(`http://localhost:8080/api/Modules/delete/${selectedModuleId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/delete/${selectedModuleId}`, {
           method: 'DELETE', // Method is post beacuse we are deleting the module
           credentials: "include",
         });

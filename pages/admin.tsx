@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<{
 
     if (typeof token === "string") {
 
-        const res = await fetch("http://localhost:8080/api/admin/list", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -95,7 +95,7 @@ export default function Admin({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/admin/list", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -135,7 +135,7 @@ export default function Admin({
         console.log(email);
         console.log(role);
 
-        fetch("http://localhost:8080/api/admin/add", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add`, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -169,7 +169,7 @@ export default function Admin({
         };
         console.log(email);
         console.log(role);
-        fetch("http://localhost:8080/api/admin/delete", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/delete`, {
             method: "DELETE",
             credentials: "include",
             headers: {

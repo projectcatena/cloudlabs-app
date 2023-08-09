@@ -37,7 +37,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
         console.log(postData);
 
         try {
-            const response = await fetch("http://localhost:8080/api/Modules/create", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/create`, {
                 // The method is POST because we are sending data.
                 method: "POST",
                 // Tell the server we're sending JSON.

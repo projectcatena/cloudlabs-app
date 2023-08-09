@@ -126,7 +126,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         console.log(postData);
         */
         try {
-            const response = await fetch("http://localhost:8080/api/snapshot/create", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/create`, {
                 // POST request
                 method: "POST",
                 // Tell the server we're sending JSON.
@@ -168,7 +168,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         console.log(postData);
         */
         try {
-            const response = await fetch("http://localhost:8080/api/snapshot/delete", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/delete`, {
                 // POST request
                 method: "DELETE",
                 // Tell the server we're sending JSON.
@@ -210,7 +210,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
 
             console.log(revert_params);
             
-            const res = await fetch("http://localhost:8080/api/snapshot/revert", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}:8080/api/snapshot/revert`, {
             // POST request
             method: "POST",
             // Tell the server we're sending JSON.

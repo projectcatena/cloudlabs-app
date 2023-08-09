@@ -112,6 +112,7 @@ export default function Login() {
                   </p>
                 </div>
                 <div className="mt-5">
+{/*
                   <button
                     type="button"
                     className="flex-auto w-full py-5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-inherit text-gray-700 shadow-sm align-middle hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
@@ -142,9 +143,15 @@ export default function Login() {
                     </svg>
                     Sign in with Google
                   </button>
+  */}
+  {/*}
                   <div className="py-4 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:border-gray-200 before:mr-6 after:flex-[1_1_0%] after:border-t after:border-gray-200 after:ml-6 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600">
                     Or
                   </div>
+*/}
+                  <div className="py-4 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:mb-2 before:border-gray-200 after:flex-[1_1_0%] after:border-t after:mb-2 after:border-gray-200 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600"></div>
+
+
                   {/* Form */}
                   <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">

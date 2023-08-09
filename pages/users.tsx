@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const res = await fetch("http://localhost:8080/api/users", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
         method: "GET",
         headers: {
             "cookie": context.req.headers.cookie!,

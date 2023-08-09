@@ -17,7 +17,7 @@ export type Module = {
 export const getServerSideProps: GetServerSideProps<{
     data: [Module]
 }> = async (context) => {
-    const response = await fetch("http://localhost:8080/api/Modules", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,

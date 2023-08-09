@@ -14,7 +14,7 @@ const SubnetTableRow = (props: SubnetProps) => {
     async function handleDelete() {
         setIsDeleting(true);
 
-        const deleteSubnetResponse = await fetch("http://localhost:8080/api/network/delete", {
+        const deleteSubnetResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/delete`, {
             method: "POST",
             credentials: "include",
             headers: {

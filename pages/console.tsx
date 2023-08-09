@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ['latin'] })
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const instanceName = context.query.instance;
 
-  const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/instance?instanceName=${instanceName}`, {
     headers: {
       "cookie": context.req.headers.cookie!,
       "Access-Control-Allow-Origin": "*",

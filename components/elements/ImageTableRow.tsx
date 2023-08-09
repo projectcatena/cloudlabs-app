@@ -16,7 +16,7 @@ const ImageTableRow = (props: ImageProps) => {
     async function handleDelete() {
         setIsDeleting(true);
 
-        const deleteImageResponse = await fetch("http://localhost:8080/api/image/delete", {
+        const deleteImageResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/delete`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

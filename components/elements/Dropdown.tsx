@@ -27,7 +27,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/compute/delete", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/delete`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -52,7 +52,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
     }
 
     async function loadSnapshotData() {
-        const response = await fetch("http://localhost:8080/api/snapshot/list", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/list`, {
             method: "GET",
             headers: {
                 "Access-Control-Allow-Origin": "*",
@@ -75,7 +75,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         };
 
         try {
-            const getStatusResponse = await fetch("http://localhost:8080/api/compute/status", {
+            const getStatusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/status`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +94,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 setStatusModalOpen(true);
                 return;
             } else {
-                const response = await fetch("http://localhost:8080/api/compute/stop", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/stop`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         };
 
         try {
-            const getStatusResponse = await fetch("http://localhost:8080/api/compute/status", {
+            const getStatusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/status`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 setStatusModalOpen(true);
                 return;
             } else {
-                const response = await fetch("http://localhost:8080/api/compute/start", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/start`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
