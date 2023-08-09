@@ -34,7 +34,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
 
     const fetchModules = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/api/Modules/${moduleId}`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/${moduleId}`, {
             credentials: "include",
           }); // Fetch data from backend endpoint
           // If successful, adds the modules to "modules"
@@ -72,7 +72,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
         console.log(postData);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/Modules/update/${moduleId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/update/${moduleId}`, {
                 // The method is PUT because we are sending edited data.
                 method: "PUT",
                 // Tell the server we're sending JSON.

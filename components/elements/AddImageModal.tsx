@@ -24,7 +24,7 @@ async function initVirtualDiskBuild(
     setErrorToastOpen: React.Dispatch<React.SetStateAction<boolean>>
     ) {
     
-    const response = await fetch("http://localhost:8080/api/image/start", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/start`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -57,7 +57,7 @@ async function getSignedUploadURL(
     setIsCancel: React.Dispatch<React.SetStateAction<boolean>>
     ) {
     // Get Signed URL for Upload
-    const signedURLResponse = await fetch("http://localhost:8080/api/image/signed", {
+    const signedURLResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/signed`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

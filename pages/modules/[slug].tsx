@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
   const moduleId = context.query.slug;
 
-  const res = await fetch(`http://localhost:8080/api/compute/list?moduleId=${moduleId}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list?moduleId=${moduleId}`, {
     method: "GET",
     headers: {
       "cookie": context.req.headers.cookie!,
@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const data = await res.json();
 
-  const moduleRes = await fetch(`http://localhost:8080/api/Modules/${moduleId}`, {
+  const moduleRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/${moduleId}`, {
     method: "GET",
     headers: {
       "cookie": context.req.headers.cookie!,

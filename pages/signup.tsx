@@ -49,7 +49,7 @@ export default function SignUp() {
       password
     }
 
-    const res = await fetch("http://localhost:8080/api/auth/register", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
       method: 'POST',
       credentials: "include",
       headers: {
@@ -97,6 +97,7 @@ export default function SignUp() {
                 </p>
               </div>
               <div className="mt-5">
+{/*
                 <button
                   type="button"
                   className="flex-auto w-full py-5 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-inherit text-gray-700 shadow-sm align-middle hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-gray-800 dark:hover:bg-gray-900 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
@@ -130,6 +131,7 @@ export default function SignUp() {
                 <div className="py-4 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:border-gray-200 before:mr-6 after:flex-[1_1_0%] after:border-t after:border-gray-200 after:ml-6 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600">
                   Or
                 </div>
+  */}
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
                   <div className="grid gap-y-4">

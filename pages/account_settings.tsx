@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
     const jwt = context.req.cookies['jwt'];
     const id = parseToken(jwt!).id.toString();
-    const response = await fetch('http://localhost:8080/api/account/get/' + id, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/account/get/` + id, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -96,7 +96,7 @@ export default function Settings({
                 newPassword,
             };
 
-            const response = await fetch("http://localhost:8080/api/account/update", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/account/update`, {
                 credentials: "include",
                 method: "POST",
                 headers: {
