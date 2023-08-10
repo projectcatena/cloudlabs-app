@@ -1,9 +1,10 @@
-import ComputeUserTableRow from "@/components/elements/ComputeUserTableRow";
+import ModuleUserTableRow from "@/components/elements/ModuleUserTableRow";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { parseToken } from "@/services/auth.service";
 import { Listbox, Transition } from "@headlessui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { Fragment, SetStateAction, useState } from "react";
 
 export type User = {
@@ -11,17 +12,17 @@ export type User = {
     fullname: string,
     username: string,
     email: string,
-    computes: ComputeInstance[]
+    modules: Module[]
 }
 
-export type ComputeInstance = {
-    id: number,
-    instanceName: string
+export type Module = {
+    moduleId: number,
+    moduleName: string
 }
 
 // TODO: Handle and format JSON
 export const getServerSideProps: GetServerSideProps<{
-    initialUserData: [User], initialComputeData:[ComputeInstance]
+    initialUserData: [User], initialModuleData:[Module]
 }> = async (context) => {
 
     const user = parseToken(context.req.cookies["jwt"]!);
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list-users`, {
+    const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list-users-modules`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -49,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<{
 
     const initialUserData = await userRes.json();
 
-    const computeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/listall`, {
+    const moduleRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
         method: "GET",
         headers: {
           "cookie": context.req.headers.cookie!,
@@ -58,22 +59,22 @@ export const getServerSideProps: GetServerSideProps<{
         },
       });
 
-    const initialComputeData = await computeRes.json();
-    console.log(initialComputeData);
+    const initialModuleData = await moduleRes.json();
+    console.log(initialModuleData);
 
-    return { props: { initialUserData, initialComputeData } }
+    return { props: { initialUserData, initialModuleData } }
 }
 
 export default function Users({
-    initialUserData, initialComputeData
+    initialUserData, initialModuleData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [userData, setUserData] = useState<User[]>(initialUserData);
-    const [computeData, setComputeData] = useState<ComputeInstance[]>(initialComputeData);
-    console.log(computeData)
+    const [moduleData, setModuleData] = useState<Module[]>(initialModuleData);
+    console.log(moduleData)
 
-    const [instanceName, setInstanceName] = useState("");
+    const [moduleId, setModuleId] = useState("");
     const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
 
     const handleUserSelect = (email: string, isSelected: boolean) => {
@@ -86,17 +87,17 @@ export default function Users({
         }
     };
 
-    async function addToCompute(event: any) {
+    async function addToModule(event: any) {
         event.preventDefault();
 
         const postData = {
-            instanceName,
+            moduleId,
             users: selectedEmails.map(email => ({ email }))
         };
         console.log(postData);
 
         try {
-            const postRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/add-users`, {
+            const postRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/add-users`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -119,17 +120,17 @@ export default function Users({
         }
     }
 
-    async function removeFromCompute(event: any) {
+    async function removeFromModule(event: any) {
         event.preventDefault();
 
         const postData = {
-            instanceName,
+            moduleId,
             users: selectedEmails.map(email => ({ email }))
         };
         console.log(postData);
 
         try {
-            const postRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/remove-users`, {
+            const postRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/remove-users`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -154,7 +155,7 @@ export default function Users({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list-users`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list-users-modules`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -196,13 +197,13 @@ export default function Users({
                     {/* Page Header */}
                     <div >
                         <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            Users
+                            Module Users
                         </h1>
                     </div>
                     {/* Page Description */}
                     <div>
                         <h2 className="text-sm text-gray-600 dark:text-gray-400">
-                            Add Users to compute instances here.
+                            Add Users to modules here.
                         </h2>
                     </div>
                     {/* Table Section */}
@@ -225,12 +226,12 @@ export default function Users({
                                                         </svg>
                                                         Refresh
                                                     </button>
-                                                    <Listbox value={instanceName} onChange={setInstanceName}>
+                                                    <Listbox value={moduleId} onChange={setModuleId}>
                                                         <div className="relative mt-1">
-                                                            <Listbox.Label>Compute Instance: </Listbox.Label>
+                                                            <Listbox.Label>Module: </Listbox.Label>
                                                             <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
                                                                 <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                                                                    <span className="block truncate">{instanceName}</span>
+                                                                    <span className="block truncate">{moduleId}</span>
                                                                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -245,14 +246,14 @@ export default function Users({
                                                                 leaveTo="opacity-0"
                                                             >
                                                                 <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                                                    {computeData.map((computeInstance: ComputeInstance, computeIdx: any ) => (
+                                                                    {moduleData.map((module: Module, moduleIdx: any ) => (
                                                                         <Listbox.Option
-                                                                            key={computeIdx}
+                                                                            key={moduleIdx}
                                                                             className={({ active }) =>
                                                                                 `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
                                                                                 }`
                                                                             }
-                                                                            value={computeInstance.instanceName}
+                                                                            value={module.moduleId}
                                                                         >
                                                                             {({ selected }) => (
                                                                                 <>
@@ -260,7 +261,7 @@ export default function Users({
                                                                                         className={`block truncate ${selected ? 'font-medium' : 'font-normal'
                                                                                             }`}
                                                                                     >
-                                                                                        {computeInstance.instanceName}
+                                                                                        {module.moduleName}
                                                                                     </span>
                                                                                     {selected ? (
                                                                                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
@@ -278,18 +279,18 @@ export default function Users({
                                                         </div>
                                                     </Listbox>
 
-                                                    <button onClick={addToCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                    <button onClick={addToModule} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                         <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                             <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                         </svg>
-                                                        Add to VM
+                                                        Add to Module
                                                     </button>
 
-                                                    <button onClick={removeFromCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                    <button onClick={removeFromModule} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                         <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                             <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                         </svg>
-                                                        Remove from VM
+                                                        Remove from Module
                                                     </button>
                                                 </div>
                                             </div>
@@ -357,7 +358,7 @@ export default function Users({
                                                     <th scope="col" className="py-3 text-left">
                                                         <div className="flex items-center gap-x-2">
                                                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                                Compute Instance(s)
+                                                                Module(s)
                                                             </span>
                                                         </div>
                                                     </th>
@@ -370,15 +371,15 @@ export default function Users({
                                                 {
                                                     userData.map((user: User) => {
                                                         return (
-                                                            <ComputeUserTableRow
+                                                            <ModuleUserTableRow
                                                                 key={user.email}
                                                                 username={user.username}
                                                                 fullName={user.fullname}
                                                                 email={user.email}
-                                                                computes={user.computes}
+                                                                modules={user.modules}
                                                                 onSelect={handleUserSelect}
                                                             //handleRefresh={handleRefresh}
-                                                            ></ComputeUserTableRow>
+                                                            ></ModuleUserTableRow>
                                                         );
                                                     })
                                                 }
