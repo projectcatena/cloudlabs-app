@@ -158,7 +158,7 @@ export default function ModulePage({
       </div>
       {/* Modals */}
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
-      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} />
+      <CreateVirtualMachineModal open={openCreateVirtualMachineModal} onClose={() => setOpenCreateVirtualMachineModal(false)} moduleId={Number(moduleId)}/>
       {/* End Content */}
       {/* ========== END MAIN CONTENT ========== */}
     </DashboardLayout>
