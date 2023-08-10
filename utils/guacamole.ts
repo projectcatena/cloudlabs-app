@@ -26,7 +26,7 @@ export function connect(host: IHostEntity, callback: (guac: Client) => void) {
 
   var guac = new Guacamole.Client(
     // True to enable CORS
-    new Guacamole.HTTPTunnel('http://localhost:8080/api/tunnel', true, params)
+    new Guacamole.HTTPTunnel(`${process.env.NEXT_PUBLIC_API_URL}/api/tunnel`, true, params)
   );
 
   // Add client to display div
