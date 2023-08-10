@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "cloudlabs-frontend-deploy"
+spec:
+  selector:
+    matchLabels:
+      app: "cloudlabs-frontend"
+  template:
+    metadata:
+      labels:
+        app: "cloudlabs-frontend"
+    spec:
+      serviceAccountName: cloudlabs-ksa
+      containers:
+
+      - name: "app"
+        image: FRONTEND_IMAGE
+        env:
+        - name: "NEXT_PUBLIC_API_URL"
+          value: "https://cloudlabs.one"
