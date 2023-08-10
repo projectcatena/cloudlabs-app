@@ -28,9 +28,10 @@ export interface Subnet {
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
+    moduleId?: number
 }
 
-const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
+const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
     const [isChecked, setChecked] = useState(false);
     const [isPublicImageChecked, setPublicImageChecked] = useState(false);
@@ -177,6 +178,12 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
             },
             machineType,
             startupScript,
+            address: {
+                subnetName: subnet?.subnetName
+            },
+            module:{
+                moduleId: moduleId,
+            },
             maxRunDuration
         };
         console.log(postData);
