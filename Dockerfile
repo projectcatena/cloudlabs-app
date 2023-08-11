@@ -27,8 +27,12 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
+# RUN yarn build
 
+# Test with Coverage
+RUN npm run test
+# Env Var placeholder
+RUN NEXT_PUBLIC_API_URL=APP_NEXT_PUBLIC_API_URL npm run build
 # If using npm comment out above and use below instead
 # RUN npm run build
 
@@ -49,11 +53,17 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/entrypoint.sh ./entrypoint.sh
+
+RUN chmod +x ./entrypoint.sh
 
 USER nextjs
 
 EXPOSE 3000
 
 ENV PORT 3000
+
+# Specify entrypoint
+ENTRYPOINT [ "/app/entrypoint.sh" ]
 
 CMD ["node", "server.js"]
