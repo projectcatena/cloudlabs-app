@@ -1,11 +1,10 @@
-import { Inter } from 'next/font/google'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import Link from 'next/link'
 import AddImageModal from '@/components/elements/AddImageModal'
-import { useState } from 'react'
 import ImageTableRow from '@/components/elements/ImageTableRow'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 import { parseToken } from '@/services/auth.service'
+import Link from 'next/link'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
+import { useState } from 'react'
 
 export enum ImageStatus {
     READY,
@@ -25,8 +24,8 @@ type Image = {
 export const getServerSideProps: GetServerSideProps<{
     initialData: [Image],
 }> = async (context) => {
-
-    const user = parseToken(context.req.cookies["jwt"]!);
+    try {
+        const user = parseToken(context.req.cookies["jwt"]!);
 
     // Check if not TUTOR or ADMIN
     if (!(user.isTutor || user.isAdmin)) {
@@ -46,10 +45,16 @@ export const getServerSideProps: GetServerSideProps<{
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
         },
-    });
+    })
 
     const initialData = await res.json();
     return { props: { initialData } }
+    } catch (error) {
+        return {
+            notFound: true
+        }
+    }
+    
 }
 
 export default function Images({
@@ -64,24 +69,26 @@ export default function Images({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/image/list")
-            .then(res => {
-                if (res.ok) {
-                    return res.json();
-                }
-                throw res;
-            })
-            .then(data => {
-                setData(data);
-            })
-            .catch(error => {
-                console.error("Error: ", error);
-                // setIsError(true);
-            })
-            .finally(() => {
-                // setIsLoading(false);
-                setIsRefresh(false);
-            })
+        fetch("http://localhost:8080/api/image/list", {
+            credentials: 'include',
+        })
+        .then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw res;
+        })
+        .then(data => {
+            setData(data);
+        })
+        .catch(error => {
+            console.error("Error: ", error);
+            // setIsError(true);
+        })
+        .finally(() => {
+            // setIsLoading(false);
+            setIsRefresh(false);
+        })
     }
 
     // Loading handle
@@ -276,6 +283,8 @@ export default function Images({
                     </div>
                 </div>
                 {/* End Card */}
+                {/* Modal */}
+
             </div>
             {/* End Table Section */}
             {/* End Content */}

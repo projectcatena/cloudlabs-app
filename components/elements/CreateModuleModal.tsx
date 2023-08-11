@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
-import React, { useState, FormEventHandler } from 'react'
-import { Type } from 'typescript'
+import React, { useState } from 'react'
+import ErrorToast from './ErrorToast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,6 +13,7 @@ type CreateModuleModalProps = {
 }
 
 const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
+    const [isError, setIsError] = useState(false);
 
     const [moduleSubtitle, setSubtitle] = useState("");
     const [moduleName, setName] = useState("");
@@ -50,7 +51,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
             });
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                setIsError(true);
             }
 
             // Get the response data from server as JSON
@@ -96,19 +97,41 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                             <div className="space-y-4">
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="subtitle" className="flex">
-                                        <input onChange={(e) => setSubtitle(e.target.value)} id="subtitle" name="subtitle" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's subtitle"></input>
+                                        <input
+                                        onChange={(e) => setSubtitle(e.target.value)}
+                                        id="subtitle" name="subtitle"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" 
+                                        placeholder="Enter the Module's subtitle"
+                                        pattern="^[a-zA-Z0-9_ ]*$"
+                                        title='Only alphanumeric characters allowed'
+                                        required></input>
                                     </label>
                                 </div>
 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="title" className="flex">
-                                        <input onChange={(e) => setName(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Module's title"></input>
+                                        <input
+                                        onChange={(e) => setName(e.target.value)}
+                                        id="title"
+                                        name="title"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        placeholder="Enter the Module's title"
+                                        pattern="^[a-zA-Z0-9_ ]*$"
+                                        title='Only alphanumeric characters allowed'
+                                        required></input>
                                     </label>
                                 </div>
                                 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="description" className="flex">
-                                        <textarea onChange={(e) => setDescription(e.target.value)} id="description" name="description" placeholder="Enter the Module's description" className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"></textarea>
+                                        <textarea onChange={(e) => setDescription(e.target.value)}
+                                        id="description"
+                                        name="description"
+                                        placeholder="Enter the Module's description"
+                                        className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        required></textarea>
                                     </label>
                                 </div>
                             </div>
@@ -125,6 +148,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                     </div> 
                 </div>
             </div>
+            <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage='Module creation has failed'></ErrorToast>
         </div>
     )
 };

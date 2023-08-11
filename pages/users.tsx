@@ -22,7 +22,8 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const res = await fetch("http://localhost:8080/api/users", {
+    try {
+        const res = await fetch("http://localhost:8080/api/users", {
         method: "GET",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -34,6 +35,12 @@ export const getServerSideProps: GetServerSideProps<{
     const data: string = await res.json();
 
     return { props: { data } }
+    } catch (error) {
+        return {
+            notFound: true
+        }
+    }
+    
 }
 
 export default function Users({

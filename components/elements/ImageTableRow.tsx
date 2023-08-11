@@ -1,6 +1,7 @@
-import Link from "next/link"
 import { ImageStatus } from "@/pages/images"
-import React, { ReactComponentElement, useState } from "react"
+import Link from "next/link"
+import { useState } from "react"
+import ErrorToast from "./ErrorToast"
 
 type ImageProps = {
     imageId: string,
@@ -11,6 +12,9 @@ type ImageProps = {
 }
 
 const ImageTableRow = (props: ImageProps) => {
+    const [isError,setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [isDeleting, setIsDeleting] = useState(false);
 
     async function handleDelete() {
@@ -18,6 +22,7 @@ const ImageTableRow = (props: ImageProps) => {
 
         const deleteImageResponse = await fetch("http://localhost:8080/api/image/delete", {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -29,7 +34,8 @@ const ImageTableRow = (props: ImageProps) => {
         });
 
         if (!deleteImageResponse.ok) {
-            throw new Error("Network response failed.");
+            setIsError(true);
+            setErrorMessage("Image Deletion Failed");
         }
 
         const deleteImageResult = await deleteImageResponse.json();
@@ -136,6 +142,7 @@ const ImageTableRow = (props: ImageProps) => {
                     </Link> */}
                 </div>
             </td>
+            <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
         </tr>
     )
 }

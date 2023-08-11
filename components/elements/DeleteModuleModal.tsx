@@ -1,8 +1,6 @@
-import { Inter } from 'next/font/google'
-import { Type } from 'typescript'
-import React, { useEffect, useState } from 'react'
-import ErrorModal from '@/components/elements/ErrorModal';
-import { Listbox } from '@headlessui/react';
+import { Inter } from 'next/font/google';
+import React, { useEffect, useState } from 'react';
+import ErrorToast from './ErrorToast';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,6 +15,8 @@ type Module = {
 }
 
 const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [modules, setModules] = useState<Module[]>([]);
     const [selectedModuleId, setSelectedModuleId] = useState<string>('');
@@ -37,7 +37,8 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
             setModules(modules);
             console.log(modules);
           } else {
-            throw new Error("Error fetching module data");
+            setIsError(true);
+            setErrorMessage("Unable to fetch module data");
           }
         } catch (error) {
           console.error("Error fetching module data", error);
@@ -67,7 +68,8 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
           // Reload the page to show the updated module 
           window.location.reload();
         } else {
-          throw new Error("Error deleting module");
+          setIsError(true);
+          setErrorMessage("Instance deletion was unsuccessful");
         }
 
         onClose(false);
@@ -135,6 +137,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
                     </div> 
                 </div>
             </div>
+            <ErrorToast errorMessage={errorMessage} isOpen={isError} />
         </div>
       )
 };

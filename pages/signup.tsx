@@ -1,3 +1,4 @@
+import ErrorToast from '@/components/elements/ErrorToast'
 import { AuthUser, useAuth } from '@/contexts/AuthContext'
 import { isLogin, parseToken } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
@@ -31,6 +32,7 @@ export default function SignUp() {
   const router = useRouter();
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
@@ -59,7 +61,9 @@ export default function SignUp() {
       },
       body: JSON.stringify(data)
     }).then((response) => {
-
+      if (!response.ok) {
+        setIsError(true);
+      }
       return response.json();
 
     }).then((data) => {
@@ -73,8 +77,15 @@ export default function SignUp() {
 
       localStorage.setItem('user', JSON.stringify(user));
 
-    }).finally(() => {
-      router.push('/dashboard');
+    }).catch(err => {
+      console.log(err);
+      //router.reload();
+    })
+    .finally(() => {
+      if (isError == false) {
+        router.push('/dashboard');
+      }
+      
     });
   }
 
@@ -266,6 +277,9 @@ export default function SignUp() {
                           placeholder="Password"
                           value={password ?? ""}
                           onChange={e => setPassword(e.target.value)}
+                          // Minimum 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+                          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                          title='At least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character and a minimum of 8 characters'
                         />
                         <div className="absolute top-3 right-3">
                           <button type='button' onClick={togglePasswordVisibility}>
@@ -328,6 +342,7 @@ export default function SignUp() {
       <div className="hidden md:block border-0">
         <img src="/ICT.jpg" className="max-w-full h-full object-cover border-0"></img>
       </div>
+      <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage='Account already exits'></ErrorToast>
     </div>
   )
 }

@@ -1,10 +1,10 @@
 
-import { Combobox, Listbox } from '@headlessui/react'
-import { Inter } from 'next/font/google'
-import React, { useDeferredValue, useEffect, useState } from 'react'
-import ErrorToast from './ErrorToast'
-import CreateSubnetModal from '@/components/elements/CreateSubnetModal';
-import Link from 'next/link'
+import { Combobox, Listbox } from '@headlessui/react';
+import { Inter } from 'next/font/google';
+import Link from 'next/link';
+import React, { useDeferredValue, useEffect, useState } from 'react';
+import ErrorToast from './ErrorToast';
+import LoadingModal from './LoadingModal';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -28,9 +28,10 @@ export interface Subnet {
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
+    moduleId?: number
 }
 
-const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
+const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
     const [instanceName, setInstanceName] = useState("");
     const [isChecked, setChecked] = useState(false);
     const [isPublicImageChecked, setPublicImageChecked] = useState(false);
@@ -57,6 +58,11 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
     // Event States
     const [isError, setIsError] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // Loading States
+    const [openLoadingModal, setOpenLoadingModal] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
 
     useEffect(
         () => {
@@ -72,7 +78,10 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                         if (res.ok) {
                             return res.json();
                         }
-                        throw res;
+                        else{
+                            throw new Error("Failed to retrieve compute instances");
+                        }
+                        
                     })
                     .then(data => {
                         setMachineTypeData(data);
@@ -81,6 +90,7 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                         console.error("Error: ", error);
                         setIsError(true);
                         setIsCreating(false);
+                        setErrorMessage("Unable to retrieve compute instances")
                     })
                     .finally(() => {
                         setIsCreating(false);
@@ -103,7 +113,9 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                     if (res.ok) {
                         return res.json();
                     }
-                    throw res;
+                    else{
+                        throw new Error("Failed to retrieve images");
+                    }
                 })
                 .then(data => {
                     setSourceImageData(data);
@@ -111,6 +123,7 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                 .catch(error => {
                     console.error("Error: ", error);
                     setIsError(true);
+                    setErrorMessage("Unable to retrieve images");
                 })
                 .finally(() => {
                     // setIsLoading(false);
@@ -166,6 +179,8 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
      */
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
+        setOpenLoadingModal(true);
+        setLoadingMessage("Creating...");
 
         setIsCreating(true);
 
@@ -177,13 +192,19 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
             },
             machineType,
             startupScript,
+            address: {
+                subnetName: subnet?.subnetName
+            },
+            module:{
+                moduleId: moduleId,
+            },
             maxRunDuration
         };
         console.log(postData);
 
         try {
 
-            const response = await fetch("http://localhost:8080/api/compute/create", {
+            const response = await fetch(`http://localhost:8080/api/compute/create`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -194,19 +215,22 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                 body: JSON.stringify(postData),
             });
 
-
             if (!response.ok) {
-                setIsError(true);
-                // throw new Error("Network response failed.");
+                setOpenLoadingModal(false);
+                throw new Error("Network response failed.");
             }
 
             setIsCreating(false);
 
             const result = await response.json();
-
+            setOpenLoadingModal(false);
+            window.location.reload();
             return result;
 
         } catch (error) {
+            setIsError(true);
+            setErrorMessage("Virtual machine creation has failed")
+            setIsCreating(false);
             console.log("Error:", error);
         }
     }
@@ -244,7 +268,17 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                     <div>
                                         <label htmlFor="name" className="block text-sm mb-2 dark:text-white">Name</label>
                                         <div className="relative">
-                                            <input onChange={(e) => setInstanceName(e.target.value)} placeholder="instance-1" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                            <input
+                                            onChange={(e) => setInstanceName(e.target.value)}
+                                            placeholder="instance-1"
+                                            type="text"
+                                            id="name"
+                                            name="name"
+                                            className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                            required
+                                            aria-describedby="email-error"
+                                            pattern="^[a-z0-9\-]+$"
+                                            title="Please only use lowercase alphanumeric characters with - instead of space" />
                                             <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                 <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
@@ -286,7 +320,17 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                                     isPublicImageChecked ?
                                                         <div className='space-y-2'>
                                                             <div className="relative">
-                                                                <input onChange={(e) => setSourceImage(sourceImage => ({ ...sourceImage, imageName: e.target.value }))} placeholder="Image Name (e.g. debian-11)" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                                                <input
+                                                                onChange={(e) => setSourceImage(sourceImage => ({ ...sourceImage, imageName: e.target.value }))}
+                                                                placeholder="Image Name (e.g. debian-11)"
+                                                                type="text"
+                                                                id="name"
+                                                                name="name"
+                                                                className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                                required
+                                                                aria-describedby="email-error"
+                                                                pattern="^[a-z0-9\-]*$"
+                                                                title='Only lowercase alphanumeric characters and - allowed' />
                                                                 <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                                     <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
@@ -295,7 +339,17 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                                             </div>
 
                                                             <div className="relative">
-                                                                <input onChange={(e) => setSourceImage(sourceImage => ({ ...sourceImage, imageProject: e.target.value }))} placeholder="Project (e.g. debian-cloud)" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                                                <input
+                                                                onChange={(e) => setSourceImage(sourceImage => ({ ...sourceImage, imageProject: e.target.value }))}
+                                                                placeholder="Project (e.g. debian-cloud)"
+                                                                type="text"
+                                                                id="name"
+                                                                name="name"
+                                                                className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                                required
+                                                                aria-describedby="email-error"
+                                                                pattern="^[a-z\-]*$"
+                                                                title='Only lowercase alphabets and - allowed' />
                                                                 <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                                     <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                                         <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
@@ -478,7 +532,17 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                                             <div>
                                                 <label htmlFor="startup-script" className="block text-sm mb-2 dark:text-white">Max Runtime Duration (in seconds)</label>
                                                 <div className="relative">
-                                                    <input onChange={(e) => setMaxRunDuration(e.target.value)} placeholder="120" type="text" id="name" name="name" className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400" required aria-describedby="email-error" />
+                                                    <input
+                                                    onChange={(e) => setMaxRunDuration(e.target.value)}
+                                                    placeholder="120"
+                                                    type="text"
+                                                    id="name"
+                                                    name="name"
+                                                    className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                    required
+                                                    aria-describedby="email-error"
+                                                    pattern="^[0-9]*$"
+                                                    title='Only numbers allowed' />
                                                     <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                         <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                                                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
@@ -515,7 +579,15 @@ const CreateVirtualMachineModal = ({ open, onClose }: ModalProps) => {
                     </div>
                 </div>
             </div>
-            <ErrorToast errorMessage="Virtual machine creation has failed." isOpen={isError}></ErrorToast>
+            {/* Modal */}
+            {openLoadingModal && (
+                <LoadingModal
+                    open={openLoadingModal}
+                    onClose={() => setOpenLoadingModal((prev) => !prev)}
+                    loadingState={loadingMessage}
+                    />
+            )}
+            <ErrorToast errorMessage={errorMessage} onClose={() => setIsError((prev) => !prev)} isOpen={isError}></ErrorToast>
         </div>
     )
 };

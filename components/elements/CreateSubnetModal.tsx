@@ -1,6 +1,6 @@
-import { Inter } from 'next/font/google'
-import React, { useState, FormEventHandler } from 'react'
 import CreatingModal from '@/components/elements/CreatingModal'
+import { Inter } from 'next/font/google'
+import React, { useState } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -50,13 +50,14 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
             });
 
             if (!response.ok) {
+                setOpenCreatingModal(false);
                 throw new Error("Network response failed.");
             }
 
             // Get the response data from server as JSON
             const result = await response.json();
             console.log(result);
-
+            setOpenCreatingModal(false);
             window.location.reload();
 
             // If server returns the subnet submitted, that means the form works.
@@ -100,7 +101,7 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
 
                                     <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="subnetName" className="flex">
-                                            <input onChange={(e) => setName(e.target.value)} id="subnetName" name="subnetName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Subnet Name"></input>
+                                            <input onChange={(e) => setName(e.target.value)} id="subnetName" name="subnetName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Subnet Name" required></input>
                                         </label>
                                     </div>
                                 </div>
@@ -110,9 +111,9 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
                                         <label htmlFor="ipv4" className="block text-sm mb-2 dark:text-white">IPCidr Range</label>
                                     </div>
 
-                                     <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="ipv4Range" className="flex">
-                                            <input onChange={(e) => setIpv4Range(e.target.value)} id="ipv4Range" name="ipv4Range" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the IPCidr"></input>
+                                            <input onChange={(e) => setIpv4Range(e.target.value)} id="ipv4Range" name="ipv4Range" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the IPCidr" required></input>
                                         </label>
                                     </div>
                                 </div>

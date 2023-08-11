@@ -1,3 +1,4 @@
+import ErrorToast from '@/components/elements/ErrorToast'
 import { AuthUser, useAuth } from '@/contexts/AuthContext'
 import { isLogin, parseToken } from '@/services/auth.service'
 import { GetServerSideProps } from 'next'
@@ -31,6 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Login() {
   const authContext = useAuth();
+  const [isError, setIsError] = useState(false);
 
   const [isPasswordVisible, SetIsPasswordVisible] = useState(false);
 
@@ -75,16 +77,11 @@ export default function Login() {
 
       localStorage.setItem('user', JSON.stringify(user));
 
-    }).finally(() => {
-      if (authContext.user?.isAdmin) {
-        router.push('/admin');
-      }
-      else if (authContext.user?.isTutor) {
-        router.push("/users");
-      }
-      else {
-        router.push("/dashboard");
-      }
+    }).catch(err => {
+      setIsError(true);
+    })
+    .finally(() => {
+      router.push("/dashboard");
     });
 
   }
@@ -205,6 +202,9 @@ export default function Login() {
                             placeholder="Password"
                             value={password ?? ""}
                             onChange={e => setPassword(e.target.value)}
+                            // Minimum 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
+                          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                          title='At least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character and a minimum of 8 characters'
                           />
                           <div className="absolute top-3 right-3">
                             <button type='button' onClick={togglePasswordVisibility}>
@@ -264,6 +264,7 @@ export default function Login() {
             </div>
           </main>
         </div>
+        <ErrorToast errorMessage='Invalid Credentials' onClose={() => setIsError((prev) => !prev)} isOpen={isError} ></ErrorToast>
       </div>
     </>
   )

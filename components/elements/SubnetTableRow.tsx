@@ -1,5 +1,6 @@
 import Link from "next/link"
-import React, { ReactComponentElement, useState } from "react"
+import { useState } from "react"
+import ErrorToast from "./ErrorToast"
 
 type SubnetProps = {
     id: number,
@@ -9,6 +10,9 @@ type SubnetProps = {
 }
 
 const SubnetTableRow = (props: SubnetProps) => {
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [isDeleting, setIsDeleting] = useState(false);
 
     async function handleDelete() {
@@ -28,7 +32,8 @@ const SubnetTableRow = (props: SubnetProps) => {
         });
 
         if (!deleteSubnetResponse.ok) {
-            throw new Error("Network response failed.");
+            setIsError(true);
+            setErrorMessage("Network Response Failed. Unable to delete subnet")
         }
 
         const deleteSubnetResult = await deleteSubnetResponse.json();
@@ -38,6 +43,8 @@ const SubnetTableRow = (props: SubnetProps) => {
     }
 
     return (
+        <div>
+        <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
         <tr>
             <td className="h-px w-px whitespace-nowrap">
                 <div className="pl-6 py-3">
@@ -89,6 +96,7 @@ const SubnetTableRow = (props: SubnetProps) => {
                 </div>
             </td>
         </tr>
+        </div>
     )
 }
 
