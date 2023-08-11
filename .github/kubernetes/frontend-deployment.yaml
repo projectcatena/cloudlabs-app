@@ -15,7 +15,14 @@ spec:
       containers:
 
       - name: "app"
-        image: FRONTEND_IMAGE
+        image: FRONTEND_IMAGE 
         env:
         - name: "NEXT_PUBLIC_API_URL"
           value: "https://cloudlabs.one"
+        resources:
+          requests:
+            cpu: 256m # milicores
+            memory: 128Mi
+          limits:
+            cpu: 512m
+            memory: 256Mi
