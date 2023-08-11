@@ -28,7 +28,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
 
       const fetchModules = async () => {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list`, {
             credentials: "include",
           }); // Fetch data from backend endpoint
           // If successful, adds the modules to "modules"
