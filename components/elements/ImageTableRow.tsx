@@ -1,6 +1,6 @@
-import Link from "next/link"
 import { ImageStatus } from "@/pages/images"
-import React, { ReactComponentElement, useState } from "react"
+import Link from "next/link"
+import { useState } from "react"
 
 type ImageProps = {
     imageId: string,
@@ -18,6 +18,7 @@ const ImageTableRow = (props: ImageProps) => {
 
         const deleteImageResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/delete`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
