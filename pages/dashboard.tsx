@@ -17,7 +17,7 @@ export type Module = {
 export const getServerSideProps: GetServerSideProps<{
     data: [Module]
 }> = async (context) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -38,10 +38,8 @@ export default function MainDashboard({ data }: InferGetServerSidePropsType<type
     const [openCreateModuleModal, setOpenCreateModuleModal] = useState(false);
     const [openDeleteModuleModal, setOpenDeleteModuleModal] = useState(false);
 
-    const { user } = useAuth();
-    const userRoles: Role[] = user?.roles || [];
 
-    const canCreateOrDeleteModule = userRoles.some(role => role.name === 'ADMIN' || role.name === 'TUTOR');
+    const authContext = useAuth();
 
     return (
         <DashboardLayout>
@@ -53,18 +51,21 @@ export default function MainDashboard({ data }: InferGetServerSidePropsType<type
                     <h1 className="block text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">Modules</h1>
                     <p className="mt-2 text-lg text-gray-800 dark:text-gray-400">This is a page where you can access your different module&#39;s materials.</p>
                     <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:gap-3">
-                        {canCreateOrDeleteModule && (
-                            <>
-                                <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                                    Add Module
-                                </button>
-
-                                <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
-                                    Delete Module
-                                </button>
-                            </>
-                        )}
-
+                        {
+                            (authContext.user?.isTutor || authContext.user?.isAdmin ? 
+                                <>
+                                    <button onClick={() => setOpenCreateModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                                            Add Module
+                                    </button>
+                                        
+                                    <button onClick={() => setOpenDeleteModuleModal(true)} className="w-full sm:w-40 inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+                                            Delete Module
+                                    </button>
+                                </>
+                                :
+                                <></>
+                        )
+                    }
                     </div>
                 </div>
 
@@ -93,9 +94,19 @@ export default function MainDashboard({ data }: InferGetServerSidePropsType<type
                             <h2 className="mt-5 font-semibold text-gray-800 dark:text-white">
                                 No modules found
                             </h2>
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                Add a new module to access it.
-                            </p>
+                            {
+                                (authContext.user?.isTutor || authContext.user?.isAdmin ?
+
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        Add a new module to access it.
+                                    </p>
+                                    :
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        Your Lecturer would add you to a module soon!
+                                    </p>
+                                )
+                            }
+                            
                             <div>
                                 <a className="inline-flex items-center mt-2 gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium" href="../docs/index.html">
                                 Learn more
@@ -106,6 +117,21 @@ export default function MainDashboard({ data }: InferGetServerSidePropsType<type
                             </div>
 
                             <div className="mt-5 grid sm:flex gap-2">
+                                {
+                                    (authContext.user?.isTutor || authContext.user?.isAdmin ?
+
+                                        <button onClick={() => setOpenCreateModuleModal(true)} type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
+                                        Add a new module
+                                        </button>
+                                        :
+                                        <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                                        Contact your Lecturer
+                                        </button>
+                                    )
+                                }
+                            </div>
+{/*
+                            <div className="mt-5 grid sm:flex gap-2">
                                 <button type="button" onClick={() => setOpenCreateModuleModal(true)} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
                                     <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlnsXlink="http://www.w3.org/2000/svg">
                                         <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -113,6 +139,7 @@ export default function MainDashboard({ data }: InferGetServerSidePropsType<type
                                     Add a new module
                                 </button>
                             </div>
+                        */}
                         </div>
                     )}
                 </div>
