@@ -12,6 +12,7 @@ export type User = {
     username: string,
     email: string,
     computes: ComputeInstance[]
+    isSelected: boolean;
 }
 
 export type ComputeInstance = {
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list-users`, {
+    const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list-users-computes`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -76,14 +77,45 @@ export default function Users({
     const [instanceName, setInstanceName] = useState("");
     const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
 
+    const [selectAll, setSelectAll] = useState(false);
+
     const handleUserSelect = (email: string, isSelected: boolean) => {
-        if (isSelected) {
-            setSelectedEmails((prevEmails) => [...prevEmails, email]);
-        } else {
-            setSelectedEmails((prevEmails) =>
-                prevEmails.filter((prevEmail) => prevEmail !== email)
+        const updatedUserData = userData.map(user => {
+            if (user.email === email) {
+                return { ...user, isSelected: isSelected };
+            }
+            return user;
+        });
+    
+        setUserData(updatedUserData);
+    
+        const allSelected = updatedUserData.every(user => user.isSelected);
+        setSelectAll(allSelected);
+        
+        if (!isSelected) {
+            setSelectedEmails(prevEmails =>
+                prevEmails.filter(prevEmail => prevEmail !== email)
             );
+        } else {
+            setSelectedEmails(prevEmails => [...prevEmails, email]);
         }
+    };
+
+    const handleSelectAll = () => {
+        const newSelectAll = !selectAll;
+        setSelectAll(newSelectAll);
+        
+        const selectedEmailsList = newSelectAll
+            ? userData.map(user => user.email) // Select all users' emails
+            : [];
+    
+        setSelectedEmails(selectedEmailsList);
+    
+        const updatedUserData = userData.map(user => ({
+            ...user,
+            isSelected: newSelectAll
+        }));
+        setUserData(updatedUserData);
     };
 
     async function addToCompute(event: any) {
@@ -196,7 +228,7 @@ export default function Users({
                     {/* Page Header */}
                     <div >
                         <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            Users
+                            Compute Users
                         </h1>
                     </div>
                     {/* Page Description */}
@@ -218,19 +250,21 @@ export default function Users({
                                         <form>
                                             <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
                                                 <div className="inline-flex gap-x-2">
-                                                    <button onClick={handleRefresh} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"> {/* onClick={handleRefresh} */}
-                                                        <svg className={`animate-spin h-4 w-4 text-white ${isRefresh ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> {/* */}
+                                                    {/*
+                                                    <button onClick={handleRefresh} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
+                                                        <svg className={`animate-spin h-4 w-4 text-white ${isRefresh ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                         </svg>
                                                         Refresh
                                                     </button>
+                                                    */}
                                                     <Listbox value={instanceName} onChange={setInstanceName}>
                                                         <div className="relative mt-1">
                                                             <Listbox.Label>Compute Instance: </Listbox.Label>
-                                                            <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
+                                                            <div className="inline-block text-sm text-gray-800 dark:text-gray-200 pl-2">
                                                                 <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                                                                    <span className="block truncate">{instanceName}</span>
+                                                                    <span className="block truncate">{instanceName || "Select a Instance"}</span>
                                                                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -278,19 +312,23 @@ export default function Users({
                                                         </div>
                                                     </Listbox>
 
-                                                    <button onClick={addToCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
-                                                        <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                            <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                        </svg>
-                                                        Add to VM
-                                                    </button>
-
-                                                    <button onClick={removeFromCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
-                                                        <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                            <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                        </svg>
-                                                        Remove from VM
-                                                    </button>
+                                                    <div className="flex items-center">
+                                                        <button onClick={addToCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                                <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                            </svg>
+                                                            Add to VM
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <div className="flex items-center">
+                                                        <button onClick={removeFromCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                                <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                            </svg>
+                                                            Remove from VM
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -325,12 +363,12 @@ export default function Users({
                                                 <tr>
                                                     <th scope="col" className="px-3 py-1 text-left">
                                                         <label htmlFor="hs-checkbox-in-form" className="flex p-3 w-full text-xl focus:border-blue-500 focus:ring-blue-500 dark:text-gray-800">
-                                                            <input type="checkbox" className="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" id="hs-checkbox-in-form"></input>
-                                                            <span className="text-xs text-gray-800 ml-2 dark:text-gray-200 font-semibold uppercase whitespace-nowrap">Select All</span>
+                                                            <input type="checkbox" checked={selectAll} onChange={handleSelectAll} className="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" id="hs-checkbox-in-form"></input>
+                                                            {/* <span className="text-xs text-gray-800 ml-2 dark:text-gray-200 font-semibold uppercase whitespace-nowrap">Select All</span> */}
                                                         </label>
                                                     </th>
 
-                                                    <th scope="col" className="px-6 py-3 text-left">
+                                                    <th scope="col" className="py-3 text-left">
                                                         <div className="flex items-center gap-x-2">
                                                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                                 Email
@@ -346,7 +384,7 @@ export default function Users({
                                                         </div>
                                                     </th>
 
-                                                    <th scope="col" className="py-3 text-left">
+                                                    <th scope="col" className="px-3 py-3 text-left">
                                                         <div className="flex items-center gap-x-2 ">
                                                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                                 Name
@@ -377,6 +415,7 @@ export default function Users({
                                                                 email={user.email}
                                                                 computes={user.computes}
                                                                 onSelect={handleUserSelect}
+                                                                isSelected={user.isSelected}
                                                             //handleRefresh={handleRefresh}
                                                             ></ComputeUserTableRow>
                                                         );
