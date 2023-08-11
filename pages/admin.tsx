@@ -9,7 +9,7 @@ import DashboardLayout from "../components/layouts/DashboardLayout";
 
 export type User = {
     id: number
-    fullName: string
+    //fullName: string
     username: string
     email: string
     roles: Role[]
@@ -414,6 +414,7 @@ export default function Admin({
                                                     </div>
                                                 </th>
 
+                                                {/*
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -421,7 +422,8 @@ export default function Admin({
                                                         </span>
                                                     </div>
                                                 </th>
-
+                                                 */}
+                                                
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -450,7 +452,7 @@ export default function Admin({
                                                             key={user.email}
                                                             //id={user.id}
                                                             username={user.username}
-                                                            fullName={user.fullName}
+                                                            //fullName={user.fullName}
                                                             email={user.email}
                                                             roles={user.roles}
                                                         //handleRefresh={handleRefresh}
@@ -458,21 +460,7 @@ export default function Admin({
                                                     );
                                                 })
                                             }
-
-                                            {/*
-                                {
-                                    data.map((user:User) => {
-                                        <UserTableRow
-                                            key={user.email}
-                                            //id={user.id}
-                                            name={user.name}
-                                            email={user.email}
-                                            roles={user.roles}
-                                            handleRefresh={fetchContent}
-                                        ></UserTableRow>
-                                    })
-                                }
-                                */}
+                                            
                                         </tbody>
 
                                     </table>
