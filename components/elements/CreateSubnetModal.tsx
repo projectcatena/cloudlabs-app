@@ -108,7 +108,7 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
                                 
                                 <div>
                                     <div className="flex justify-between items-center">
-                                        <label htmlFor="ipv4" className="block text-sm mb-2 dark:text-white">IPCidr Range</label>
+                                        <label htmlFor="ipv4" className="block text-sm mb-2 dark:text-white">IP CIDR Range</label>
                                     </div>
 
                                     <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">

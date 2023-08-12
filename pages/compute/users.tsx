@@ -4,7 +4,7 @@ import { parseToken } from "@/services/auth.service";
 import { Listbox, Transition } from "@headlessui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { Fragment, SetStateAction, useState } from "react";
+import { Fragment, useState } from "react";
 
 export type User = {
     id: number,
@@ -48,6 +48,12 @@ export const getServerSideProps: GetServerSideProps<{
         },
     });
 
+    if (!userRes.ok) {
+        return {
+            notFound: true,
+        }
+    }
+
     const initialUserData = await userRes.json();
 
     const computeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/listall`, {
@@ -58,6 +64,12 @@ export const getServerSideProps: GetServerSideProps<{
           "Access-Control-Allow-Headers": "*",
         },
       });
+
+      if (!computeRes.ok) {
+        return {
+            notFound: true,
+        }
+    }
 
     const initialComputeData = await computeRes.json();
     console.log(initialComputeData);

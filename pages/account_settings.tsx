@@ -206,7 +206,8 @@ export default function Settings({
                 id="email"
                 type="email"
                 className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                placeholder={email} /> {/* authContext?.user?.email */}
+                placeholder={email}
+                readOnly /> {/* authContext?.user?.email */}
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
