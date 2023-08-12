@@ -126,7 +126,7 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
 
             const xhr = new XMLHttpRequest();
             setCurrentXHR(xhr);
-            const isXHRSuccess = await new Promise((resolve, reject) => {
+            await new Promise((resolve, reject) => {
                 xhr.upload.addEventListener("progress", (event) => {
                     if (event.lengthComputable) {
                         console.log("upload progress:", (100 * event.loaded) / event.total);
@@ -146,20 +146,15 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
                 });
                 xhr.open("PUT", signedURL, true);
                 xhr.setRequestHeader("Content-Type", "application/octet-stream");
+                xhr.setRequestHeader("x-goog-meta-os", operatingSystem);
                 xhr.send(formData);
-
-                console.log("success:", isXHRSuccess);
-
-                if (isXHRSuccess) {
-                    // initVirtualDiskBuild(fileSelected!.name, imageName, setErrorToastOpen);
-                    setIsFileUpload(false);
-                    setProgress(0);
-                }
-            })
-                .catch(error => {
-                    console.log(error);
-                    setWarningToastOpen(true);
-                });
+            }).catch(error => {
+                console.log(error);
+                setWarningToastOpen(true);
+            }).finally(() => {
+                setIsFileUpload(false);
+                setProgress(0);
+            });
         } catch (error) {
             console.log(error);
             setErrorToastOpen(true);
@@ -175,7 +170,7 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
                 setIsFileUpload(false);
             }
         },
-        [isCancel] // Run only when isCancel changes
+        [isCancel, currentXHR] // Run only when isCancel changes
     )
 
     useEffect(
@@ -249,7 +244,7 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
                                                             key={codename}
                                                             value={codename}
                                                             className={({ active }) =>
-                                                                `relative cursor-default select-none py-2 pl-5 ${active ? 'bg-blue-500 text-white' : 'text-gray-400'
+                                                                `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-blue-500 text-white' : 'text-gray-400'
                                                                 }`
                                                             }
                                                         >
