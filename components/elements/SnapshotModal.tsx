@@ -367,20 +367,22 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                                     </select>
                                 </label>
                             </div>
-                            <button
-                            type="submit"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                            onClick={deleteSnapshot} //open hidden form
-                            >
-                            Delete
-                            </button>
-                            <button
-                            type="button"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                            onClick={() => changeButtonState("close")} //close hidden form
-                            >
-                            Close
-                            </button>
+                            <div className="flex justify-start items-center mt-6 mb-0 gap-x-2 py-3 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">
+                                <button
+                                type="submit"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                                onClick={deleteSnapshot} //open hidden form
+                                >
+                                Delete
+                                </button>
+                                <button
+                                type="button"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                                onClick={() => changeButtonState("close")} //close hidden form
+                                >
+                                Close
+                                </button>
+                            </div>
                         </form>
                         )}
                     </div>
@@ -403,20 +405,22 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                                 </select>
                             </label>
                             </div>
-                            <button
-                            type="submit"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                            onClick={revertSnapshot}
-                            >
-                            Revert
-                            </button>
-                            <button
-                            type="button"
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                            onClick={() => changeButtonState("close")} //close hidden form
-                            >
-                            Close
-                            </button>
+                            <div className="flex justify-start items-center mt-6 mb-0 gap-x-2 py-3 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">
+                                <button
+                                type="submit"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                                onClick={revertSnapshot}
+                                >
+                                Revert
+                                </button>
+                                <button
+                                type="button"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                                onClick={() => changeButtonState("close")} //close hidden form
+                                >
+                                Close
+                                </button>
+                            </div>
                         </form>
                         )}
                     </div>
