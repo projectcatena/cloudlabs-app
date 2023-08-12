@@ -1,11 +1,11 @@
+import ErrorToast from "@/components/elements/ErrorToast";
 import ModuleUserTableRow from "@/components/elements/ModuleUserTableRow";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { parseToken } from "@/services/auth.service";
 import { Listbox, Transition } from "@headlessui/react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { Fragment, SetStateAction, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 export type User = {
     id: number,
@@ -49,16 +49,28 @@ export const getServerSideProps: GetServerSideProps<{
         },
     });
 
+    if (!userRes.ok) {
+        return {
+            notFound: true,
+        }
+    }
+
     const initialUserData = await userRes.json();
 
-    const moduleRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules`, {
+    const moduleRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list`, {
         method: "GET",
+        credentials: "include",
         headers: {
           "cookie": context.req.headers.cookie!,
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "*",
         },
       });
+      if (!moduleRes.ok) {
+        return {
+            notFound: true,
+        }
+    }
 
     const initialModuleData = await moduleRes.json();
     console.log(initialModuleData);
@@ -69,6 +81,9 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Users({
     initialUserData, initialModuleData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [userData, setUserData] = useState<User[]>(initialUserData);
@@ -152,7 +167,8 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                throw new Error("Network response failed");
+                setIsError(true);
+                setErrorMessage("Failed to add user(s)");
             }
 
             const postResult = await postRes.json();
@@ -185,7 +201,8 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                throw new Error("Network response failed");
+                setIsError(true);
+                setErrorMessage("Failed to remove user(s)");
             }
 
             const postResult = await postRes.json();
@@ -208,7 +225,8 @@ export default function Users({
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Error("Unable to fetch data");
+                    setIsError(true);
+                    setErrorMessage("Failed to add user(s)");
                 }
                 return res.json();
             })
@@ -467,6 +485,7 @@ export default function Users({
                         </div>
                     </div>
                     {/* End Card */}
+                    <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
                 </div>
                 {/* End Table Section */}
             </DashboardLayout>

@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google'
-import React, { useState, useEffect } from 'react'
-import { Type } from 'typescript'
+import React, { useEffect, useState } from 'react'
+import ErrorToast from './ErrorToast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +21,8 @@ type Module = {
 }
 
 const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
-    
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [modules, setModules] = useState<Module[]>([]);
     const [selectedModule, setSelectedModule] = useState<Module | null>(null);
     const [subtitleValue, setSubtitleValue] = useState("");
@@ -46,7 +47,8 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
             setDescriptionValue(moduleDetails.moduleDescription);
             console.log(moduleDetails);
           } else {
-            throw new Error("Error fetching module data");
+            setIsError(true);
+            setErrorMessage("Unable to fetch module data");
           }
         } catch (error) {
           console.error("Error fetching module data", error);
@@ -85,7 +87,8 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
             });
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                setIsError(true);
+                setErrorMessage("Module edit failed");
             }
 
             // Get the response data from server as JSON
@@ -131,19 +134,38 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
                             <div className="space-y-4">
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="subtitle" className="flex">
-                                        <input onChange={(e) => setSubtitleValue(e.target.value)} id="subtitle" name="subtitle" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={subtitleValue}></input>
+                                        <input
+                                        onChange={(e) => setSubtitleValue(e.target.value)}
+                                        id="subtitle"
+                                        name="subtitle"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        value={subtitleValue}
+                                        pattern="^[a-zA-Z0-9_ ]*$"
+                                        title='Only alphanumeric characters allowed'
+                                        required
+                                        ></input>
                                     </label>
                                 </div>
 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="title" className="flex">
-                                        <input onChange={(e) => setTitleValue(e.target.value)} id="title" name="title" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" value={nameValue}></input>
+                                        <input
+                                        onChange={(e) => setTitleValue(e.target.value)}
+                                        id="title"
+                                        name="title"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        value={nameValue}
+                                        pattern="^[a-zA-Z0-9_ ]*$"
+                                        title='Only alphanumeric characters allowed'
+                                        required></input>
                                     </label>
                                 </div>
                                     
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="description" className="flex">
-                                        <textarea onChange={(e) => setDescriptionValue(e.target.value)} id="description" name="description" value={descriptionValue} className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"></textarea>
+                                        <textarea onChange={(e) => setDescriptionValue(e.target.value)} id="description" name="description" value={descriptionValue} className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" required></textarea>
                                     </label>
                                 </div>
                             </div>
@@ -160,6 +182,7 @@ const EditModuleModal = ({open, onClose, moduleId}: EditModuleModalProps) => {
                     </div> 
                 </div>
             </div>
+            <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
         </div>
     )
 }

@@ -1,6 +1,7 @@
 type ErrorToastProps = {
     errorMessage: string
     isOpen: boolean
+    onClose: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function ErrorToast({ errorMessage, isOpen }: ErrorToastProps) {
