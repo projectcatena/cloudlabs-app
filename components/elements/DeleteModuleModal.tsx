@@ -137,7 +137,7 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
                     </div> 
                 </div>
             </div>
-            <ErrorToast errorMessage={errorMessage} isOpen={isError} />
+            <ErrorToast errorMessage={errorMessage} isOpen={isError} onClose={() => setIsError((prev) => !prev)} />
         </div>
       )
 };
