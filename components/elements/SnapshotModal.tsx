@@ -1,8 +1,10 @@
+import LoadingModal from '@/components/elements/LoadingModal'
 import { useAtom } from 'jotai'
 import Error from 'next/error'
 import { Inter } from 'next/font/google'
 import React, { useState } from 'react'
 import { errorAtom, errorMessageAtom, snapshotAtom } from './Atoms/atoms'
+import ErrorToast from './ErrorToast'
 import SnapshotTableRow from './SnapshotTableRow'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -369,13 +371,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                                         required></input>
                                     </label>
                                 </div>
-                                {/* 
-                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                    <label htmlFor="diskName" className="flex">
-                                        <input onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Filter Name"></input>
-                                    </label>
-                                </div>
-                                */}
+
                             </div>
                             <button
                             type="submit"
@@ -434,43 +430,53 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     </div>
                     {/* End Revert Form */}
 
-                        {showButton && (
-                            <div className="mt-4">
-
-                                <button
-                                    type="button"
-                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                    onClick={() => changeButtonState("create")} //open hidden form
-                                >
-                                    New Snapshot
-                                </button>
-                                <button
-                                    type="button"
-                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                    onClick={() => changeButtonState("delete")}
-                                >
-                                    Delete
-                                </button>
-                                <button type="button"
-                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                    onClick={() => changeButtonState("revert")}
-                                >
-                                    Revert
-                                </button>
-                                <button
-                                    type="button"
-                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                    onClick={() => onClose(false)}
-                                >
-                                    Close
-                                </button>
-
-                            </div>
-                        )}
+                    {showButton && (
+                    <div className="mt-4">
+                        
+                        <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                        onClick={() => changeButtonState("create")} //open hidden form
+                        >
+                        New Snapshot
+                        </button>
+                        <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                        onClick={() => changeButtonState("delete")}
+                        >
+                        Delete
+                        </button>
+                        <button type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                        onClick={() => changeButtonState("revert")}
+                        >
+                        Revert
+                        </button>
+                        <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                        onClick={() => onClose(false)}
+                        >
+                        Close
+                        </button>
+                        
                     </div>
+                    )}
                 </div>
+                {/* Modal */}
+                {openLoadingModal && (
+                <LoadingModal
+                    open={openLoadingModal}
+                    onClose={() => setOpenLoadingModal((prev) => !prev)}
+                    loadingState={loadingMessage}
+                    />
+                    )}
+                
+                <ErrorToast isOpen={openErrorModal} onClose={() => setOpenErrorModal((prev) => !prev)} errorMessage={errorModalMessage}></ErrorToast>
             </div>
-            </div>
+        </div>
+        </div>
         </>
     )
 };
