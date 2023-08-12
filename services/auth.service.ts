@@ -50,7 +50,7 @@ export function isRoleValid(role: Role[], acceptRole: string) {
 
 export async function signOut() {
 
-    const res = await fetch("http://localhost:8080/api/auth/signout", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signout`, {
         method: "POST",
         credentials: "include", // please include this in every request to backend
         headers: {

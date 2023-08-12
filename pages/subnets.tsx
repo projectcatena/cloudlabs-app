@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
     try {
-        const res = await fetch('http://localhost:8080/api/network/list', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -65,7 +65,7 @@ export default function Subnets({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/network/list", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
             credentials: "include",
         })
             .then(res => {

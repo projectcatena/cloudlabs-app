@@ -67,7 +67,7 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
     useEffect(
         () => {
             if (deferredMachineTypesQuery != "") {
-                fetch(`http://localhost:8080/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`, {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list-machine-types?query=${deferredMachineTypesQuery}`, {
                     credentials: "include",
                     headers: {
                         "Access-Control-Allow-Origin": "*",
@@ -102,7 +102,7 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
 
     useEffect(
         () => {
-            fetch(`http://localhost:8080/api/image/list`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
                 credentials: "include",
                 headers: {
                     "Access-Control-Allow-Origin": "*",
@@ -134,7 +134,7 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
 
     useEffect(
         () => {
-            fetch(`http://localhost:8080/api/network/list`, {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
                 credentials: "include",
                 headers: {
                     "Access-Control-Allow-Origin": "*",
@@ -204,7 +204,7 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
 
         try {
 
-            const response = await fetch(`http://localhost:8080/api/compute/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/create`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

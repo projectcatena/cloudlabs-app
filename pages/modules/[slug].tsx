@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (context) => {
   const moduleId = context.query.slug;
 
-  const res = await fetch(`http://localhost:8080/api/compute/list?moduleId=${moduleId}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/list?moduleId=${moduleId}`, {
     method: "GET",
     headers: {
       "cookie": context.req.headers.cookie!,
@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
   const data = await res.json();
   
 
-  const moduleRes = await fetch(`http://localhost:8080/api/Modules/${moduleId}`, {
+  const moduleRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/${moduleId}`, {
     method: "GET",
     headers: {
       "cookie": context.req.headers.cookie!,
@@ -157,7 +157,7 @@ export default function ModulePage({
                 :
 
                 <button type="button" className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
-                  Contact your Teacher
+                  Contact your Lecturer
                 </button>
               )
             }

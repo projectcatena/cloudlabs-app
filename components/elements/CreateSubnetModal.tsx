@@ -37,7 +37,7 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
         console.log(postData);
 
         try {
-            const response = await fetch("http://localhost:8080/api/network/create", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/create`, {
                 // The method is POST because we are sending data.
                 method: "POST",
                 // Tell the server we're sending JSON.

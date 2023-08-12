@@ -15,13 +15,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
     const instanceName = context.query.instance;
 
-    const res = await fetch(`http://localhost:8080/api/compute/instance?instanceName=${instanceName}`, {
-      headers: {
-        "cookie": context.req.headers.cookie!,
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-      },
-    });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/instance?instanceName=${instanceName}`, {
+    headers: {
+      "cookie": context.req.headers.cookie!,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "*",
+    },
+  });
 
     const computeInstance: ComputeInstance = await res.json();
 

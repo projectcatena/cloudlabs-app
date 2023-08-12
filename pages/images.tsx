@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
         }
     }
 
-    const res = await fetch('http://localhost:8080/api/image/list', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -69,7 +69,7 @@ export default function Images({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/image/list", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
             credentials: 'include',
         })
         .then(res => {

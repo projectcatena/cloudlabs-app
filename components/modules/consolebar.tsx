@@ -29,7 +29,7 @@
                 instanceName
             };
             try{
-                const response = await fetch("http://localhost:8080/api/compute/reset", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/reset`, {
                     method: "POST",
                     headers: {
                         "Content-Type" : "application/json",

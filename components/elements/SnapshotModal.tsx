@@ -47,8 +47,8 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
     // snapshot list
     const [snapshotListData, setSnapshotListData] = useAtom<Snapshots[]>(snapshotAtom);
 
-    function changeButtonState(formType:string) {
-        if (formType == "create"){
+    function changeButtonState(formType: string) {
+        if (formType == "create") {
             setShowCreateForm((prev) => !prev);
             setShowDeleteForm(false);
             setShowRevertForm(false);
@@ -84,22 +84,22 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         setLoadingMessage("Creating...");
 
         let params = {
-        snapshotName,
-        instanceName,
-        description
+            snapshotName,
+            instanceName,
+            description
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/snapshot/create", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/create`, {
                 // POST request
                 method: "POST",
                 credentials: 'include',
                 // Tell the server we're sending JSON.
                 headers: {
-                "content-type": "application/json",
-                //"Authorization": "Bearer " + localStorage.getItem("token"),
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
+                    "content-type": "application/json",
+                    //"Authorization": "Bearer " + localStorage.getItem("token"),
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
                 },
                 // Body of the request is the JSON data we created above.
                 body: JSON.stringify(params),
@@ -117,7 +117,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             window.location.reload();
             //alert(`Result: ` + result);
             // If server returns the name submitted, that means the form works.
-            
+
             return result;
         } catch (error) {
             setOpenErrorModal(true);
@@ -138,7 +138,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             };
             
         try {
-            const response = await fetch("http://localhost:8080/api/snapshot/delete", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/delete`, {
                 // POST request
                 method: "DELETE",
                 credentials: 'include',
@@ -182,8 +182,8 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             let revert_params = { //revert snapshot parameters
                 instanceName,
                 snapshotName,
-            
-            //diskName,
+
+                //diskName,
             };
 
             console.log(revert_params);
@@ -212,7 +212,6 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         const revert_result = await res.text();
         setOpenLoadingModal(false);
         window.location.reload();
-        //alert(`Result: ` + revert_result);
         // If server returns the name submitted, that means the form works.
         return revert_result;
         } catch (error) {
@@ -273,10 +272,10 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                                     <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27zm.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0l-.509-.51z"/>
                                     <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z"/>
                                 </svg> */}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-gray-600 dark:text-gray-400">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-                                </svg>
-                            </div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 text-gray-600 dark:text-gray-400">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                                            </svg>
+                                        </div>
 
                             <h2 className="mt-5 font-semibold text-gray-800 dark:text-white">
                             No snapshots found
@@ -300,13 +299,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                         </div>
                         </th>
 
-                        <th scope="col" className="px-6 py-3 text-left">
-                        <div className="flex items-center gap-x-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            Description
-                            </span>
-                        </div>
-                        </th>
+                                                <th scope="col" className="px-6 py-3 text-left">
+                                                    <div className="flex items-center gap-x-2">
+                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                                                            Description
+                                                        </span>
+                                                    </div>
+                                                </th>
 
                     </tr>
                     </thead>
@@ -423,7 +422,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                         <form>
                             <div className="space-y-4">
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                    <label htmlFor="snapshotName" className="flex">
+                                <label htmlFor="snapshotName" className="flex">
                                         <input
                                         onChange={(e) => setSnapshotName(e.target.value)}
                                         id="snapshotName"
@@ -505,7 +504,6 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             </div>
             </Dialog>
         </Transition>
-        
         </>
     )
 };

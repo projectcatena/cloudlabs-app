@@ -10,7 +10,7 @@ import DashboardLayout from "../components/layouts/DashboardLayout";
 
 export type User = {
     id: number
-    fullName: string
+    //fullName: string
     username: string
     email: string
     roles: Role[]
@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps<{
     
     try {
         if (typeof token === "string") {
-            const res = await fetch("http://localhost:8080/api/admin/list", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -109,7 +109,7 @@ export default function Admin({
 
     async function handleRefresh() {
         setIsRefresh(true);
-        fetch("http://localhost:8080/api/admin/list", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -150,7 +150,7 @@ export default function Admin({
         console.log(email);
         console.log(role);
 
-        fetch("http://localhost:8080/api/admin/add", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add`, {
             method: "PUT",
             credentials: "include",
             headers: {
@@ -187,7 +187,7 @@ export default function Admin({
         };
         console.log(email);
         console.log(role);
-        fetch("http://localhost:8080/api/admin/delete", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/delete`, {
             method: "DELETE",
             credentials: "include",
             headers: {
@@ -354,7 +354,7 @@ export default function Admin({
 
                                             <button onClick={deleteRole} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                 <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                    <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                    <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
                                                 Remove Role
                                             </button>
@@ -438,6 +438,7 @@ export default function Admin({
                                                     </div>
                                                 </th>
 
+                                                {/*
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -445,7 +446,8 @@ export default function Admin({
                                                         </span>
                                                     </div>
                                                 </th>
-
+                                                 */}
+                                                
                                                 <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
@@ -474,7 +476,7 @@ export default function Admin({
                                                             key={user.email}
                                                             //id={user.id}
                                                             username={user.username}
-                                                            fullName={user.fullName}
+                                                            //fullName={user.fullName}
                                                             email={user.email}
                                                             roles={user.roles}
                                                         //handleRefresh={handleRefresh}
@@ -482,21 +484,7 @@ export default function Admin({
                                                     );
                                                 })
                                             }
-
-                                            {/*
-                                {
-                                    data.map((user:User) => {
-                                        <UserTableRow
-                                            key={user.email}
-                                            //id={user.id}
-                                            name={user.name}
-                                            email={user.email}
-                                            roles={user.roles}
-                                            handleRefresh={fetchContent}
-                                        ></UserTableRow>
-                                    })
-                                }
-                                */}
+                                            
                                         </tbody>
 
                                     </table>
