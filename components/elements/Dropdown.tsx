@@ -1,6 +1,8 @@
 import { useAtom } from "jotai";
 import { useState } from "react";
-import { snapshotAtom } from "./Atoms/atoms";
+import { errorAtom, errorMessageAtom, snapshotAtom } from "./Atoms/atoms";
+import ErrorToast from "./ErrorToast";
+import LoadingModal from "./LoadingModal";
 import SnapshotModal from "./SnapshotModal";
 import StatusModal from "./VirtualMachineStatusModal";
 
@@ -11,6 +13,14 @@ type DropdownProps = {
 }
 
 export default function Dropdown({ instanceName }: DropdownProps) {
+    // Error atom
+    const [snapshotError, setSnapshotError] = useAtom(errorAtom);
+    const [snapshotErrorMessage, setSnapshotErrorMessage] = useAtom(errorMessageAtom);
+
+    // Error useState()
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [dropdown, setDropdown] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
 
@@ -20,7 +30,13 @@ export default function Dropdown({ instanceName }: DropdownProps) {
     const [StatusModalOpen, setStatusModalOpen] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
 
+    // Loading State
+    const [openLoadingModal, setOpenLoadingModal] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
+
     async function handleDelete() {
+        setOpenLoadingModal(true);
+        setLoadingMessage("Deleting...");
 
         const postData = {
             instanceName,
@@ -40,36 +56,50 @@ export default function Dropdown({ instanceName }: DropdownProps) {
 
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                throw new Error("Network Failed")
             }
 
             const result = await response.json();
+            setOpenLoadingModal(false);
+            window.location.reload();
 
             return result;
         } catch (error) {
+            setOpenLoadingModal(false);
+            setIsError(true);
+            setErrorMessage("Deleting Virtual Machine failed");
             console.log("Error:", error);
         }
     }
 
     async function loadSnapshotData() {
+        let data = {
+            instanceName,
+        };
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/list`, {
-            method: "GET",
+            method: "POST",
+            credentials: "include",
             headers: {
+                "content-type": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "*",
-            }
+            },
+            body: JSON.stringify(data),
         });
         if (!response.ok) {
-            throw new Error("Unable to fetch snapshots");
+            setSnapshotError(true);
+            setSnapshotErrorMessage("Unable to retrieve snapshots");
         }
         const return_data = await response.json();
-        //setData(return_data);
-        //console.log(return_data);
         setSnapshotListData(return_data);
+        setSnapshotError(false);
         return return_data;
     }
 
     async function handleStop() {
+        setOpenLoadingModal(true);
+        setLoadingMessage("Stopping...");
+
         const postData = {
             instanceName,
         };
@@ -77,6 +107,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         try {
             const getStatusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/status`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -90,12 +121,14 @@ export default function Dropdown({ instanceName }: DropdownProps) {
             const statusResult = await getStatusResponse.json();
 
             if (statusResult.status === "TERMINATED") {
+                setOpenLoadingModal(false);
                 setStatusMessage("This Virtual Machine is already terminated!");
                 setStatusModalOpen(true);
                 return;
             } else {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/stop`, {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -107,15 +140,21 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 }
 
                 const result = await response.json();
+                setOpenLoadingModal(false);
+                window.location.reload();
 
                 return result;
             }
         } catch (error) {
+            setOpenLoadingModal(false);
             console.log("Error:", error);
         }
     }
 
     async function handleStart() {
+        setOpenLoadingModal(true);
+        setLoadingMessage("Starting...");
+
         const postData = {
             instanceName,
         };
@@ -123,6 +162,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         try {
             const getStatusResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/status`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -136,12 +176,14 @@ export default function Dropdown({ instanceName }: DropdownProps) {
             const statusResult = await getStatusResponse.json();
 
             if (statusResult.status === "RUNNING") {
+                setOpenLoadingModal(false);
                 setStatusMessage("This Virtual Machine is already running!");
                 setStatusModalOpen(true);
                 return;
             } else {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/start`, {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -153,10 +195,13 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 }
 
                 const result = await response.json();
+                setOpenLoadingModal(false);
+                window.location.reload();
 
                 return result;
             }
         } catch (error) {
+            setOpenLoadingModal(false);
             console.log("Error:", error);
         }
     }
@@ -191,10 +236,15 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                     </button>
                 </div>
                 {/* Modal */}
-
+                {openLoadingModal && (
+                    <LoadingModal
+                    open={openLoadingModal}
+                    onClose={() => setOpenLoadingModal((prev) => !prev)}
+                    loadingState={loadingMessage} />
+                )}
                 <SnapshotModal open={openModal} onClose={() => setOpenModal((prev) => !prev)} instanceName={instanceName} />
                 <StatusModal open={StatusModalOpen} onClose={() => setStatusModalOpen(false)} statusMessage={statusMessage} />
-
+                <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
             </div>
         </div>
     )

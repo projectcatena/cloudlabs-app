@@ -1,11 +1,9 @@
-import { Inter } from 'next/font/google'
-import DashboardLayout from '@/components/layouts/DashboardLayout'
-import Link from 'next/link'
 import CreateSubnetModal from '@/components/elements/CreateSubnetModal'
-import { useState } from 'react'
 import SubnetTableRow from '@/components/elements/SubnetTableRow'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
+import DashboardLayout from '@/components/layouts/DashboardLayout'
 import { parseToken } from '@/services/auth.service'
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types'
+import { useState } from 'react'
 
 type Subnet = {
     id: number,
@@ -18,7 +16,6 @@ type Subnet = {
 export const getServerSideProps: GetServerSideProps<{
     initialData: [Subnet],
 }> = async (context) => {
-
     const user = parseToken(context.req.cookies["jwt"]!);
 
     // Check if not TUTOR or ADMIN
@@ -31,18 +28,29 @@ export const getServerSideProps: GetServerSideProps<{
             } */
         }
     }
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/network/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
-        },
-    });
-
-    const initialData = await res.json();
-    return { props: { initialData } }
+            },
+        });
+        let initialData = await res.json();
+        return { props: { initialData } }
+    } catch (error) {
+        return {
+            notFound: true,
+            /*
+            redirect: {
+                permanent: false,
+                destination: '/_error'
+            }
+            */
+        }
+    }
+    
 }
 
 export default function Subnets({
@@ -70,6 +78,8 @@ export default function Subnets({
                 setData(data);
             })
             .catch(error => {
+                setAddSubnetModalOpen(false);
+                window.location.reload();
                 console.error("Error: ", error);
                 // setIsError(true);
             })
@@ -174,7 +184,7 @@ export default function Subnets({
                                     </label> */}
                                                 </th>
 
-                                                <th scope="col" className="pl-6 lg:pl-3 xl:pl-0 pr-6 py-3 text-left">
+                                                <th scope="col" className="px-6 py-3 text-left">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                             Name
@@ -247,13 +257,15 @@ export default function Subnets({
                             </div>
                         </div>
                     </div>
+                    <CreateSubnetModal open={isAddSubnetModalOpen} onClose={() => setAddSubnetModalOpen(false)} subnetName={''} ipv4Range={''}></CreateSubnetModal>
                 </div>
                 {/* End Card */}
+                
             </div>
             {/* End Table Section */}
             {/* End Content */}
             {/* ========== END MAIN CONTENT ========== */}
-            <CreateSubnetModal open={isAddSubnetModalOpen} onClose={() => setAddSubnetModalOpen(false)} subnetName={''} ipv4Range={''}></CreateSubnetModal>
+            
         </DashboardLayout>
     )
 }
