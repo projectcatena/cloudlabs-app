@@ -1,6 +1,5 @@
 import LoadingModal from '@/components/elements/LoadingModal'
 import { useAtom } from 'jotai'
-import Error from 'next/error'
 import { Inter } from 'next/font/google'
 import React, { useState } from 'react'
 import { errorAtom, errorMessageAtom, snapshotAtom } from './Atoms/atoms'
@@ -23,6 +22,7 @@ export type Snapshots = {
     snapshotName: string
     description: string
     instancename: string
+    isSelected: boolean
     //region: string
     //location: string
 }
@@ -221,10 +221,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         }
     }
     //TODO: resolve error when snapshotlist is empty
-    if (!snapshotAtom) {
-        setOpenErrorModal(true);
-        return <Error statusCode={500}/>
-    }
+    if (!open) return null;
     return (
         <>
         <div id="snapshots" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
@@ -355,23 +352,20 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     {/* Delete Form */}
                     <div>
                         {showDeleteForm && (
-                        <form>
-                            <div className="space-y-4">
-                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                    <label htmlFor="snapshotName" className="flex">
-                                        <input
-                                        onChange={(e) => setSnapshotName(e.target.value)}
-                                        id="snapshotName"
-                                        name="snapshotName"
-                                        type="text"
-                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
-                                        placeholder="Snapshot name"
-                                        pattern="^[a-zA-Z0-9\-]+$"
-                                        title='Please use alphanumric characters with - instead of space'
-                                        required></input>
-                                    </label>
-                                </div>
-
+                        <form id='delete-snapshot'>
+                            <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                <label htmlFor="delete-snapshot" className="flex">
+                                    <select value={snapshotName} onChange={(event) => setSnapshotName(event.target.value)} className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                        <option disabled value="" className="flex flex-col border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                            Select the Snapshot
+                                        </option>
+                                        {snapshotListData.map((snapshot:Snapshots) => (
+                                            <option key={snapshot.snapshotName} value={snapshot.snapshotName} className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                            {snapshot.snapshotName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
                             </div>
                             <button
                             type="submit"
@@ -394,27 +388,25 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     {/* Revert Form */}
                     <div>
                         {showRevertForm && (
-                        <form>
-                            <div className="space-y-4">
-                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                <label htmlFor="snapshotName" className="flex">
-                                        <input
-                                        onChange={(e) => setSnapshotName(e.target.value)}
-                                        id="snapshotName"
-                                        name="snapshotName"
-                                        type="text"
-                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
-                                        placeholder="Snapshot name"
-                                        pattern="^[a-zA-Z0-9\-]+$"
-                                        title='Please use alphanumric characters with - instead of space'
-                                        required></input>
-                                    </label>
-                                </div>
+                        <form id='revert-snapshot'>
+                        <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 space-y-4">
+                            <label htmlFor="revert-snapshot" className="flex">
+                                <select value={snapshotName} onChange={(event) => setSnapshotName(event.target.value)} className="relative cursor-default text-left py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+                                    <option disabled value="" className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                        Select the Snapshot
+                                    </option>
+                                    {snapshotListData.map((snapshot:Snapshots) => (
+                                        <option key={snapshot.snapshotName} value={snapshot.snapshotName} className="border-gray-200 absolute z-[60] mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm dark:bg-gray-800 dark:border-gray-700">
+                                        {snapshot.snapshotName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
                             </div>
                             <button
                             type="submit"
                             className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                            onClick={revertSnapshot} //open hidden form
+                            onClick={revertSnapshot}
                             >
                             Revert
                             </button>
