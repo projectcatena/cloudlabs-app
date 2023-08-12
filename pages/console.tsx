@@ -1,18 +1,19 @@
-import { Inter } from 'next/font/google'
-import { useEffect, useState } from 'react'
+import ErrorModal from '@/components/elements/ErrorModal'
+import LoadingModal from '@/components/elements/LoadingModal'
+import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
+import ConsoleBar from '@/components/modules/consolebar'
+import { IHostEntity, connect } from '@/utils/guacamole'
 import { Client } from 'guacamole-common-js'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import GuacCredentialsModal from '@/components/elements/modals/GuacCredentialsModal'
-import { IHostEntity, connect } from '@/utils/guacamole'
-import ConsoleBar from '@/components/modules/consolebar'
-import LoadingModal from '@/components/elements/LoadingModal'
-import ErrorModal from '@/components/elements/ErrorModal'
+import { Inter } from 'next/font/google'
+import { useEffect, useState } from 'react'
 import { ComputeInstance } from './modules/[slug]'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const instanceName = context.query.instance;
+  try {
+    const instanceName = context.query.instance;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/instance?instanceName=${instanceName}`, {
     headers: {
@@ -22,9 +23,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   });
 
-  const computeInstance: ComputeInstance = await res.json();
+    const computeInstance: ComputeInstance = await res.json();
 
-  return { props: { computeInstance } };
+    return { props: { computeInstance } };
+  } catch (error) {
+    return {
+      notFound: true
+    }
+  }
+  
 }
 
 export default function Console({ computeInstance }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -125,7 +132,7 @@ export default function Console({ computeInstance }: InferGetServerSidePropsType
         onClose={setOpenCredentialsModal}
         callback={callback}
       />
-      <LoadingModal open={openLoadingModal} onClose={() => setOpenLoadingModal(false)} />
+      <LoadingModal open={openLoadingModal} onClose={() => setOpenLoadingModal(false)} loadingState='Connecting...' />
       <ErrorModal open={openErrorModal} onClose={() => setOpenErrorModal(false)} errorMessage="A connection error has occured." />
     </main>
   )

@@ -485,7 +485,7 @@ export default function Users({
                         </div>
                     </div>
                     {/* End Card */}
-                    <ErrorToast isOpen={isError} errorMessage={errorMessage} />
+                    <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
                 </div>
                 {/* End Table Section */}
             </DashboardLayout>

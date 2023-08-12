@@ -1,7 +1,8 @@
-import Dropdown from './Dropdown'
-import Link from 'next/link'
-import { Inter } from 'next/font/google'
 import { ComputeInstance } from '@/pages/modules/[slug]'
+import { Inter } from 'next/font/google'
+import Link from 'next/link'
+import { useState } from 'react'
+import Dropdown from './Dropdown'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -10,6 +11,7 @@ type VirtualMachineCardProps = {
 }
 
 export default function VirtualMachineCard({ computeInstance }: VirtualMachineCardProps) {
+    const [openModal, setOpenModal] = useState(false);
     return (
         <div className="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
             <div className="h-16 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl"></div>
@@ -36,7 +38,7 @@ export default function VirtualMachineCard({ computeInstance }: VirtualMachineCa
                     className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-bl-xl font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm sm:p-4 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
                     View Console
                 </Link>
-                <Dropdown instanceName={computeInstance.instanceName}></Dropdown>
+                <Dropdown instanceName={computeInstance.instanceName} ></Dropdown>
             </div>
         </div>
     )
