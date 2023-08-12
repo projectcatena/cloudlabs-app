@@ -33,6 +33,7 @@ export default function Sidebar() {
 
                     {/* Breadcrumb */}
                     <ol className="ml-3 flex items-center whitespace-nowrap min-w-0" aria-label="Breadcrumb">
+                            {/*
                         <li className="flex items-center text-sm text-gray-800 dark:text-gray-400">
                             Application Layout
                             <svg className="flex-shrink-0 mx-3 overflow-visible h-2.5 w-2.5 text-gray-400 dark:text-gray-600" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -41,6 +42,10 @@ export default function Sidebar() {
                         </li>
                         <li className="text-sm font-semibold text-gray-800 truncate dark:text-gray-400" aria-current="page">
                             Dashboard
+                        </li>
+                         */}
+                         <li className="flex items-center text-sm text-gray-800 dark:text-gray-400">
+                            CloudLabs
                         </li>
                     </ol>
                     {/* End Breadcrumb */}
@@ -53,7 +58,7 @@ export default function Sidebar() {
                 <div id="application-sidebar" className="translate-x-0 -translate-x-full transition-all duration-300 transform lg:hidden fixed top-0 left-0 bottom-0 z-[60] w-64 bg-white border-r border-gray-200 pt-7 pb-10 overflow-y-auto scrollbar-y block flex flex-col justify-between translate-x-0 right-auto bottom-0 dark:scrollbar-y dark:bg-gray-800 dark:border-gray-700">
                     <div>
                         <div className="relative flex justify-between px-6">
-                            <a className="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="Brand">Cloud<span className="text-blue-600">Labs</span></a>
+                            <a className="flex-none text-xl font-semibold dark:text-white" href="/dashboard" aria-label="Brand">Cloud<span className="text-blue-600">Labs</span></a>
                             {/*<a className="flex-none text-xl font-semibold dark:text-white" href="#" aria-label="Brand">Brand</a>*/}
                             <button type="button" onClick={() => setIsMobileSidebarOpen(false)} className="inline-flex flex-shrink-0 justify-center items-center h-8 w-8 rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:focus:ring-gray-700 dark:focus:ring-offset-gray-800" data-hs-overlay="#hs-notifications">
                                 <span className="sr-only">Close</span>
