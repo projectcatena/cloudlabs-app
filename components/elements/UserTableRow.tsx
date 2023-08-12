@@ -88,7 +88,7 @@ const UserTableRow = (props: UserProps) => {
                 </div>
             </td>
             </tr>
-            <ErrorToast isOpen={isError} errorMessage={errorMessage} />
+            <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
         </>
     )
 }
