@@ -1,6 +1,5 @@
 import LoadingModal from '@/components/elements/LoadingModal'
 import { useAtom } from 'jotai'
-import Error from 'next/error'
 import { Inter } from 'next/font/google'
 import React, { useState } from 'react'
 import { errorAtom, errorMessageAtom, snapshotAtom } from './Atoms/atoms'
@@ -105,14 +104,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             });
 
             if (!response.ok) {
-                setOpenLoadingModal(false);
-                setOpenErrorModal(true);
-                setErrorModalMessage("Failed to revert snapshot");
+                throw new Error("Network Failure")
             }
 
             // Get the response data from server as JSON
             const result = await response.text();
             setOpenLoadingModal(false);
+            setOpenErrorModal(false);
             window.location.reload();
             //alert(`Result: ` + result);
             // If server returns the name submitted, that means the form works.
@@ -121,6 +119,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         } catch (error) {
             setOpenErrorModal(true);
             setErrorModalMessage("Failed to create snapshot")
+            setOpenLoadingModal(false);
             console.log("Error:", error);
         }
     }
@@ -152,14 +151,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
             });
 
             if (!response.ok) {
-                setOpenLoadingModal(false);
-                setOpenErrorModal(true);
-                setErrorModalMessage("Failed to revert snapshot");
+                throw new Error("Network Failure");
             }
 
             // Get the response data from server as JSON
             const result = await response.text();
             setOpenLoadingModal(false);
+            setOpenErrorModal(false);
             window.location.reload();
             //alert(`Result: ${JSON.stringify(result)}`);
             // If server returns the name submitted, that means the form works.
@@ -167,6 +165,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         } catch (error) {
             setOpenErrorModal(true);
             setErrorModalMessage("Failed to delete snapshot");
+            setOpenLoadingModal(false);
             console.log("Error:", error);
         }
     }
@@ -202,14 +201,13 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         });
 
         if (!res.ok) {
-            setOpenLoadingModal(false);
-            setOpenErrorModal(true);
-            setErrorModalMessage("Failed to revert snapshot");
+            throw new Error("Network Failure");
         }
 
         // Get the response data from server as JSON
         const revert_result = await res.text();
         setOpenLoadingModal(false);
+        setOpenErrorModal(false);
         window.location.reload();
         // If server returns the name submitted, that means the form works.
         return revert_result;
@@ -221,10 +219,8 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
         }
     }
     //TODO: resolve error when snapshotlist is empty
-    if (!snapshotAtom) {
-        setOpenErrorModal(true);
-        return <Error statusCode={500}/>
-    }
+    if (!open) return null;
+
     return (
         <>
         <div id="snapshots" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
@@ -464,8 +460,10 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     </div>
                     )}
                 </div>
-                {/* Modal */}
-                {openLoadingModal && (
+            </div>
+            </div>
+            {/* Modal */}
+            {openLoadingModal && (
                 <LoadingModal
                     open={openLoadingModal}
                     onClose={() => setOpenLoadingModal((prev) => !prev)}
@@ -474,8 +472,6 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     )}
                 
                 <ErrorToast isOpen={openErrorModal} onClose={() => setOpenErrorModal((prev) => !prev)} errorMessage={errorModalMessage}></ErrorToast>
-            </div>
-        </div>
         </div>
         </>
     )
