@@ -76,7 +76,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         let data = {
             instanceName,
         };
-        const response = await fetch("http://localhost:8080/api/snapshot/list", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/list`, {
             method: "POST",
             credentials: "include",
             headers: {

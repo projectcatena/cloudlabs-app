@@ -188,7 +188,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
 
             console.log(revert_params);
             
-            const res = await fetch("http://localhost:8080/api/snapshot/revert", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/revert`, {
             // POST request
             method: "POST",
             credentials: 'include',
