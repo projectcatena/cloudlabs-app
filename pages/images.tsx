@@ -27,34 +27,34 @@ export const getServerSideProps: GetServerSideProps<{
     try {
         const user = parseToken(context.req.cookies["jwt"]!);
 
-    // Check if not TUTOR or ADMIN
-    if (!(user.isTutor || user.isAdmin)) {
-        return {
-            notFound: true,
-            /* redirect: {
-                permanent: false,
-                destination: '/error'
-            } */
+        // Check if not TUTOR or ADMIN
+        if (!(user.isTutor || user.isAdmin)) {
+            return {
+                notFound: true,
+                /* redirect: {
+                    permanent: false,
+                    destination: '/error'
+                } */
+            }
         }
-    }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
-        credentials: "include",
-        headers: {
-            "cookie": context.req.headers.cookie!,
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "*",
-        },
-    })
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
+            credentials: "include",
+            headers: {
+                "cookie": context.req.headers.cookie!,
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+            },
+        })
 
-    const initialData = await res.json();
-    return { props: { initialData } }
+        const initialData = await res.json();
+        return { props: { initialData } }
     } catch (error) {
         return {
             notFound: true
         }
     }
-    
+
 }
 
 export default function Images({
@@ -72,23 +72,23 @@ export default function Images({
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/image/list`, {
             credentials: 'include',
         })
-        .then(res => {
-            if (res.ok) {
-                return res.json();
-            }
-            throw res;
-        })
-        .then(data => {
-            setData(data);
-        })
-        .catch(error => {
-            console.error("Error: ", error);
-            // setIsError(true);
-        })
-        .finally(() => {
-            // setIsLoading(false);
-            setIsRefresh(false);
-        })
+            .then(res => {
+                if (res.ok) {
+                    return res.json();
+                }
+                throw res;
+            })
+            .then(data => {
+                setData(data);
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+                // setIsError(true);
+            })
+            .finally(() => {
+                // setIsLoading(false);
+                setIsRefresh(false);
+            })
     }
 
     // Loading handle
