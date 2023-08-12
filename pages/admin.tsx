@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 import { Fragment, useEffect, useState } from "react";
 
+import ErrorToast from '@/components/elements/ErrorToast';
 import UserTableRow from '@/components/elements/UserTableRow';
 import { isLogin } from '@/services/auth.service';
 import DashboardLayout from "../components/layouts/DashboardLayout";
@@ -31,32 +32,43 @@ export const getServerSideProps: GetServerSideProps<{
     token: string
 }> = async (context) => {
     const token = context.req.cookies["jwt"];
-
-    if (typeof token === "string") {
-
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "cookie": context.req.headers.cookie!,
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*"
-            },
-        });
-        if (!res.ok) {
-            console.log(res);
-            throw new Error("Unable to retrieve data");
+    
+    try {
+        if (typeof token === "string") {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "cookie": context.req.headers.cookie!,
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+            });
+            if (!res.ok) {
+                console.log(res);
+                return {
+                    redirect: {
+                        permanent: false,
+                        destination: "/dashboard",
+                    },
+                }
+            }
+            const initialData: [User] = await res.json();
+            console.log(initialData);
+    
+            return { props: { initialData, token } }
         }
-        const initialData: [User] = await res.json();
-        console.log(initialData);
-
-        return { props: { initialData, token } }
+    } catch (error) {
+        return {
+            notFound:true
+        }
     }
-
+    
+    
     return {
         redirect: {
             permanent: false,
-            destination: "/maindashboard",
+            destination: "/dashboard",
         },
     }
 }
@@ -64,21 +76,23 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Admin({
     initialData, token
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
     const router = useRouter();
+
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] =useState('');
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [data, setData] = useState<User[]>(initialData);
     //console.log(data);
 
-    const [email, setEmail]: any = useState(
+    const [email, setEmail] = useState(
         data.map((user: User, index) => {
             if (index == 0) {
                 return (user.email);
             }
         }));
     //console.log(email);
-    const [role, setRole]: any = useState('USER');
+    const [role, setRole] = useState<string>('USER');
     //console.log(role);
     useEffect(() => {
         //setLoading(true)
@@ -89,7 +103,7 @@ export default function Admin({
             //setLoading(false)
         }
         else {
-            router.push("/login");
+            router.push("/dashboard");
         }
     }, []);
 
@@ -104,9 +118,7 @@ export default function Admin({
             },
         })
             .then(res => {
-                if (!res.ok) {
-                    throw new Error("Unable to fetch data");
-                }
+                setIsError(false);
                 return res.json();
             })
             .then(data => {
@@ -117,9 +129,12 @@ export default function Admin({
                 }
             })
             .catch(err => {
+                setIsError(true);
+                setErrorMessage("Failed to retrieve Users")
                 console.log(err);
             })
             .finally(() => {
+                //window.location.reload();
                 setIsRefresh(false);
             })
     }
@@ -146,11 +161,14 @@ export default function Admin({
             body: JSON.stringify(params),
         }).then(res => {
             if (res.ok) {
+                setIsError(false);
                 return res.json;
             }
             throw res;
         })
             .catch(error => {
+                setIsError(true);
+                setErrorMessage("Failed to add role")
                 console.error("Error: ", error);
                 // setIsError(true);
             })
@@ -179,19 +197,25 @@ export default function Admin({
             },
             body: JSON.stringify(params),
         }).then(res => {
-            if (res.ok) {
+            if (!res.ok) {
+                setIsError(true);
+                setErrorMessage("Failed to delete role");
+            }
+            else {
+                setIsError(false);
                 return res.json;
             }
             throw res;
         }).catch(error => {
             console.error("Error: ", error);
+            console.log(isError);
             // setIsError(true);
         }).finally(() => {
             // setIsLoading(false);
             handleRefresh();
         })
     }
-
+    
     return (
         <DashboardLayout>
             {/* ========== MAIN CONTENT ========== */}
@@ -499,6 +523,7 @@ export default function Admin({
                     </div>
                 </div>
                 {/* End Card */}
+                <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
             </div>
             {/* End Table Section */}
             {/* End Content */}

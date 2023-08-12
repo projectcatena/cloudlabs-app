@@ -6,14 +6,16 @@ const inter = Inter({ subsets: ['latin'] })
 type ModalProps = {
     open: boolean
     onClose: React.Dispatch<React.SetStateAction<boolean>>
+    loadingState: string
     // onClose: (value: boolean) => void
 }
 
-const LoadingModal = ({open, onClose}: ModalProps) => {
+const LoadingModal = ({open, onClose, loadingState}: ModalProps) => {
     if (!open) return null;
 
     return (
         <div id="overlay" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
+            <div className='h-full flex justify-center items-center ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto sm:h-fit'>
             {/* hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto */}
             <div id="hs-task-created-alert" className="overflow-x-hidden overflow-y-auto">
                 <div className="mt-0 opacity-100 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
@@ -30,7 +32,7 @@ const LoadingModal = ({open, onClose}: ModalProps) => {
                             {/* End of Icon */}
 
                             <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-200">
-                                Connecting...
+                                {loadingState}
                             </h3>
                             <p className="text-gray-500">
                                 This will take a while.
@@ -38,6 +40,7 @@ const LoadingModal = ({open, onClose}: ModalProps) => {
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     )

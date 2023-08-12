@@ -1,7 +1,8 @@
 import { useAtom } from 'jotai'
+import Error from 'next/error'
 import { Inter } from 'next/font/google'
 import React, { useState } from 'react'
-import { snapshotAtom } from './Atoms/atoms'
+import { errorAtom, errorMessageAtom, snapshotAtom } from './Atoms/atoms'
 import SnapshotTableRow from './SnapshotTableRow'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,25 +20,15 @@ export type Snapshots = {
     id: number
     snapshotName: string
     description: string
+    instancename: string
     //region: string
     //location: string
 }
 
-/*
-export const getServerSideProps: GetServerSideProps<{
-    initialData : [Snapshots]
-}> = async () => {
-    const res = await fetch("http://localhost:8080/api/snapshot/list");
-    console.log(res);
-    if (!res.ok) {
-        throw new Error("Unable to retrieve snapshots");
-    }
-    const initialData = await res.json();
-    return { props: { initialData } };
-}
-*/
-
-const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
+const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
+    // errors
+    const [openErrorModal, setOpenErrorModal] = useAtom(errorAtom);
+    const [errorModalMessage, setErrorModalMessage] = useAtom(errorMessageAtom);
 
     const [snapshotName, setSnapshotName] = useState("");
     const [description, setDescription] = useState("");
@@ -45,39 +36,13 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
     const [showDeleteForm, setShowDeleteForm] = useState(false);
     const [showRevertForm, setShowRevertForm] = useState(false);
     const [showButton, setShowButton] = useState(true);
-    //const instanceName = instanceName;
-    const filter = "";
+
+    // loading modal
+    const [openLoadingModal, setOpenLoadingModal] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState('');
+
+    // snapshot list
     const [snapshotListData, setSnapshotListData] = useAtom<Snapshots[]>(snapshotAtom);
-
-    //const [title, setTitle] = useState("");
-    //const [description, setDescription] = useState("");
-
-    /*
-    async function handleRefresh() {
-        let params = {
-            filter
-        };
-        const refreshData = Object.entries(params)
-            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
-            .join('&');
-        const response = await fetch("http://localhost:8080/api/snapshot/list");
-        if (!response.ok) {
-            throw new Error("Unable to fetch snapshots");
-        }
-        const data: [Snapshots] = await response.json();
-        return data;
-    }
-    
-    useEffect(() => {
-        fetchSnapshotData;
-        console.log(snapshotListData);
-        //setSnapshotData(snapshot_data);
-    })
-     */
-
-
-
-
 
     function changeButtonState(formType: string) {
         if (formType == "create") {
@@ -112,18 +77,15 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
     async function createSnapshot(event: React.SyntheticEvent) {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault()
+        setOpenLoadingModal(true);
+        setLoadingMessage("Creating...");
+
         let params = {
             snapshotName,
             instanceName,
             description
         };
 
-        /* Get data from the form.
-        const postData = {
-            snapshotName: snapshotName
-        };
-        console.log(postData);
-        */
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/create`, {
                 // POST request
@@ -141,57 +103,68 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
             });
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                setOpenLoadingModal(false);
+                setOpenErrorModal(true);
+                setErrorModalMessage("Failed to revert snapshot");
             }
 
             // Get the response data from server as JSON
             const result = await response.text();
-            alert(`Result: ` + result);
+            setOpenLoadingModal(false);
+            window.location.reload();
+            //alert(`Result: ` + result);
             // If server returns the name submitted, that means the form works.
 
             return result;
         } catch (error) {
+            setOpenErrorModal(true);
+            setErrorModalMessage("Failed to create snapshot")
             console.log("Error:", error);
         }
     }
 
     async function deleteSnapshot(event: React.SyntheticEvent) {
         // Stop the form from submitting and refreshing the page.
-        event.preventDefault()
+        event.preventDefault();
+        setOpenLoadingModal(true);
+        setLoadingMessage("Deleting...");
+
         let params = {
             snapshotName,
-        };
-        /* Get data from the form.
-        const postData = {
-            snapshotName: snapshotName
-        };
-        console.log(postData);
-        */
+            instanceName,
+            };
+            
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/delete`, {
                 // POST request
                 method: "DELETE",
+                credentials: 'include',
                 // Tell the server we're sending JSON.
                 headers: {
-                    "content-type": "application/json",
-                    //"Authorization": "Bearer " + localStorage.getItem("token"),
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "*",
+                "content-type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
                 },
                 // Body of the request is the JSON data we created above.
                 body: JSON.stringify(params),
             });
 
             if (!response.ok) {
-                throw new Error("Network response failed.");
+                setOpenLoadingModal(false);
+                setOpenErrorModal(true);
+                setErrorModalMessage("Failed to revert snapshot");
             }
 
             // Get the response data from server as JSON
             const result = await response.text();
-            alert(`Result: ${JSON.stringify(result)}`);
+            setOpenLoadingModal(false);
+            window.location.reload();
+            //alert(`Result: ${JSON.stringify(result)}`);
             // If server returns the name submitted, that means the form works.
             return result;
         } catch (error) {
+            setOpenErrorModal(true);
+            setErrorModalMessage("Failed to delete snapshot");
             console.log("Error:", error);
         }
     }
@@ -199,6 +172,8 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
     async function revertSnapshot(event: React.SyntheticEvent) {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault()
+        setOpenLoadingModal(true);
+        setLoadingMessage("Reverting...");
 
         try {
             let revert_params = { //revert snapshot parameters
@@ -209,53 +184,48 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
             };
 
             console.log(revert_params);
-
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/revert`, {
-                // POST request
-                method: "POST",
-                // Tell the server we're sending JSON.
-                headers: {
-                    "content-type": "application/json",
-                    //"Authorization": "Bearer " + localStorage.getItem("token"),
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "*",
-                },
-                // Body of the request is the JSON data we created above.
-                body: JSON.stringify(revert_params),
-            });
-
-            if (!res.ok) {
-                throw new Error("Failed to Revert to Snapshot.");
-            }
-
-            // Get the response data from server as JSON
-            const revert_result = await res.text();
-            alert(`Result: ` + revert_result);
-            // If server returns the name submitted, that means the form works.
-            return revert_result;
-        } catch (error) {
-            console.log("Error:", error);
-        }
-
-
-        /* Get data from the form.
-        const postData = {
-            snapshotName: snapshotName
-        };
-        console.log(postData);
-        
-        try {
             
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/revert`, {
+            // POST request
+            method: "POST",
+            credentials: 'include',
+            // Tell the server we're sending JSON.
+            headers: {
+            "content-type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            },
+            // Body of the request is the JSON data we created above.
+            body: JSON.stringify(revert_params),
+        });
+
+        if (!res.ok) {
+            setOpenLoadingModal(false);
+            setOpenErrorModal(true);
+            setErrorModalMessage("Failed to revert snapshot");
+        }
+
+        // Get the response data from server as JSON
+        const revert_result = await res.text();
+        setOpenLoadingModal(false);
+        window.location.reload();
+        // If server returns the name submitted, that means the form works.
+        return revert_result;
         } catch (error) {
+            setOpenLoadingModal(false);
+            setOpenErrorModal(true);
+            setErrorModalMessage("Failed to revert snapshot");
             console.log("Error:", error);
         }
-        */
     }
-
-    if (!open) return null;
+    //TODO: resolve error when snapshotlist is empty
+    if (!snapshotAtom) {
+        setOpenErrorModal(true);
+        return <Error statusCode={500}/>
+    }
     return (
         <>
-         <div id="snapshots" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
+        <div id="snapshots" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center w-full h-full overflow-x-hidden overflow-y-auto">
             <div id="snapshots" className="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
                 <div className="relative flex flex-col bg-white border shadow-sm rounded-xl overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                     <div className="absolute top-2 right-2">
@@ -288,241 +258,218 @@ const SnapshotModal = ({ open, onClose, instanceName }: SnapshotModalProps) => {
                                             </svg>
                                         </div>
 
-                                        <h2 className="mt-5 font-semibold text-gray-800 dark:text-white">
-                                            No snapshots found
-                                        </h2>
-                                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            Snapshots will show when a snapshot had been created
-                                        </p>
-                                        <div>
-                                        </div>
-                                    </div>
-                                    {/* End of Body */}
-                                    {/* Table */}
-                                    <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 ${snapshotListData.length ? "" : "hidden"}`}> {/*  */}
-                                        <thead className="bg-gray-50 dark:bg-slate-800">
-                                            <tr>
-                                                {/*
-                        <th scope="col" className="pl-6 lg:pl-3 xl:pl-0 pr-6 py-3 text-left">
-                        <div className="flex items-center gap-x-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            ID
-                            </span>
+                            <h2 className="mt-5 font-semibold text-gray-800 dark:text-white">
+                            No snapshots found
+                            </h2>
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                Snapshots will show when a snapshot had been created
+                            </p>
+                            <div>
                         </div>
-                        </th>
-                        
+                    </div>
+                    {/* End of Body */}
+                    {/* Table */}
+                    <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 ${ snapshotListData.length ? "" : "hidden"}`}> {/*  */}
+                    <thead className="bg-gray-50 dark:bg-slate-800">
+                    <tr>
                         <th scope="col" className="px-6 py-3 text-left">
                         <div className="flex items-center gap-x-2">
                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            ID
+                            Name
                             </span>
                         </div>
                         </th>
-                        */}
-                                                <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
-                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Name
-                                                        </span>
-                                                    </div>
-                                                </th>
-                                                {/*
                         <th scope="col" className="px-6 py-3 text-left">
-                        <div className="flex items-center gap-x-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            Zone
-                            </span>
-                        </div>
+                            <div className="flex items-center gap-x-2">
+                                <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
+                                    Description
+                                </span>
+                            </div>
                         </th>
-                        */}
-
-                                                <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
-                                                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            Description
-                                                        </span>
-                                                    </div>
-                                                </th>
-
-                                                {/* <th scope="col" className="px-6 py-3 text-left">
-                        <div className="flex items-center gap-x-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                            Portfolio
-                            </span>
-                        </div>
-                        </th> */}
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                            {
-                                                snapshotListData.map((snapshot: Snapshots) => {
-                                                    return (
-                                                        <SnapshotTableRow
-                                                            key={snapshot.id}
-                                                            //id={user.id}
-                                                            name={snapshot.snapshotName}
-                                                            description={snapshot.description}
-                                                        //roles={snapshot.roles}
-                                                        //handleRefresh={handleRefresh}
-                                                        ></SnapshotTableRow>
-                                                    );
-                                                })
-                                            }
-
-                                            {/*
-                                {
-                                    data.map((user:User) => {
-                                        <UserTableRow
-                                            key={user.email}
-                                            //id={user.id}
-                                            name={user.name}
-                                            email={user.email}
-                                            roles={user.roles}
-                                            handleRefresh={fetchContent}
-                                        ></UserTableRow>
-                                    })
-                                }
-                                */}
-                                        </tbody>
-                                    </table>
-                                    {/* End table/list of snapshots */}
-                                    {/* Create Form */}
-                                    <div>
-                                        {showCreateForm && (
-                                            <form>
-                                                <div className="space-y-4">
-                                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-
-                                                        <label htmlFor="snapshotName" className="flex">
-                                                            <input onChange={(e) => setSnapshotName(e.target.value)} id="snapshotName" name="snapshotName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Snapshot name"></input>
-                                                        </label>
-                                                    </div>
-                                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                                        <label htmlFor="diskName" className="flex">
-                                                            <textarea onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Description (Max 150)" maxLength={150}></textarea>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    type="submit"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={createSnapshot} //open hidden form
-                                                >
-                                                    Create
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={() => changeButtonState("close")} //close hidden form
-                                                >
-                                                    Close
-                                                </button>
-                                            </form>
-                                        )}
-                                    </div>
-                                    {/* End Create Form */}
-                                    {/* Delete Form */}
-                                    <div>
-                                        {showDeleteForm && (
-                                            <form>
-                                                <div className="space-y-4">
-                                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                                        <label htmlFor="snapshotName" className="flex">
-                                                            <input onChange={(e) => setSnapshotName(e.target.value)} id="snapshotName" name="snapshotName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Snapshot name"></input>
-                                                        </label>
-                                                    </div>
-                                                    {/* 
+                    </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {
+                            snapshotListData.map((snapshot:Snapshots) => {
+                                return(
+                                <SnapshotTableRow
+                                    key={snapshot.id}
+                                    //id={user.id}
+                                    name={snapshot.snapshotName}
+                                    description={snapshot.description}
+                                    //roles={snapshot.roles}
+                                    //handleRefresh={handleRefresh}
+                                ></SnapshotTableRow>
+                                );
+                            })
+                        }
+                    </tbody>
+                    </table>
+                    {/* End table/list of snapshots */}
+                    {/* Create Form */}
+                    <div>
+                        {showCreateForm && (
+                        <form>
+                            <div className="space-y-4">
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    
+                                    <label htmlFor="snapshotName" className="flex">
+                                        <input
+                                        onChange={(e) => setSnapshotName(e.target.value)}
+                                        id="snapshotName"
+                                        name="snapshotName"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        placeholder="Snapshot name"
+                                        pattern="^[a-z0-9\-]+$"
+                                        title='Please use lowercase alphanumric characters with - instead of space'
+                                        required></input>
+                                    </label>
+                                </div>
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <label htmlFor="diskName" className="flex">
+                                        <textarea onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" className="py-3 px-4 block w-full h-40 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Description (Max 150)" maxLength={150} required></textarea>
+                                    </label>
+                                </div>
+                            </div>
+                            <button
+                            type="submit"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={createSnapshot} //open hidden form
+                            >
+                            Create
+                            </button>
+                            <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={() => changeButtonState("close")} //close hidden form
+                            >
+                            Close
+                            </button>
+                        </form>
+                        )}
+                    </div>
+                    {/* End Create Form */}
+                    {/* Delete Form */}
+                    <div>
+                        {showDeleteForm && (
+                        <form>
+                            <div className="space-y-4">
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                    <label htmlFor="snapshotName" className="flex">
+                                        <input
+                                        onChange={(e) => setSnapshotName(e.target.value)}
+                                        id="snapshotName"
+                                        name="snapshotName"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        placeholder="Snapshot name"
+                                        pattern="^[a-zA-Z0-9\-]+$"
+                                        title='Please use alphanumric characters with - instead of space'
+                                        required></input>
+                                    </label>
+                                </div>
+                                {/* 
                                 <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                     <label htmlFor="diskName" className="flex">
                                         <input onChange={(e) => setDescription(e.target.value)} id="diskName" name="diskName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Filter Name"></input>
                                     </label>
                                 </div>
                                 */}
-                                                </div>
-                                                <button
-                                                    type="submit"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={deleteSnapshot} //open hidden form
-                                                >
-                                                    Delete
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={() => changeButtonState("close")} //close hidden form
-                                                >
-                                                    Close
-                                                </button>
-                                            </form>
-                                        )}
-                                    </div>
-                                    {/* End Delete Form */}
-                                    {/* Revert Form */}
-                                    <div>
-                                        {showRevertForm && (
-                                            <form>
-                                                <div className="space-y-4">
-                                                    <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
-                                                        <label htmlFor="snapshotName" className="flex">
-                                                            <input onChange={(e) => setSnapshotName(e.target.value)} id="snapshotName" name="snapshotName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Snapshot name"></input>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    type="submit"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={revertSnapshot} //open hidden form
-                                                >
-                                                    Revert
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
-                                                    onClick={() => changeButtonState("close")} //close hidden form
-                                                >
-                                                    Close
-                                                </button>
-                                            </form>
-                                        )}
-                                    </div>
-                                    {/* End Revert Form */}
+                            </div>
+                            <button
+                            type="submit"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={deleteSnapshot} //open hidden form
+                            >
+                            Delete
+                            </button>
+                            <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={() => changeButtonState("close")} //close hidden form
+                            >
+                            Close
+                            </button>
+                        </form>
+                        )}
+                    </div>
+                    {/* End Delete Form */}
+                    {/* Revert Form */}
+                    <div>
+                        {showRevertForm && (
+                        <form>
+                            <div className="space-y-4">
+                                <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
+                                <label htmlFor="snapshotName" className="flex">
+                                        <input
+                                        onChange={(e) => setSnapshotName(e.target.value)}
+                                        id="snapshotName"
+                                        name="snapshotName"
+                                        type="text"
+                                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                        placeholder="Snapshot name"
+                                        pattern="^[a-zA-Z0-9\-]+$"
+                                        title='Please use alphanumric characters with - instead of space'
+                                        required></input>
+                                    </label>
+                                </div>
+                            </div>
+                            <button
+                            type="submit"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={revertSnapshot} //open hidden form
+                            >
+                            Revert
+                            </button>
+                            <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2 mt-4"
+                            onClick={() => changeButtonState("close")} //close hidden form
+                            >
+                            Close
+                            </button>
+                        </form>
+                        )}
+                    </div>
+                    {/* End Revert Form */}
 
-                                    {showButton && (
-                                        <div className="mt-4">
+                        {showButton && (
+                            <div className="mt-4">
 
-                                            <button
-                                                type="button"
-                                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                                onClick={() => changeButtonState("create")} //open hidden form
-                                            >
-                                                New Snapshot
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                                onClick={() => changeButtonState("delete")}
-                                            >
-                                                Delete
-                                            </button>
-                                            <button type="button"
-                                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                                onClick={() => changeButtonState("revert")}
-                                            >
-                                                Revert
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
-                                                onClick={() => onClose(false)}
-                                            >
-                                                Close
-                                            </button>
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                                    onClick={() => changeButtonState("create")} //open hidden form
+                                >
+                                    New Snapshot
+                                </button>
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                                    onClick={() => changeButtonState("delete")}
+                                >
+                                    Delete
+                                </button>
+                                <button type="button"
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                                    onClick={() => changeButtonState("revert")}
+                                >
+                                    Revert
+                                </button>
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 mr-2"
+                                    onClick={() => onClose(false)}
+                                >
+                                    Close
+                                </button>
 
-                                        </div>
-                                    )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+            </div>
             </div>
         </>
     )

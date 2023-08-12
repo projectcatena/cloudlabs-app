@@ -1,11 +1,11 @@
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import ModuleCard from '../components/elements/ModuleCard';
-import React, { useState } from 'react';
-import ErrorModal from '@/components/elements/ErrorModal';
 import CreateModuleModal from '@/components/elements/CreateModuleModal';
 import DeleteModuleModal from '@/components/elements/DeleteModuleModal';
+import ErrorModal from '@/components/elements/ErrorModal';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { useAuth, Role } from '@/contexts/AuthContext';
+import { useState } from 'react';
+import ModuleCard from '../components/elements/ModuleCard';
 
 export type Module = {
     moduleId: number;
@@ -17,7 +17,8 @@ export type Module = {
 export const getServerSideProps: GetServerSideProps<{
     data: [Module]
 }> = async (context) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list`, {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Modules/list`, {
         credentials: "include",
         headers: {
             "cookie": context.req.headers.cookie!,
@@ -30,6 +31,12 @@ export const getServerSideProps: GetServerSideProps<{
     const data = await response.json();
 
     return { props: { data } }
+    } catch (error) {
+        return {
+            notFound: true
+        }
+    }
+    
 }
 
 export default function MainDashboard({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
