@@ -39,7 +39,7 @@ const SubnetTableRow = (props: SubnetProps) => {
         return deleteSubnetResult;
         } catch (error) {
             setIsError(true);
-            setErrorMessage("Network Response Failed. Unable to delete subnet")
+            setErrorMessage("Failed to delete subnet")
         }
         
     }
