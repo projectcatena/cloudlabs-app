@@ -1,4 +1,5 @@
 import ComputeUserTableRow from "@/components/elements/ComputeUserTableRow";
+import ErrorToast from "@/components/elements/ErrorToast";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { parseToken } from "@/services/auth.service";
 import { Listbox, Transition } from "@headlessui/react";
@@ -58,6 +59,7 @@ export const getServerSideProps: GetServerSideProps<{
 
     const computeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/listall`, {
         method: "GET",
+        credentials: "include",
         headers: {
           "cookie": context.req.headers.cookie!,
           "Access-Control-Allow-Origin": "*",
@@ -80,6 +82,9 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Users({
     initialUserData, initialComputeData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    // Error Handling
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [userData, setUserData] = useState<User[]>(initialUserData);
@@ -159,6 +164,8 @@ export default function Users({
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to add instance to user");
             console.log("Error:", error);
         }
     }
@@ -192,6 +199,8 @@ export default function Users({
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to remove instance from user");
             console.log("Error:", error);
         }
     }
@@ -464,6 +473,8 @@ export default function Users({
                         </div>
                     </div>
                     {/* End Card */}
+                    {/* Modal */}
+                    <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
                 </div>
                 {/* End Table Section */}
             </DashboardLayout>

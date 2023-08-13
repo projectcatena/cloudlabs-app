@@ -167,14 +167,15 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                setIsError(true);
-                setErrorMessage("Failed to add user(s)");
+                throw new Error("Network Failure");
             }
 
             const postResult = await postRes.json();
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to add user(s)");
             console.log("Error:", error);
         }
     }
@@ -201,14 +202,15 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                setIsError(true);
-                setErrorMessage("Failed to remove user(s)");
+                throw new Error("Network Error");
             }
 
             const postResult = await postRes.json();
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to remove user(s)");
             console.log("Error:", error);
         }
     }
@@ -242,6 +244,7 @@ export default function Users({
             })
             .finally(() => {
                 setIsRefresh(false);
+                window.location.reload();
             })
 
         
