@@ -423,6 +423,7 @@ export default function Users({
                                                             </span>
                                                         </div>
                                                     </th>
+                                                    <th scope="col" className="px-16 py-3 text-right"></th>
                                                 </tr>
                                             </thead>
 
