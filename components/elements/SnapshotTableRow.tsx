@@ -15,7 +15,7 @@ const SnapshotTableRow = (props: SnapshotProps) => {
             <td className="h-px w-px whitespace-nowrap">
             <div className="px-6 py-3">
                 {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 truncate hover:text-clip">
                     {props.name}
                 </span>
             </div>
@@ -23,7 +23,7 @@ const SnapshotTableRow = (props: SnapshotProps) => {
             <td className="h-px w-px whitespace-nowrap">
             <div className="px-6 py-3">
                 {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 truncate hover:text-clip">
                     {props.description}
                 </span>
             </div>

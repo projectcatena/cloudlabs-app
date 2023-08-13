@@ -386,7 +386,7 @@ export default function Users({
                                             <thead className="bg-gray-50 dark:bg-slate-800">
                                                 <tr>
                                                     <th scope="col" className="px-3 py-1 text-left">
-                                                        <label htmlFor="hs-checkbox-in-form" className="flex p-3 w-full text-xl focus:border-blue-500 focus:ring-blue-500 dark:text-gray-800">
+                                                        <label htmlFor="hs-checkbox-in-form" className="flex p-3 focus:border-blue-500 focus:ring-blue-500 dark:text-gray-800">
                                                             <input type="checkbox" checked={selectAll} onChange={handleSelectAll} className="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" id="hs-checkbox-in-form"></input>
                                                             {/* <span className="text-xs text-gray-800 ml-2 dark:text-gray-200 font-semibold uppercase whitespace-nowrap">Select All</span> */}
                                                         </label>
@@ -416,15 +416,13 @@ export default function Users({
                                                         </div>
                                                     </th>
 
-                                                    <th scope="col" className="py-3 text-left">
+                                                    <th scope="col" className="py-3 px-3 text-left">
                                                         <div className="flex items-center gap-x-2">
                                                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                                 Module(s)
                                                             </span>
                                                         </div>
                                                     </th>
-
-                                                    <th scope="col" className="px-16 py-3 text-right"></th>
                                                 </tr>
                                             </thead>
 
