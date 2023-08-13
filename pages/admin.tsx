@@ -108,112 +108,100 @@ export default function Admin({
     }, []);
 
     async function handleRefresh() {
-        setIsRefresh(true);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*"
-            },
-        })
-            .then(res => {
-                setIsError(false);
-                return res.json();
-            })
-            .then(data => {
-                setData(data);
-                //console.log(data);
-                if (data = null) {
-                    console.log("null")
-                }
-            })
-            .catch(err => {
-                setIsError(true);
-                setErrorMessage("Failed to retrieve Users")
-                console.log(err);
-            })
-            .finally(() => {
-                //window.location.reload();
-                setIsRefresh(false);
-            })
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/list`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed");
+            }
+
+            const result = await response.json();
+            setData(result);
+            setIsError(false);
+            return result;
+        } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to retrieve Users")
+        }
     }
 
-    async function addRole(e: any) {
-        setIsRefresh(true);
+    async function addRole(e: React.SyntheticEvent) {
         e.preventDefault();
-        const newRole = role;
-        let params = {
-            email,
-            newRole,
-        };
-        console.log(email);
-        console.log(role);
+        try {
+            const newRole = role;
+            let params = {
+                email,
+                newRole,
+            };
+            console.log(email);
+            console.log(role);
 
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add`, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-                "content-type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*"
-            },
-            body: JSON.stringify(params),
-        }).then(res => {
-            if (res.ok) {
-                setIsError(false);
-                return res.json;
-            }
-            throw res;
-        })
-            .catch(error => {
-                setIsError(true);
-                setErrorMessage("Failed to add role")
-                console.error("Error: ", error);
-                // setIsError(true);
-            })
-            .finally(() => {
-                handleRefresh();
-            })
-    }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/add`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "content-type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+                body: JSON.stringify(params),
+            });
 
-    async function deleteRole(e: any) {
-        setIsRefresh(true);
-        e.preventDefault();
-        const newRole = role;
-        let params = {
-            email,
-            newRole,
-        };
-        console.log(email);
-        console.log(role);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/delete`, {
-            method: "DELETE",
-            credentials: "include",
-            headers: {
-                "content-type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*"
-            },
-            body: JSON.stringify(params),
-        }).then(res => {
-            if (!res.ok) {
-                setIsError(true);
-                setErrorMessage("Failed to delete role");
+            if (!response.ok) {
+                throw new Error("Server Failure");
             }
-            else {
-                setIsError(false);
-                return res.json;
-            }
-            throw res;
-        }).catch(error => {
-            console.error("Error: ", error);
-            console.log(isError);
-            // setIsError(true);
-        }).finally(() => {
-            // setIsLoading(false);
+
+            const result = await response.json();
+            setIsError(false);
             handleRefresh();
-        })
+            return result
+        } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to add role")
+        }
+        
+    }
+
+    async function deleteRole(e: React.SyntheticEvent) {
+        e.preventDefault();
+        try {
+            const newRole = role;
+            let params = {
+                email,
+                newRole,
+            };
+            console.log(email);
+            console.log(role);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/delete`, {
+                method: "DELETE",
+                credentials: "include",
+                headers: {
+                    "content-type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*"
+                },
+                body: JSON.stringify(params),
+            });
+            
+            if (!response.ok) {
+                throw new Error("Server failure");
+            }
+
+            const result = await response.json();
+            handleRefresh();
+            setIsError(false);
+            return result;
+        } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to delete role");
+        }
     }
     
     return (

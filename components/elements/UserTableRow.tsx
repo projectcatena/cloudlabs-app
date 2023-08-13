@@ -47,7 +47,7 @@ const UserTableRow = (props: UserProps) => {
     return (
         <>
             <tr>
-                <td className="h-px w-72 whitespace-nowrap">
+                <td className="max-w-xs h-px w-72 whitespace-nowrap ">
                     <div className="px-6 py-3">
                         {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
                         <span className="block text-sm text-gray-500">{props.email}</span>
@@ -86,9 +86,12 @@ const UserTableRow = (props: UserProps) => {
                     Edit
                     </Link> */}
                 </div>
+                <div>
+                <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
+                </div>
             </td>
             </tr>
-            <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
+            
         </>
     )
 }

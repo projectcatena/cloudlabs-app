@@ -62,6 +62,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
             }
 
             const result = await response.json();
+            setIsError(false);
             setOpenLoadingModal(false);
             window.location.reload();
 
@@ -69,33 +70,38 @@ export default function Dropdown({ instanceName }: DropdownProps) {
         } catch (error) {
             setOpenLoadingModal(false);
             setIsError(true);
-            setErrorMessage("Deleting Virtual Machine failed");
+            setErrorMessage("Failed to delete Virtual Machine");
             console.log("Error:", error);
         }
     }
 
     async function loadSnapshotData() {
-        let data = {
-            instanceName,
-        };
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/list`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "content-type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "*",
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
+        try {
+            let data = {
+                instanceName,
+            };
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/snapshot/list`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "content-type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "*",
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to retrieve snapshot list");
+            }
+            const return_data = await response.json();
+            setIsError(false);
+            setSnapshotListData(return_data);
+            setSnapshotError(false);
+            return return_data;
+        } catch (error) {
             setSnapshotError(true);
             setSnapshotErrorMessage("Unable to retrieve snapshots");
         }
-        const return_data = await response.json();
-        setSnapshotListData(return_data);
-        setSnapshotError(false);
-        return return_data;
     }
 
     async function handleStop() {
@@ -142,12 +148,15 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 }
 
                 const result = await response.json();
+                setIsError(false);
                 setOpenLoadingModal(false);
                 window.location.reload();
 
                 return result;
             }
         } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to stop Virtual Machine");
             setOpenLoadingModal(false);
             console.log("Error:", error);
         }
@@ -197,12 +206,15 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                 }
 
                 const result = await response.json();
+                setIsError(false);
                 setOpenLoadingModal(false);
                 window.location.reload();
 
                 return result;
             }
         } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to start Virtual Machine");
             setOpenLoadingModal(false);
             console.log("Error:", error);
         }

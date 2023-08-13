@@ -34,13 +34,15 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
           // If successful, adds the modules to "modules"
           if (response.ok) {
             const modules = await response.json();
+            setIsError(false);
             setModules(modules);
             console.log(modules);
           } else {
-            setIsError(true);
-            setErrorMessage("Unable to fetch module data");
+            throw new Error("Network Failed");
           }
         } catch (error) {
+          setIsError(true);
+          setErrorMessage("Unable to fetch module data");
           console.error("Error fetching module data", error);
         }
       };
@@ -64,17 +66,18 @@ const DeleteModuleModal = ({open, onClose}: DeleteModuleModalProps) => {
         if (response.ok) {
           // Module deleted successfully
           console.log('Module deleted');
-
+          setIsError(false);
           // Reload the page to show the updated module 
           window.location.reload();
         } else {
-          setIsError(true);
-          setErrorMessage("Instance deletion was unsuccessful");
+          throw new Error("Network Failed");
         }
 
         onClose(false);
           
         } catch (error) {
+          setIsError(true);
+          setErrorMessage("Instance deletion was unsuccessful");
           console.error("Error deleting module", error);
         }
       };

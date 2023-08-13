@@ -85,16 +85,18 @@ export default function Settings({
             });
 
             if (!response.ok) {
-                setIsError(true);
-                setErrorMessage("Network Failure, unable to update password")
+                throw new Error("Network Failure");
             }
             const result = await response.json();
             setFullName(result["fullName"]);
             setUsername(result["username"]);
             setEmail(result["email"]);
+            setIsError(false);
             return result;
         }
         catch (error) {
+            setIsError(true);
+            setErrorMessage("Network Failure, unable to update password")
             console.log ("Error: " + error );
         }
 
