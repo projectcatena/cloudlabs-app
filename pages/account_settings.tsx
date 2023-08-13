@@ -225,7 +225,7 @@ export default function Settings({
                     className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" 
                     placeholder="Enter current password"
                     // Minimum 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$"
                     title='At least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character and a minimum of 8 characters' />
                 </div>
                 </div>
@@ -245,7 +245,7 @@ export default function Settings({
                     className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                     placeholder="Enter new password"
                     // Minimum 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$"
                     title='At least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character and a minimum of 8 characters' />
                 </div>
                 </div>
