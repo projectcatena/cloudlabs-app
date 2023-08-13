@@ -179,8 +179,6 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
      */
     async function createVirtualMachine(event: React.SyntheticEvent) {
         event.preventDefault();
-        setOpenLoadingModal(true);
-        setLoadingMessage("Creating...");
 
         setIsCreating(true);
 
@@ -216,14 +214,12 @@ const CreateVirtualMachineModal = ({ open, onClose, moduleId }: ModalProps) => {
             });
 
             if (!response.ok) {
-                setOpenLoadingModal(false);
                 throw new Error("Network response failed.");
             }
 
             setIsCreating(false);
 
             const result = await response.json();
-            setOpenLoadingModal(false);
             window.location.reload();
             return result;
 
