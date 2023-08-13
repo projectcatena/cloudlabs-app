@@ -114,7 +114,7 @@ export default function Settings({
                 Profile
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage your name, password and account settings.
+                Change your password.
             </p>
             </div>
             {/* Form */}
@@ -172,7 +172,8 @@ export default function Settings({
                     className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-t-lg sm:rounded-l-lg sm:mt-0 sm:firstml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                     placeholder={fullname}
                     pattern="^[a-zA-Z]*$"
-                    title="Please only use alphabets" /> {/* authContext?.user?.fullname */}
+                    title="Please only use alphabets" 
+                    disabled /> {/* authContext?.user?.fullname */}
                     {/*<input type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm -mt-px -ml-px border rounded-b-lg first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:mt-0 sm:first:ml-0 sm:first:rounded-tr-none sm:last:rounded-bl-none sm:last:rounded-r-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" placeholder="Last name" />*/}
                 </div>
                 </div>
@@ -191,7 +192,8 @@ export default function Settings({
                 className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                 placeholder={username}
                 pattern="^[a-zA-Z0-9]*$"
-                title="Please only use alphanumeric characters" /> {/* authContext?.user?.username */}
+                title="Please only use alphanumeric characters" 
+                disabled/> {/* authContext?.user?.username */}
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
@@ -207,7 +209,8 @@ export default function Settings({
                 type="email"
                 className="py-2 px-3 pr-11 block w-full border rounded-md border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                 placeholder={email}
-                readOnly /> {/* authContext?.user?.email */}
+                readOnly 
+                disabled/> {/* authContext?.user?.email */}
                 </div>
                 {/* End Col */}
                 <div className="col-span-3">
