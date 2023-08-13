@@ -121,8 +121,10 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
             const signedURL = await getSignedUploadURL(fileSelected!.name, operatingSystem, setErrorToastOpen, setIsCancel);
             console.log(signedURL);
 
-            const formData = new FormData();
-            formData.append("file", fileSelected as Blob)
+            // Just send the file, no need append as form data. 
+            // Otherwise, this will corrupt the file (verify using hash)
+            // const formData = new FormData();
+            // formData.append("file", fileSelected as Blob)
 
             const xhr = new XMLHttpRequest();
             setCurrentXHR(xhr);
@@ -147,7 +149,7 @@ const AddImageModal = ({ open, onClose }: ModalProps) => {
                 xhr.open("PUT", signedURL, true);
                 xhr.setRequestHeader("Content-Type", "application/octet-stream");
                 xhr.setRequestHeader("x-goog-meta-os", operatingSystem);
-                xhr.send(formData);
+                xhr.send(fileSelected);
             }).catch(error => {
                 console.log(error);
                 setWarningToastOpen(true);
