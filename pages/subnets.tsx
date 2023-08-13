@@ -177,15 +177,8 @@ export default function Subnets({
                                     <table className={`min-w-full divide-y divide-gray-200 dark:divide-gray-700 ${data.length ? "" : "hidden"}`}>
                                         <thead className="bg-gray-50 dark:bg-slate-800">
                                             <tr>
-                                                <th scope="col" className="pl-6 py-3 text-left">
-                                                    {/* <label htmlFor="hs-at-with-checkboxes-main" className="flex">
-                                        <input type="checkbox" className="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" id="hs-at-with-checkboxes-main" />
-                                        <span className="sr-only">Checkbox</span>
-                                    </label> */}
-                                                </th>
-
                                                 <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
+                                                    <div className="max-w-xs flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                             Name
                                                         </span>
@@ -193,24 +186,16 @@ export default function Subnets({
                                                 </th>
 
                                                 <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
+                                                    <div className="max-w-xs flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                                            IPCIDR
+                                                            IP CIDR
                                                         </span>
                                                     </div>
                                                 </th>
-                                                {/* <th scope="col" className="px-6 py-3 text-left">
-                                <div className="flex items-center gap-x-2">
-                                    <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
-                                    Portfolio
-                                    </span>
-                                </div>
-                                </th> */}
-                                                <th scope="col" className="px-6 py-3 text-right"></th>
                                             </tr>
                                         </thead>
 
-                                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             {
                                                 data.map((subnet) => (
                                                     <SubnetTableRow

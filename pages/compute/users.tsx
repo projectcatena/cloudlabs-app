@@ -1,4 +1,5 @@
 import ComputeUserTableRow from "@/components/elements/ComputeUserTableRow";
+import ErrorToast from "@/components/elements/ErrorToast";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import { parseToken } from "@/services/auth.service";
 import { Listbox, Transition } from "@headlessui/react";
@@ -58,6 +59,7 @@ export const getServerSideProps: GetServerSideProps<{
 
     const computeRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/compute/listall`, {
         method: "GET",
+        credentials: "include",
         headers: {
           "cookie": context.req.headers.cookie!,
           "Access-Control-Allow-Origin": "*",
@@ -80,6 +82,9 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Users({
     initialUserData, initialComputeData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    // Error Handling
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [isRefresh, setIsRefresh] = useState(false);
     const [userData, setUserData] = useState<User[]>(initialUserData);
@@ -159,6 +164,8 @@ export default function Users({
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to add instance to user");
             console.log("Error:", error);
         }
     }
@@ -192,6 +199,8 @@ export default function Users({
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to remove instance from user");
             console.log("Error:", error);
         }
     }
@@ -260,8 +269,7 @@ export default function Users({
                                     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700">
                                         {/* Header */}
                                         <form>
-                                            <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
-                                                <div className="inline-flex gap-x-2">
+                                            <div className="px-6 py-4 grid gap-3 md:flex md:justify-start md:items-center border-b border-gray-200 dark:border-gray-700">
                                                     {/*
                                                     <button onClick={handleRefresh} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
                                                         <svg className={`animate-spin h-4 w-4 text-white ${isRefresh ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -324,24 +332,19 @@ export default function Users({
                                                         </div>
                                                     </Listbox>
 
-                                                    <div className="flex items-center">
-                                                        <button onClick={addToCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
-                                                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                                <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                            </svg>
-                                                            Add to VM
-                                                        </button>
-                                                    </div>
-                                                    
-                                                    <div className="flex items-center">
-                                                        <button onClick={removeFromCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
-                                                            <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                                <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                                                            </svg>
-                                                            Remove from VM
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                    <button onClick={addToCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                        <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                            <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                        </svg>
+                                                        Add to VM
+                                                    </button>
+
+                                                    <button onClick={removeFromCompute} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
+                                                        <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                            <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                                        </svg>
+                                                        Remove from VM
+                                                    </button>
                                             </div>
                                         </form>
                                         {/* End Header */}
@@ -470,6 +473,8 @@ export default function Users({
                         </div>
                     </div>
                     {/* End Card */}
+                    {/* Modal */}
+                    <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
                 </div>
                 {/* End Table Section */}
             </DashboardLayout>

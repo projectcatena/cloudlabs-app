@@ -167,14 +167,15 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                setIsError(true);
-                setErrorMessage("Failed to add user(s)");
+                throw new Error("Network Failure");
             }
 
             const postResult = await postRes.json();
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to add user(s)");
             console.log("Error:", error);
         }
     }
@@ -201,14 +202,15 @@ export default function Users({
             });
 
             if (!postRes.ok) {
-                setIsError(true);
-                setErrorMessage("Failed to remove user(s)");
+                throw new Error("Network Error");
             }
 
             const postResult = await postRes.json();
             window.location.reload();
             return postResult;
         } catch(error) {
+            setIsError(true);
+            setErrorMessage("Failed to remove user(s)");
             console.log("Error:", error);
         }
     }
@@ -242,6 +244,7 @@ export default function Users({
             })
             .finally(() => {
                 setIsRefresh(false);
+                window.location.reload();
             })
 
         
@@ -278,8 +281,7 @@ export default function Users({
                                     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700">
                                         {/* Header */}
                                         <form>
-                                            <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
-                                                <div className="inline-flex gap-x-2">
+                                            <div className="px-6 py-4 grid gap-3 md:flex md:justify-start md:items-center border-b border-gray-200 dark:border-gray-700">
                                                     {/* <button onClick={handleRefresh} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800">
                                                         <svg className={`animate-spin h-4 w-4 text-white ${isRefresh ? "" : "hidden"}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -339,24 +341,19 @@ export default function Users({
                                                             </Transition>
                                                         </div>
                                                     </Listbox>
-                                                    <div className="flex items-center">
                                                         <button onClick={addToModule} className="py-2 px-3 h-9 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                                 <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                             </svg>
                                                             Add to Module
                                                         </button>
-                                                    </div>
                                                     
-                                                    <div className="flex items-center">
                                                         <button onClick={removeFromModule} className="py-1 px-3 h-9 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                             <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                                 <path d="M11 8H4V7H11V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                             </svg>
                                                             Remove from Module
                                                         </button>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </form>
                                         {/* End Header */}
@@ -389,7 +386,7 @@ export default function Users({
                                             <thead className="bg-gray-50 dark:bg-slate-800">
                                                 <tr>
                                                     <th scope="col" className="px-3 py-1 text-left">
-                                                        <label htmlFor="hs-checkbox-in-form" className="flex p-3 w-full text-xl focus:border-blue-500 focus:ring-blue-500 dark:text-gray-800">
+                                                        <label htmlFor="hs-checkbox-in-form" className="flex p-3 focus:border-blue-500 focus:ring-blue-500 dark:text-gray-800">
                                                             <input type="checkbox" checked={selectAll} onChange={handleSelectAll} className="shrink-0 border-gray-200 rounded text-blue-600 pointer-events-none focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800" id="hs-checkbox-in-form"></input>
                                                             {/* <span className="text-xs text-gray-800 ml-2 dark:text-gray-200 font-semibold uppercase whitespace-nowrap">Select All</span> */}
                                                         </label>
@@ -419,15 +416,13 @@ export default function Users({
                                                         </div>
                                                     </th>
 
-                                                    <th scope="col" className="py-3 text-left">
+                                                    <th scope="col" className="py-3 px-3 text-left">
                                                         <div className="flex items-center gap-x-2">
                                                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                                 Module(s)
                                                             </span>
                                                         </div>
                                                     </th>
-
-                                                    <th scope="col" className="px-16 py-3 text-right"></th>
                                                 </tr>
                                             </thead>
 
