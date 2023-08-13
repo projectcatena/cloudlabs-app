@@ -103,8 +103,8 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                                         type="text"
                                         className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" 
                                         placeholder="Enter the Module's subtitle"
-                                        pattern="^[a-zA-Z0-9 \-]*$"
-                                        title='Only alphanumeric characters allowed'
+                                        pattern="^[a-zA-Z0-9_]*$"
+                                        title='Only alphanumeric characters and underscore allowed'
                                         required></input>
                                     </label>
                                 </div>
@@ -118,7 +118,7 @@ const CreateModuleModal = ({open, onClose}: CreateModuleModalProps) => {
                                         type="text"
                                         className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
                                         placeholder="Enter the Module's title"
-                                        pattern="^[a-zA-Z0-9_ ]*$"
+                                        pattern="^[a-zA-Z0-9 ]*$"
                                         title='Only alphanumeric characters allowed'
                                         required></input>
                                     </label>
