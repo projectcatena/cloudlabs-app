@@ -14,8 +14,8 @@ const LoadingModal = ({open, onClose, loadingState}: ModalProps) => {
     if (!open) return null;
 
     return (
-        <div id="overlay" className="fixed z-[60] h-[105%] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
-            <div className='h-full flex justify-center items-center mb-20 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto sm:h-fit'>
+        <div id="overlay" className="fixed z-[60] inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center">
+            <div className='h-full flex justify-center items-center ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto sm:h-fit'>
             {/* hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto */}
             <div id="hs-task-created-alert" className="overflow-x-hidden overflow-y-auto">
                 <div className="mt-0 opacity-100 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
