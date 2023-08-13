@@ -413,7 +413,7 @@ export default function Admin({
                                         <thead className="bg-gray-50 dark:bg-slate-800">
                                             <tr>
                                                 <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
+                                                    <div className="max-w-xs flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                             Email
                                                         </span>
@@ -421,7 +421,7 @@ export default function Admin({
                                                 </th>
 
                                                 <th scope="col" className="px-6 py-3 text-left">
-                                                    <div className="flex items-center gap-x-2">
+                                                    <div className="max-w-xs flex items-center gap-x-2">
                                                         <span className="text-xs font-semibold uppercase tracking-wide text-gray-800 dark:text-gray-200">
                                                             Username
                                                         </span>

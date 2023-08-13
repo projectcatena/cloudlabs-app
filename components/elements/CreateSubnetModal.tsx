@@ -136,12 +136,12 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
                                             className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
                                             placeholder="Enter the IPCidr"
                                             required
-                                            pattern='^([0-9]{1,3}\.){3}[0-9]{1,3}($|/(16|24))$'
+                                            pattern='^([0-9]{1,3}\.){3}[0-9]{1,3}($|\/[0-9]{2})'
                                             title='Please enter a valid IP CIDR range'></input>
                                         </label>
                                     </div>
                                 </div>
-                               
+                            
                             </div>
 
                             <div className="flex justify-end items-center mt-6 gap-x-2 py-3 px-4 bg-gray-50 border-t dark:bg-gray-800 dark:border-gray-700">

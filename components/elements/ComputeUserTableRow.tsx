@@ -1,5 +1,5 @@
 import { ComputeInstance } from "@/pages/compute/users";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type UserProps = {
     //id: number,
@@ -36,33 +36,33 @@ const ComputeUserTableRow = (props: UserProps) => {
                         checked={localIsSelected} onChange={handleCheckBoxChange}></input>
                     </label>
                 </td>
-                <td className="h-px w-36 whitespace-nowrap">
+                <td className="max-w-xs h-px w-36 whitespace-nowrap">
                     <div className="py-3">
                         {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                        <span className="block text-sm text-gray-500">{props.email}</span>
+                        <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.email}</span>
                     </div>
                 </td>
-                <td className="h-px w-36 whitespace-nowrap">
+                <td className="max-w-xs h-px w-36 whitespace-nowrap">
                     <div className="py-3">
                         {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                        <span className="block text-sm text-gray-500">{props.username}</span>
+                        <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.username}</span>
                     </div>
                 </td>
-                <td className="h-px w-36 px-3 whitespace-nowrap">
+                <td className="max-w-xs h-px w-36 px-3 whitespace-nowrap">
                     <div className="py-3">
                         {/* <span className="text-sm text-gray-500">28 Dec, 12:12</span> */}
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 truncate hover:text-clip">
                             {props.fullName}
                         </span>
                     </div>
                 </td>
-                <td className="h-px w-px whitespace-nowrap">
+                <td className="max-w-xs h-px w-px whitespace-nowrap px-3">
                     <div className="py-3">
                         {
                             props.computes.map((computeinstance: ComputeInstance, key) => {
                                 //console.log(role.name);
                                 return (
-                                    <span key={key} className="text-sm text-gray-500">
+                                    <span key={key} className="text-sm text-gray-500 truncate hover:text-clip">
                                         {computeinstance.instanceName + " "}
                                     </span>
                                 )

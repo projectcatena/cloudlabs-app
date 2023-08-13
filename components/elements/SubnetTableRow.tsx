@@ -52,7 +52,7 @@ const SubnetTableRow = (props: SubnetProps) => {
                     {/* <img className="inline-block h-[2.375rem] w-[2.375rem] rounded-full" src="basicprofilepicture.jpeg" alt="Image Description" /> */}
                     <div className="grow">
                         {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageName}</span> */}
-                        <span className="block text-sm text-gray-500">{props.subnetName}</span>
+                        <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.subnetName}</span>
                     </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@ const SubnetTableRow = (props: SubnetProps) => {
             <td className="h-px w-3/5 whitespace-nowrap">
                 <div className="px-6 py-3 mr-14 flex items-center justify-between">
                     {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                    <span className="block text-sm text-gray-500">{props.ipv4Range}</span>
+                    <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.ipv4Range}</span>
                     <Link onClick={handleDelete} className={`inline-flex items-center gap-x-1.5 text-sm text-red-500 decoration-2 hover:underline font-medium ${isDeleting ? "hidden" : ""}`} href="#">
                         Delete
                     </Link>
@@ -74,22 +74,6 @@ const SubnetTableRow = (props: SubnetProps) => {
                 <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage} />
                 </div>
             </td>
-            {/* <td className="h-px w-px whitespace-nowrap">
-                <div className="px-6 py-3">
-                    <div className="flex items-center gap-x-3">
-                    <span className="text-xs text-gray-500">1/5</span>
-                    <div className="flex w-full h-1.5 bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700">
-                        <div className="flex flex-col justify-center overflow-hidden bg-gray-800 dark:bg-gray-200" role="progressbar" style={{width: "25%"}}></div>
-                    </div>
-                    </div>
-                </div>
-            </td> */}
-            {/*
-            <td className="h-px w-1/5 whitespace-nowrap">
-                
-                
-            </td>
-             */}
         </tr>
     )
 }

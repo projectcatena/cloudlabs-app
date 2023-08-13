@@ -54,24 +54,24 @@ const ImageTableRow = (props: ImageProps) => {
                     </label> */}
                 </div>
             </td>
-            <td className="h-px w-px whitespace-nowrap">
+            <td className="max-w-xs h-px w-px whitespace-nowrap">
                 <div className="pl-6 lg:pl-3 xl:pl-0 pr-6 py-3">
                     <div className="flex items-center gap-x-3">
                         {/* <img className="inline-block h-[2.375rem] w-[2.375rem] rounded-full" src="basicprofilepicture.jpeg" alt="Image Description" /> */}
                         <div className="grow">
                             {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageName}</span> */}
-                            <span className="block text-sm text-gray-500">{props.imageName}</span>
+                            <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.imageName}</span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td className="h-px w-72 whitespace-nowrap">
+            <td className="max-w-xs h-px w-72 whitespace-nowrap">
                 <div className="px-6 py-3">
                     {/* <span className="block text-sm font-semibold text-gray-800 dark:text-gray-200">{props.imageId}</span> */}
-                    <span className="block text-sm text-gray-500">{props.imageId}</span>
+                    <span className="block text-sm text-gray-500 truncate hover:text-clip">{props.imageId}</span>
                 </div>
             </td>
-            <td className="h-px w-px whitespace-nowrap">
+            <td className="max-w-xs h-px w-px whitespace-nowrap">
                 <div className="px-6 py-3">
                     {
                         (() => {
