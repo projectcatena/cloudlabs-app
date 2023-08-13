@@ -239,112 +239,114 @@ export default function Admin({
                                     {/* Header */}
                                     <form>
                                         <div className="px-6 py-4 grid gap-3 md:flex md:items-center border-b border-gray-200 dark:border-gray-700">
-                                            {/* User Dropdown List */}
-                                            <Listbox value={email} onChange={setEmail}>
-                                                <div className="relative mt-1">
-                                                    <Listbox.Label>Email :</Listbox.Label>
-                                                    <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
-                                                        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                                                            <span className="block truncate">{email}</span>
-                                                            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                                                </svg>
-                                                            </span>
-                                                        </Listbox.Button>
-                                                    </div>
-                                                    <Transition
-                                                        as={Fragment}
-                                                        leave="transition ease-in duration-100"
-                                                        leaveFrom="opacity-100"
-                                                        leaveTo="opacity-0"
-                                                    >
-                                                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                                            {data.map((person: any, personIdx: any) => (
-                                                                <Listbox.Option
-                                                                    key={personIdx}
-                                                                    className={({ active }) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-                                                                        }`
-                                                                    }
-                                                                    value={person.email}
-                                                                >
-                                                                    {({ selected }) => (
-                                                                        <>
-                                                                            <span
-                                                                                className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                                                                                    }`}
-                                                                            >
-                                                                                {person.email}
-                                                                            </span>
-                                                                            {selected ? (
-                                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                                                                    </svg>
+                                            <div className="flex mt-1">
+                                                {/* User Dropdown List */}
+                                                <Listbox value={email} onChange={setEmail}>
+                                                    <div className="relative ">
+                                                        <Listbox.Label>Email :</Listbox.Label>
+                                                        <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
+                                                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                                                                <span className="block truncate">{email}</span>
+                                                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                                                    </svg>
+                                                                </span>
+                                                            </Listbox.Button>
+                                                        </div>
+                                                        <Transition
+                                                            as={Fragment}
+                                                            leave="transition ease-in duration-100"
+                                                            leaveFrom="opacity-100"
+                                                            leaveTo="opacity-0"
+                                                        >
+                                                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                                                {data.map((person: any, personIdx: any) => (
+                                                                    <Listbox.Option
+                                                                        key={personIdx}
+                                                                        className={({ active }) =>
+                                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                                                                            }`
+                                                                        }
+                                                                        value={person.email}
+                                                                    >
+                                                                        {({ selected }) => (
+                                                                            <>
+                                                                                <span
+                                                                                    className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                                                                        }`}
+                                                                                >
+                                                                                    {person.email}
                                                                                 </span>
-                                                                            ) : null}
-                                                                        </>
-                                                                    )}
-                                                                </Listbox.Option>
-                                                            ))}
-                                                        </Listbox.Options>
-                                                    </Transition>
-                                                </div>
-                                            </Listbox>
-                                            {/* Role Dropdown List */}
-                                            <Listbox value={role} onChange={setRole}>
-                                                <div className="relative mt-1">
-                                                    <Listbox.Label>Role :</Listbox.Label>
-                                                    <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
-                                                        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-                                                            <span className="block truncate">{role}</span>
-                                                            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-                                                                </svg>
-                                                            </span>
-                                                        </Listbox.Button>
+                                                                                {selected ? (
+                                                                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                ) : null}
+                                                                            </>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ))}
+                                                            </Listbox.Options>
+                                                        </Transition>
                                                     </div>
-                                                    <Transition
-                                                        as={Fragment}
-                                                        leave="transition ease-in duration-100"
-                                                        leaveFrom="opacity-100"
-                                                        leaveTo="opacity-0"
-                                                    >
-                                                        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                                            {ERole.map((Role: any, RoleIdx: any) => (
-                                                                <Listbox.Option
-                                                                    key={RoleIdx}
-                                                                    className={({ active }) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
-                                                                        }`
-                                                                    }
-                                                                    value={Role.role}
-                                                                >
-                                                                    {({ selected }) => (
-                                                                        <>
-                                                                            <span
-                                                                                className={`block truncate ${selected ? 'font-medium' : 'font-normal'
-                                                                                    }`}
-                                                                            >
-                                                                                {Role.role}
-                                                                            </span>
-                                                                            {selected ? (
-                                                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
-                                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                                                                    </svg>
+                                                </Listbox>
+                                                {/* Role Dropdown List */}
+                                                <Listbox value={role} onChange={setRole}>
+                                                    <div className="relative ml-3">
+                                                        <Listbox.Label>Role :</Listbox.Label>
+                                                        <div className="inline-block text-sm text-gray-800 mt-2.5 dark:text-gray-200 pl-2">
+                                                            <Listbox.Button className="relative w-full cursor-default rounded-lg bg-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                                                                <span className="block truncate">{role}</span>
+                                                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                                                                    </svg>
+                                                                </span>
+                                                            </Listbox.Button>
+                                                        </div>
+                                                        <Transition
+                                                            as={Fragment}
+                                                            leave="transition ease-in duration-100"
+                                                            leaveFrom="opacity-100"
+                                                            leaveTo="opacity-0"
+                                                        >
+                                                            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                                                {ERole.map((Role: any, RoleIdx: any) => (
+                                                                    <Listbox.Option
+                                                                        key={RoleIdx}
+                                                                        className={({ active }) =>
+                                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                                                                            }`
+                                                                        }
+                                                                        value={Role.role}
+                                                                    >
+                                                                        {({ selected }) => (
+                                                                            <>
+                                                                                <span
+                                                                                    className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                                                                        }`}
+                                                                                >
+                                                                                    {Role.role}
                                                                                 </span>
-                                                                            ) : null}
-                                                                        </>
-                                                                    )}
-                                                                </Listbox.Option>
-                                                            ))}
-                                                        </Listbox.Options>
-                                                    </Transition>
-                                                </div>
-                                            </Listbox>
+                                                                                {selected ? (
+                                                                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5">
+                                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                                                        </svg>
+                                                                                    </span>
+                                                                                ) : null}
+                                                                            </>
+                                                                        )}
+                                                                    </Listbox.Option>
+                                                                ))}
+                                                            </Listbox.Options>
+                                                        </Transition>
+                                                    </div>
+                                                </Listbox>
+                                            </div>
                                             <button onClick={addRole} className="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"> {/* onClick={() => setAddImageModalOpen(true)} */}
                                                 <svg className="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                     <path d="M2.63452 7.50001L13.6345 7.5M8.13452 13V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
