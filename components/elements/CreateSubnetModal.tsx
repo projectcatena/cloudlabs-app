@@ -12,6 +12,8 @@ type CreateSubnetModalProps = {
 }
 
 const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
+    const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [subnetName, setName] = useState("");
     const [ipv4Range, setIpv4Range] = useState("");
@@ -63,6 +65,8 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
             // If server returns the subnet submitted, that means the form works.
             return result;
         } catch (error) {
+            setIsError(true);
+            setErrorMessage("Failed to create subnet");
             console.log("Error:", error);
         }
     }
@@ -101,7 +105,15 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
 
                                     <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="subnetName" className="flex">
-                                            <input onChange={(e) => setName(e.target.value)} id="subnetName" name="subnetName" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the Subnet Name" required></input>
+                                            <input
+                                            onChange={(e) => setName(e.target.value)}
+                                            id="subnetName"
+                                            name="subnetName"
+                                            type="text"
+                                            className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                            placeholder="Enter the Subnet Name"
+                                            required
+                                            pattern='^[a-zA-Z0-9\-]+$'></input>
                                         </label>
                                     </div>
                                 </div>
@@ -113,7 +125,16 @@ const CreateSubnetModal = ({open, onClose}: CreateSubnetModalProps) => {
 
                                     <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700">
                                         <label htmlFor="ipv4Range" className="flex">
-                                            <input onChange={(e) => setIpv4Range(e.target.value)} id="ipv4Range" name="ipv4Range" type="text" className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400" placeholder="Enter the IPCidr" required></input>
+                                            <input
+                                            onChange={(e) => setIpv4Range(e.target.value)}
+                                            id="ipv4Range"
+                                            name="ipv4Range"
+                                            type="text"
+                                            className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-inherit dark:border-gray-700 dark:text-gray-400"
+                                            placeholder="Enter the IPCidr"
+                                            required
+                                            pattern='^([0-9]{1,3}\.){3}[0-9]{1,3}($|/(16|24))$'
+                                            title='Please enter a valid IP CIDR range'></input>
                                         </label>
                                     </div>
                                 </div>

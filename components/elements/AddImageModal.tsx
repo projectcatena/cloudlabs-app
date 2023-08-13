@@ -231,10 +231,10 @@ const AddImageModal = ({open, onClose}: ModalProps) => {
                                             type="text"
                                             id="imageName"
                                             name="imageName"
-                                            pattern="^[a-z0-9-]+$"
+                                            pattern="^[a-z0-9\-]+$"
                                             className="py-3 px-4 block w-full border rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
                                             required
-                                            title='Please use lowercase alphabets and numbers only'
+                                            title='Please use lowercase alphabets and numbers and - only'
                                             aria-describedby="email-error" />
                                             <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
                                                 <svg className="h-5 w-5 text-red-500" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
