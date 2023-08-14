@@ -471,7 +471,7 @@ const SnapshotModal = ({open, onClose, instanceName}: SnapshotModalProps) => {
                     />
                     )}
                 
-                <ErrorToast isOpen={openErrorModal} onClose={() => setOpenErrorModal((prev) => !prev)} errorMessage={errorModalMessage}></ErrorToast>
+            <ErrorToast isOpen={openErrorModal} onClose={() => setOpenErrorModal((prev) => !prev)} errorMessage={errorModalMessage}></ErrorToast>
         </div>
         </>
     )

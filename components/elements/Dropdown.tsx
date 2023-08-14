@@ -246,6 +246,7 @@ export default function Dropdown({ instanceName }: DropdownProps) {
                         Snapshot
                     </button>
                 </div>
+            </div>
             {/* Modal */}
             {openLoadingModal && (
                 <LoadingModal
@@ -256,7 +257,6 @@ export default function Dropdown({ instanceName }: DropdownProps) {
             <SnapshotModal open={openModal} onClose={() => setOpenModal((prev) => !prev)} instanceName={instanceName} />
             <StatusModal open={StatusModalOpen} onClose={() => setStatusModalOpen(false)} statusMessage={statusMessage} />
             <ErrorToast isOpen={isError} onClose={() => setIsError((prev) => !prev)} errorMessage={errorMessage}></ErrorToast>
-            </div>
         </div>
 
     )
