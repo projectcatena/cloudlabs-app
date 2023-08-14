@@ -62,7 +62,7 @@ export default function Settings({
     console.log(newPassword);
 
     async function saveChanges(e: React.SyntheticEvent) {
-        //e.preventDefault
+        e.preventDefault();
 
         try {
             let params = {
@@ -73,7 +73,7 @@ export default function Settings({
                 newPassword,
             };
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/account/update`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
                 credentials: "include",
                 method: "POST",
                 headers: {
@@ -88,15 +88,19 @@ export default function Settings({
                 throw new Error("Network Failure");
             }
             const result = await response.json();
+            /*
             setFullName(result["fullName"]);
             setUsername(result["username"]);
             setEmail(result["email"]);
+            
+            */
             setIsError(false);
+            window.location.reload();
             return result;
         }
         catch (error) {
             setIsError(true);
-            setErrorMessage("Network Failure, unable to update password")
+            setErrorMessage("Wrong password")
             console.log ("Error: " + error );
         }
 
