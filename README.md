@@ -73,6 +73,7 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#our-supporters">Our Supporters</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -231,6 +232,10 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 ## Contact
 
 Kai - [@DancinParrot](https://github.com/DancinParrot)
+
+Boon Chong - [@s10219129](https://github.com/s10219129)
+
+Tristan - [@loghogjog](https://github.com/loghogjog)
 
 <!-- name - [@twitter](https://twitter.com/handle) - email@email.com -->
 
