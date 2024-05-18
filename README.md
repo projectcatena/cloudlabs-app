@@ -30,7 +30,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/projectcatena/cloudlabs-app">
-    <img src="https://i.postimg.cc/90t4QPxQ/Cloud-Labs-Logo.png" alt="Logo" width="80" height="80">
+    <img src="./assets/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">CloudLabs</h3>
@@ -280,15 +280,15 @@ We are eternally grateful to all our wonderful supporters and sponsors!
 [issues-url]: https://github.com/projectcatena/cloudlabs-app/issues
 [license-shield]: https://img.shields.io/github/license/projectcatena/cloudlabs-app.svg?style=for-the-badge
 [license-url]: https://github.com/projectcatena/cloudlabs-app/blob/master/LICENSE.txt
-[product-screenshot]: https://i.postimg.cc/fWpfLWmt/index.png
+[product-screenshot]: ./assets/hero.png 
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [Next-url]: https://nextjs.org/
 [Spring]: https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white 
 [Spring-url]: https://spring.io/
 [GCP]: https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white
 [GCP-url]: https://cloud.google.com/
-[Architecture]: https://i.postimg.cc/yxQTNzpd/CAP-Cloud-Labs-GCP-GKE-Cloudflare-Function-drawio.png 
-[Create-instance]: https://i.postimg.cc/Gt573krH/create-instance.png
-[Create-subnet]: https://i.postimg.cc/9Xbz8LFW/create-subnet.png
-[Snapshot]: https://i.postimg.cc/4NzKvX7S/snapshot.png
-[Browser-access]: https://i.postimg.cc/L8qYwjnn/browser-access.png 
+[Architecture]: ./assets/architecture.png
+[Create-instance]: ./assets/com-engine.png
+[Create-subnet]: ./assets/subnet.png
+[Snapshot]: ./assets/snapshot.png
+[Browser-access]: ./assets/browser-access.png
